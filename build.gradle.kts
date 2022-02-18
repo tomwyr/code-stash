@@ -31,3 +31,7 @@ dependencies {
     implementation("com.apurebase:kgraphql:$kgraphql_version")
     implementation("com.apurebase:kgraphql-ktor:$kgraphql_version")
 }
+
+tasks.create("stage") {
+    dependsOn("installDist")
+}
