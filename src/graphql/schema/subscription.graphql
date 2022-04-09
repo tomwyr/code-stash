@@ -1,0 +1,4 @@
+type Subscription {
+    athleteRegistered: Athlete!
+    medalAwarded: Medal!
+}

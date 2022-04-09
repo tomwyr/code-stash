@@ -1,0 +1,13 @@
+input AthleteInput {
+  name: String!
+  gender: Gender!
+  birthdate: String!
+  countryCode: String!
+}
+
+input MedalInput {
+  event: String!
+  type: MedalType!
+  disciplineCode: String!
+  athleteId: String!
+}
