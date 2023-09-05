@@ -1,0 +1,33 @@
+name: issues
+description: "A simple mobile application utilizing Shorebird service for code push in Flutter."
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  appwrite: ^8.1.0
+  copy_with_extension: ^5.0.4
+  flutter:
+    sdk: flutter
+  flutter_dotenv: ^5.1.0
+  flutter_mobx: ^2.0.6+5
+  json_annotation: ^4.8.1
+  mobx: ^2.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  json_serializable: ^6.7.1
+  build_runner: ^2.4.6
+  mobx_codegen: ^2.3.0
+  copy_with_extension_gen: ^5.0.4
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - .env
