@@ -96,11 +96,16 @@ abstract class IssuesStoreBase with Store {
   Issue _toggleUserVote(String issueId) {
     final user = authStore.user;
     final issue = _issues.firstWhere((issue) => issue.id == issueId);
+    final userHasVoted = issue.votes.any((vote) => vote.userId == user.id);
 
-    final userVote = IssueVote(
-      userId: user.id,
-    );
-    final votes = [...issue.votes, userVote];
+    final votes = [...issue.votes];
+    if (userHasVoted) {
+      votes.removeWhere((vote) => vote.userId == user.id);
+    } else {
+      votes.add(IssueVote(
+        userId: user.id,
+      ));
+    }
 
     return issue.copyWith(votes: votes);
   }
