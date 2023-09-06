@@ -35,6 +35,14 @@ class _IssuesPageState extends State<IssuesPage> {
         actions: [
           Observer(
             builder: (context) => IconButton(
+              onPressed: issuesStore.issues.isNotEmpty
+                  ? () => Navigator.of(context).pushNamed('/stats')
+                  : null,
+              icon: const Icon(Icons.bar_chart),
+            ),
+          ),
+          Observer(
+            builder: (context) => IconButton(
               onPressed: !authStore.loading ? authStore.logOut : null,
               icon: const Icon(Icons.exit_to_app),
             ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../pages/issues.dart';
 import '../pages/login.dart';
 import '../pages/splash.dart';
+import '../pages/stats.dart';
 import 'auth_navigator.dart';
 import 'theme.dart';
 
@@ -26,6 +27,7 @@ class _AppState extends State<App> {
         '/': (_) => const SplashPage(),
         '/login': (_) => const LoginPage(),
         '/issues': (_) => const IssuesPage(),
+        '/stats': (_) => const StatsPage(),
       },
       builder: (context, child) => AuthNavigator(
         navigatorKey: _navigatorKey,
