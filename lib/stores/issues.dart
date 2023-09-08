@@ -45,6 +45,10 @@ abstract class IssuesStoreBase with Store {
   @action
   void dispose() {
     _issuesSubscription?.close();
+    _initialized = false;
+    _loadingIssues = false;
+    _togglingVotes = [];
+    _issues = [];
   }
 
   @action

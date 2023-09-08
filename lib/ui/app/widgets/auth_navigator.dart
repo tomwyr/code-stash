@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../models/auth_state.dart';
-import '../../stores/auth.dart';
+import '../../../models/auth_state.dart';
+import '../../../stores/auth.dart';
 
 class AuthNavigator extends StatefulWidget {
   const AuthNavigator({

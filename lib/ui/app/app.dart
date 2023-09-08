@@ -4,8 +4,9 @@ import '../pages/issues.dart';
 import '../pages/login.dart';
 import '../pages/splash.dart';
 import '../pages/stats.dart';
-import 'auth_navigator.dart';
 import 'theme.dart';
+import 'widgets/auth_navigator.dart';
+import 'widgets/update_notifier.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -31,7 +32,9 @@ class _AppState extends State<App> {
       },
       builder: (context, child) => AuthNavigator(
         navigatorKey: _navigatorKey,
-        child: child!,
+        child: UpdateNotifier(
+          child: child!,
+        ),
       ),
     );
   }
