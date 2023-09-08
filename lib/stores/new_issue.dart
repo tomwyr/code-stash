@@ -11,6 +11,8 @@ final newIssueStore = NewIssueStore();
 class NewIssueStore = NewIssueStoreBase with _$NewIssueStore;
 
 abstract class NewIssueStoreBase with Store {
+  final _databases = createDatabases();
+
   @readonly
   bool _loading = false;
 
@@ -23,7 +25,7 @@ abstract class NewIssueStoreBase with Store {
     _loading = true;
 
     try {
-      final doc = await databases.createDocument(
+      final doc = await _databases.createDocument(
         databaseId: databaseId,
         collectionId: issuesId,
         documentId: DocumentId.unique,

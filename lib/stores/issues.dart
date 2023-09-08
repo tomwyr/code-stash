@@ -104,6 +104,7 @@ abstract class IssuesStoreBase with Store {
     } else {
       votes.add(IssueVote(
         userId: user.id,
+        userName: user.name,
       ));
     }
 

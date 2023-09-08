@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import '../../models/issue.dart';
 import '../../stores/auth.dart';
 import '../../stores/issues.dart';
+import '../modals/issue_votes.dart';
 import '../modals/new_issue.dart';
 
 class IssuesPage extends StatefulWidget {
@@ -89,6 +90,7 @@ class IssueTile extends StatelessWidget {
     final color = votedByUser ? Colors.green : null;
 
     return ListTile(
+      onTap: () => IssueVotesModal.show(context, issueId: issueId),
       title: Text(title),
       trailing: Observer(
         builder: (context) {

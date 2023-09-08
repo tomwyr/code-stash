@@ -6,9 +6,11 @@ part 'issue_vote.g.dart';
 class IssueVote {
   IssueVote({
     required this.userId,
+    required this.userName,
   });
 
   final String userId;
+  final String userName;
 
   factory IssueVote.fromJson(Map<String, dynamic> json) => _$IssueVoteFromJson(json);
 
