@@ -5,18 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "issues",
+      "name": "launch",
       "request": "launch",
       "type": "dart"
     },
     {
-      "name": "issues (profile mode)",
+      "name": "launch (profile mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile"
     },
     {
-      "name": "issues (release mode)",
+      "name": "launch (release mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"

@@ -1,4 +1,4 @@
-name: issues
+name: shorebird_votes
 description: "A simple mobile application utilizing Shorebird service for code push in Flutter."
 publish_to: "none"
 version: 0.1.0+1

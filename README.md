@@ -1,4 +1,4 @@
-# Issues
+# Shorebird Votes
 
 A simple mobile application utilizing Shorebird service for code push in Flutter. The application uses a few services that require configuration in order work correctly, namely:
 - [Shorebird](https://shorebird.dev/): Code push
