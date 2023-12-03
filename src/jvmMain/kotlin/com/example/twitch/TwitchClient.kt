@@ -71,7 +71,7 @@ class TwitchClient(
         ))
     }
 
-    private suspend inline fun <reified T> query(
+    private suspend inline fun <reified T : Any> query(
             url: String,
             queryParams: Map<String, Any?>,
     ): Result<T, TwitchFailure> {
@@ -86,7 +86,7 @@ class TwitchClient(
     }
 
 
-    private suspend inline fun <reified T> tryQuery(
+    private suspend inline fun <reified T : Any> tryQuery(
             url: String,
             queryParams: Map<String, Any?>,
     ): Result<T, TwitchFailure> {
@@ -139,9 +139,9 @@ class TwitchClient(
     }
 }
 
-suspend inline fun <reified T> HttpResponse.bodyOrNull(): T? = try {
+suspend inline fun <reified T : Any> HttpResponse.bodyOrNull(): T? = try {
     body<T>()
 } catch (error: Throwable) {
-    App.raise(DeserializationError(T::class, bodyAsText()))
+    App.raise(DeserializationError(T::class, bodyAsText(), error))
     null
 }
