@@ -2,12 +2,9 @@ package com.example.services
 
 import com.example.LateInfo
 import com.example.StreamStatus
-import com.example.twitch.Stream
-import com.example.twitch.StreamerConfig
-import com.example.twitch.TwitchClient
-import com.example.twitch.Video
+import com.example.StreamerInfo
+import com.example.twitch.*
 import com.github.michaelbull.result.getOrElse
-import kotlinx.coroutines.delay
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone.Companion.UTC
 import kotlin.time.Duration
@@ -19,17 +16,24 @@ actual class LateService(
         private val twitchClient: TwitchClient,
 ) : ILateService {
     override suspend fun getLateInfo(): LateInfo {
-        throw CurrentStreamUnavailable()
-        
+        val user = twitchClient.getUser(streamerConfig.id)
+                .getOrElse { throw StreamerInfoUnavailable() }
         val currentStream = twitchClient.getCurrentStream(streamerConfig.id)
                 .getOrElse { throw CurrentStreamUnavailable() }
         val newestVideo = twitchClient.getNewestVideo(streamerConfig.id)
                 .getOrElse { throw NewestVideoUnavailable() }
 
+        val streamerInfo = user?.let(::getStreamerInfo) ?: throw StreamerNotFound()
         val (streamStatus, streamStart) =
                 StreamInfoResolver(streamerConfig).getStatusAndStart(currentStream, newestVideo)
 
-        return LateInfo(streamStatus, streamStart)
+        return LateInfo(streamerInfo, streamStatus, streamStart)
+    }
+
+    private fun getStreamerInfo(user: User): StreamerInfo {
+        return with(user) {
+            StreamerInfo(displayName, profileImageUrl)
+        }
     }
 }
 

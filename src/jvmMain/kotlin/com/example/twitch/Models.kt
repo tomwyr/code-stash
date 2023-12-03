@@ -18,13 +18,8 @@ class CreateSessionInput(
 )
 
 @Serializable
-data class StreamsResponse(
-        val data: List<Stream>,
-)
-
-@Serializable
-data class VideosResponse(
-        val data: List<Video>,
+data class ListResponse<T>(
+        val data: List<T>,
 )
 
 @Serializable
@@ -52,3 +47,9 @@ enum class VideoType {
     Highlight,
     Upload,
 }
+
+@Serializable
+data class User(
+        @SerialName("display_name") val displayName: String,
+        @SerialName("profile_image_url") val profileImageUrl: String,
+)

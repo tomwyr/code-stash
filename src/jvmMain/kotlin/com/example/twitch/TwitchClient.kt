@@ -15,8 +15,11 @@ class TwitchClient(
     companion object {
         private const val AUTH_URL = "https://id.twitch.tv/oauth2/token"
         private const val AUTH_GRANT_TYPE = "client_credentials"
-        private const val STREAMS_URL = "https://api.twitch.tv/helix/streams"
-        private const val VIDEOS_URL = "https://api.twitch.tv/helix/videos"
+
+        private const val API_BASE_URL = "https://api.twitch.tv/helix"
+        private const val STREAMS_URL = "$API_BASE_URL/streams"
+        private const val VIDEOS_URL = "$API_BASE_URL/videos"
+        private const val USERS_URL = "$API_BASE_URL/users"
 
         private const val SESSION_KEY = "session"
     }
@@ -27,11 +30,21 @@ class TwitchClient(
         data object InvalidResponse : TwitchFailure()
     }
 
+    suspend fun getUser(id: String): Result<User?, TwitchFailure> {
+        return getUsers(listOf(id)).map { it.data.singleOrNull() }
+    }
+
+    private suspend fun getUsers(ids: List<String>): Result<ListResponse<User>, TwitchFailure> {
+        val idParams = ids.map { "id" to it }.toTypedArray()
+        return query(USERS_URL, mapOf(*idParams))
+    }
+
+
     suspend fun getCurrentStream(streamerId: String): Result<Stream?, TwitchFailure> {
         return getStreams(streamerId, first = 1).map { it.data.singleOrNull() }
     }
 
-    private suspend fun getStreams(userLogin: String, first: Int?): Result<StreamsResponse, TwitchFailure> {
+    private suspend fun getStreams(userLogin: String, first: Int?): Result<ListResponse<Stream>, TwitchFailure> {
         return query(STREAMS_URL, mapOf(
                 "user_login" to userLogin,
                 "first" to first,
@@ -47,7 +60,7 @@ class TwitchClient(
             sort: VideosSort?,
             type: VideoType?,
             first: Int?,
-    ): Result<VideosResponse, TwitchFailure> {
+    ): Result<ListResponse<Video>, TwitchFailure> {
         return query(VIDEOS_URL, mapOf(
                 "user_login" to userLogin,
                 "sort" to sort,

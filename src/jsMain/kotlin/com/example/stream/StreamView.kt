@@ -80,6 +80,12 @@ private fun Container.content(result: Result<LateInfo, LateServiceFailure>) {
 
 private fun Container.successView(lateInfo: LateInfo) {
     with(lateInfo) {
+        image(streamerInfo.imageUrl) {
+            borderRadius = 50.perc
+        }
+
+        span(streamerInfo.name)
+
         span("$streamStatus") {
             colorName = Col.GRAY
         }

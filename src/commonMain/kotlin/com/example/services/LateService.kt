@@ -15,6 +15,12 @@ interface ILateService {
 sealed class LateServiceFailure(override val message: String) : AbstractServiceException()
 
 @KVServiceException
+class StreamerNotFound : LateServiceFailure("Streamer with given ID could not be found.")
+
+@KVServiceException
+class StreamerInfoUnavailable : LateServiceFailure("Unable to retrieve streamer info data. Please try again later.")
+
+@KVServiceException
 class CurrentStreamUnavailable : LateServiceFailure("Unable to retrieve current stream data. Please try again later.")
 
 @KVServiceException

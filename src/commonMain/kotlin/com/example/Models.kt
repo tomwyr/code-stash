@@ -11,7 +11,14 @@ enum class StreamStatus {
 }
 
 @Serializable
+data class StreamerInfo(
+        val name: String,
+        val imageUrl: String,
+)
+
+@Serializable
 data class LateInfo(
+        val streamerInfo: StreamerInfo,
         val streamStatus: StreamStatus,
         val streamStart: Instant,
 )
