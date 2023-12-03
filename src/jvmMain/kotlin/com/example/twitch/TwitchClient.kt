@@ -1,5 +1,7 @@
 package com.example.twitch
 
+import com.example.app.App
+import com.example.app.AppEvent.DeserializationError
 import com.example.utils.LocalStorage
 import com.github.michaelbull.result.*
 import io.ktor.client.*
@@ -140,5 +142,6 @@ class TwitchClient(
 suspend inline fun <reified T> HttpResponse.bodyOrNull(): T? = try {
     body<T>()
 } catch (error: Throwable) {
+    App.raise(DeserializationError(T::class, bodyAsText()))
     null
 }
