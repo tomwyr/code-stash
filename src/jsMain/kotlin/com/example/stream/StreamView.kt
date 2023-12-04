@@ -1,16 +1,15 @@
 package com.example.stream
 
 import com.example.LateInfo
+import com.example.StreamStatus
 import com.example.services.LateServiceFailure
-import com.example.utils.Failure
-import com.example.utils.Loading
-import com.example.utils.Result
-import com.example.utils.Success
+import com.example.utils.*
 import io.kvision.core.*
 import io.kvision.html.*
 import io.kvision.panel.SimplePanel
 import io.kvision.state.bind
 import io.kvision.utils.*
+import kotlinx.datetime.internal.JSJoda.DateTimeFormatter
 
 object StreamView : SimplePanel() {
     init {
@@ -82,9 +81,20 @@ private fun Container.successView(lateInfo: LateInfo) {
     with(lateInfo) {
         image(streamerInfo.imageUrl) {
             borderRadius = 50.perc
+            padding = 1.rem
         }
 
-        span(streamerInfo.name)
+        span(streamerInfo.name) {
+
+        }
+
+        DateTimeFormatter.ofPattern("HH:mm").withLocale().format(streamStart)
+
+        when (streamStatus) {
+            StreamStatus.Live -> "${streamerInfo.name} has been online since ${streamStart}."
+            StreamStatus.Late -> TODO()
+            StreamStatus.Offline -> TODO()
+        }
 
         span("$streamStatus") {
             colorName = Col.GRAY
@@ -97,7 +107,7 @@ private fun Container.loadingView() {
 }
 
 private fun Container.failureView(failure: LateServiceFailure) {
-    image("images/deadge.webp") {
+    image(Images.error) {
         width = 3.rem
         height = 3.rem
     }
