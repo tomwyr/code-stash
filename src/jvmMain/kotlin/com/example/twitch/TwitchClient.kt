@@ -2,12 +2,14 @@ package com.example.twitch
 
 import com.example.app.App
 import com.example.app.AppEvent.DeserializationError
+import com.example.app.AppEvent.UnsuccessfulCallError
 import com.example.utils.LocalStorage
 import com.github.michaelbull.result.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 
 class TwitchClient(
         private val config: AppConfig,
@@ -37,41 +39,39 @@ class TwitchClient(
     }
 
     private suspend fun getUsers(ids: List<String>): Result<ListResponse<User>, TwitchFailure> {
-        val idParams = ids.map { "id" to it }.toTypedArray()
-        return query(USERS_URL, mapOf(*idParams))
+        return query(USERS_URL, ids.associateBy { "id" })
     }
 
-
-    suspend fun getCurrentStream(streamerId: String): Result<Stream?, TwitchFailure> {
-        return getStreams(streamerId, first = 1).map { it.data.singleOrNull() }
+    suspend fun getCurrentStream(userId: String): Result<Stream?, TwitchFailure> {
+        return getStreams(userId, first = 1).map { it.data.singleOrNull() }
     }
 
-    private suspend fun getStreams(userLogin: String, first: Int?): Result<ListResponse<Stream>, TwitchFailure> {
+    private suspend fun getStreams(userId: String, first: Int?): Result<ListResponse<Stream>, TwitchFailure> {
         return query(STREAMS_URL, mapOf(
-                "user_login" to userLogin,
+                "user_id" to userId,
                 "first" to first,
         ))
     }
 
-    suspend fun getNewestVideo(streamerId: String): Result<Video?, TwitchFailure> {
-        return getVideos(streamerId, VideosSort.Time, VideoType.Archive, first = 1).map { it.data.firstOrNull() }
+    suspend fun getNewestVideo(userId: String): Result<Video?, TwitchFailure> {
+        return getVideos(userId, VideosSort.Time, VideoType.Archive, first = 1).map { it.data.firstOrNull() }
     }
 
     private suspend fun getVideos(
-            userLogin: String,
+            userId: String,
             sort: VideosSort?,
             type: VideoType?,
             first: Int?,
     ): Result<ListResponse<Video>, TwitchFailure> {
         return query(VIDEOS_URL, mapOf(
-                "user_login" to userLogin,
-                "sort" to sort,
-                "type" to type,
+                "user_id" to userId,
+                "sort" to sort?.toJsonValue(),
+                "type" to type?.toJsonValue(),
                 "first" to first,
         ))
     }
 
-    private suspend inline fun <reified T : Any> query(
+    private suspend inline fun <reified T> query(
             url: String,
             queryParams: Map<String, Any?>,
     ): Result<T, TwitchFailure> {
@@ -86,12 +86,16 @@ class TwitchClient(
     }
 
 
-    private suspend inline fun <reified T : Any> tryQuery(
+    private suspend inline fun <reified T> tryQuery(
             url: String,
             queryParams: Map<String, Any?>,
     ): Result<T, TwitchFailure> {
         val accessToken = authorize().accessToken
         val response = runQuery(url, queryParams, accessToken)
+
+        if (!response.status.isSuccess()) {
+            App.raise(UnsuccessfulCallError(response))
+        }
 
         return when (response.status.value) {
             in 200 until 300 -> {
@@ -139,9 +143,9 @@ class TwitchClient(
     }
 }
 
-suspend inline fun <reified T : Any> HttpResponse.bodyOrNull(): T? = try {
+suspend inline fun <reified T> HttpResponse.bodyOrNull(): T? = try {
     body<T>()
 } catch (error: Throwable) {
-    App.raise(DeserializationError(T::class, bodyAsText(), error))
+    App.raise(DeserializationError(this, error))
     null
 }

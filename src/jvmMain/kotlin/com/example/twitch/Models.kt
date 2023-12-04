@@ -3,6 +3,8 @@ package com.example.twitch
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlin.time.Duration
 
 @Serializable
@@ -30,22 +32,42 @@ data class Stream(
 @Serializable
 data class Video(
         @SerialName("created_at") val createdAt: Instant,
-        val duration: Duration,
+        @Serializable(DurationSerializer::class) val duration: Duration,
 )
 
 @Serializable
 enum class VideosSort {
+    @SerialName("time")
     Time,
+
+    @SerialName("trending")
     Trending,
-    Views,
+
+    @SerialName("views")
+    View;
+
+    fun toJsonValue(): String {
+        return Json.encodeToString(this).trim { it == '"' };
+    }
 }
 
 @Serializable
 enum class VideoType {
+    @SerialName("all")
     All,
+
+    @SerialName("archive")
     Archive,
+
+    @SerialName("highlight")
     Highlight,
-    Upload,
+
+    @SerialName("upload")
+    Upload;
+
+    fun toJsonValue(): String {
+        return Json.encodeToString(this).trim { it == '"' }
+    }
 }
 
 @Serializable

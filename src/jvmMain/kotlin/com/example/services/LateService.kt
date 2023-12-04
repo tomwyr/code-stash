@@ -16,11 +16,12 @@ actual class LateService(
         private val twitchClient: TwitchClient,
 ) : ILateService {
     override suspend fun getLateInfo(): LateInfo {
-        val user = twitchClient.getUser(streamerConfig.id)
+        val userId = streamerConfig.id
+        val user = twitchClient.getUser(userId)
                 .getOrElse { throw StreamerInfoUnavailable() }
-        val currentStream = twitchClient.getCurrentStream(streamerConfig.id)
+        val currentStream = twitchClient.getCurrentStream(userId)
                 .getOrElse { throw CurrentStreamUnavailable() }
-        val newestVideo = twitchClient.getNewestVideo(streamerConfig.id)
+        val newestVideo = twitchClient.getNewestVideo(userId)
                 .getOrElse { throw NewestVideoUnavailable() }
 
         val streamerInfo = user?.let(::getStreamerInfo) ?: throw StreamerNotFound()

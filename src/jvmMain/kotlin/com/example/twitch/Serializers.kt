@@ -4,12 +4,18 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.listSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonTransformingSerializer
+import kotlinx.serialization.json.jsonPrimitive
+import kotlin.time.Duration
 
 object OffDaysSerializer : KSerializer<OffDays> {
     @OptIn(ExperimentalSerializationApi::class)
@@ -51,5 +57,32 @@ object DayOfWeekSerializer : KSerializer<DayOfWeek> {
             DayOfWeek.SATURDAY -> "Sat"
             DayOfWeek.SUNDAY -> "Sun"
         })
+    }
+}
+
+object DurationSerializerx : JsonTransformingSerializer<Duration>(Duration.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        val units = Regex("[dhms]")
+        val inValue = element.jsonPrimitive.content
+        val outValue = inValue.replace(units) { "${it.value} " }.trim()
+        return JsonPrimitive(outValue)
+    }
+
+    override fun transformSerialize(element: JsonElement): JsonElement {
+        val inValue = element.jsonPrimitive.content
+        val outValue = inValue.filterNot { it == ' ' }
+        return JsonPrimitive(outValue)
+    }
+}
+
+object DurationSerializer : KSerializer<Duration> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("SimpleDuration", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Duration) {
+        encoder.encodeString(value.toString())
+    }
+
+    override fun deserialize(decoder: Decoder): Duration {
+        return Duration.parse(decoder.decodeString())
     }
 }
