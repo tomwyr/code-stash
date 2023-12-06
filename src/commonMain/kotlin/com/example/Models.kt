@@ -15,6 +15,7 @@ enum class StreamStatus {
 data class StreamerInfo(
         val name: String,
         val imageUrl: String,
+        val streamUrl: String,
         val timeZone: TimeZone,
 )
 

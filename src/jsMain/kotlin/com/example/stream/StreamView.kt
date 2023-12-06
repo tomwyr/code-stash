@@ -83,11 +83,15 @@ private fun Container.content(result: Result<LateInfo, LateServiceFailure>) {
 
 private fun Container.successView(lateInfo: LateInfo) {
     with(lateInfo) {
-        image(streamerInfo.imageUrl) {
+        link("", streamerInfo.streamUrl, target = "_blank") {
+            margin = 1.rem
             borderRadius = 50.perc
-            padding = 1.rem
-            width = 8.rem
-            height = 8.rem
+
+            image(streamerInfo.imageUrl) {
+                borderRadius = 50.perc
+                width = 8.rem
+                height = 8.rem
+            }
         }
 
         span("$streamStatus") {

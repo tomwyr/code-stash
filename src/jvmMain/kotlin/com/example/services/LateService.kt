@@ -31,11 +31,14 @@ actual class LateService(
         return LateInfo(streamerInfo, streamStatus, streamStart)
     }
 
-    private fun getStreamerInfo(user: User): StreamerInfo = StreamerInfo(
-            user.displayName,
-            user.profileImageUrl,
-            streamerConfig.timeZone,
-    )
+    private fun getStreamerInfo(user: User): StreamerInfo = with(user) {
+        StreamerInfo(
+                displayName,
+                profileImageUrl,
+                "https://twitch.tv/$login/",
+                streamerConfig.timeZone,
+        )
+    }
 }
 
 private class StreamInfoResolver(
