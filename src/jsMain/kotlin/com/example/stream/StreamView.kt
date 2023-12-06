@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.hours
 object StreamView : SimplePanel() {
     init {
         addAfterInsertHook {
-            StreamModel.loadLateInfo()
+            StreamModel.initialize()
         }
 
         bind(StreamModel.lateInfo) { result ->
@@ -94,13 +94,15 @@ private fun Container.successView(lateInfo: LateInfo) {
             colorName = Col.GRAY
         }
 
-        val description = when (streamStatus) {
-            StreamStatus.Live -> ::liveDescription
-            StreamStatus.Late -> ::lateDescription
-            StreamStatus.Offline -> ::offlineDescription
-        }
+        div().bind(StreamModel.refreshStatus) {
+            val description = when (streamStatus) {
+                StreamStatus.Live -> ::liveDescription
+                StreamStatus.Late -> ::lateDescription
+                StreamStatus.Offline -> ::offlineDescription
+            }
 
-        description(streamerInfo, streamStart)
+            description(streamerInfo, streamStart)
+        }
     }
 }
 
@@ -118,7 +120,7 @@ private fun Container.liveDescription(streamerInfo: StreamerInfo, streamStart: I
 
 private fun Container.lateDescription(streamerInfo: StreamerInfo, streamStart: Instant) {
     val streamer = streamerInfo.name
-    val timePassed =streamStart.untilNow().formatHms()
+    val timePassed = streamStart.untilNow().formatHms()
 
     p {
         b(streamer)

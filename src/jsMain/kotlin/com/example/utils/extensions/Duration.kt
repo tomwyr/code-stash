@@ -5,7 +5,7 @@ import kotlin.time.Duration
 fun Duration.formatHms(): String = toComponents { hours, minutes, seconds, _ ->
     var result = "${minutes.padded()}:${seconds.padded()}"
     if (hours > 0) {
-        result = "${minutes.padded()}:$result"
+        result = "${hours.padded()}:$result"
     }
     return result
 }
