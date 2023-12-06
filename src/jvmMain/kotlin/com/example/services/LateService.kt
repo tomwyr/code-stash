@@ -31,11 +31,11 @@ actual class LateService(
         return LateInfo(streamerInfo, streamStatus, streamStart)
     }
 
-    private fun getStreamerInfo(user: User): StreamerInfo {
-        return with(user) {
-            StreamerInfo(displayName, profileImageUrl)
-        }
-    }
+    private fun getStreamerInfo(user: User): StreamerInfo = StreamerInfo(
+            user.displayName,
+            user.profileImageUrl,
+            streamerConfig.timeZone,
+    )
 }
 
 private class StreamInfoResolver(
@@ -74,10 +74,16 @@ private class StreamInfoResolver(
 
     private fun getNearestStreamStart(type: StreamType): Instant {
         with(streamerConfig) {
-            val currentDate = now.toLocalDateTime(timeZone).date
+            val (currentDate, currentTime) = now.toLocalDateTime(timeZone).run { date to time }
             val weekDay = currentDate.dayOfWeek
+            val skipToday = when (type) {
+                StreamType.Next -> currentTime >= startTime
+                StreamType.Last -> currentTime <= startTime
+            }
 
             for (daysDiff in 0..7) {
+                if (daysDiff == 0 && skipToday) continue
+
                 val nextDay = weekDay + daysDiff.toLong() * type.timeMultiplier
                 if (nextDay in offDays) continue
 

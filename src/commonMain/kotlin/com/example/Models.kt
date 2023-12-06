@@ -1,6 +1,7 @@
 package com.example
 
 import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,6 +15,7 @@ enum class StreamStatus {
 data class StreamerInfo(
         val name: String,
         val imageUrl: String,
+        val timeZone: TimeZone,
 )
 
 @Serializable

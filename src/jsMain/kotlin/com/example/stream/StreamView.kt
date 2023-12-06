@@ -2,14 +2,18 @@ package com.example.stream
 
 import com.example.LateInfo
 import com.example.StreamStatus
+import com.example.StreamerInfo
 import com.example.services.LateServiceFailure
 import com.example.utils.*
+import com.example.utils.extensions.*
 import io.kvision.core.*
 import io.kvision.html.*
 import io.kvision.panel.SimplePanel
 import io.kvision.state.bind
 import io.kvision.utils.*
-import kotlinx.datetime.internal.JSJoda.DateTimeFormatter
+import kotlinx.datetime.Instant
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration.Companion.hours
 
 object StreamView : SimplePanel() {
     init {
@@ -82,23 +86,75 @@ private fun Container.successView(lateInfo: LateInfo) {
         image(streamerInfo.imageUrl) {
             borderRadius = 50.perc
             padding = 1.rem
-        }
-
-        span(streamerInfo.name) {
-
-        }
-
-        DateTimeFormatter.ofPattern("HH:mm").withLocale().format(streamStart)
-
-        when (streamStatus) {
-            StreamStatus.Live -> "${streamerInfo.name} has been online since ${streamStart}."
-            StreamStatus.Late -> TODO()
-            StreamStatus.Offline -> TODO()
+            width = 8.rem
+            height = 8.rem
         }
 
         span("$streamStatus") {
             colorName = Col.GRAY
         }
+
+        val description = when (streamStatus) {
+            StreamStatus.Live -> ::liveDescription
+            StreamStatus.Late -> ::lateDescription
+            StreamStatus.Offline -> ::offlineDescription
+        }
+
+        description(streamerInfo, streamStart)
+    }
+}
+
+private fun Container.liveDescription(streamerInfo: StreamerInfo, streamStart: Instant) {
+    val streamer = streamerInfo.name
+    val timePassed = streamStart.untilNow().formatHms()
+
+    p {
+        b(streamer)
+        span(" has been online for ")
+        b(timePassed)
+        span(".")
+    }
+}
+
+private fun Container.lateDescription(streamerInfo: StreamerInfo, streamStart: Instant) {
+    val streamer = streamerInfo.name
+    val timePassed =streamStart.untilNow().formatHms()
+
+    p {
+        b(streamer)
+        span(" has been late for ")
+        b(timePassed)
+        span(".")
+    }
+}
+
+private fun Container.offlineDescription(streamerInfo: StreamerInfo, streamStart: Instant) {
+    fun P.nextStreamTime() {
+        when (val timeLeft = streamStart.sinceNow()) {
+            in 0.hours..1.hours -> {
+                span("in ")
+                b(timeLeft.formatHms())
+            }
+
+            else -> {
+                val weekDay = streamStart.toLocalDateTime(streamerInfo.timeZone).dayOfWeek.shortName
+                val time = streamStart.format("HH:mm", streamerInfo.timeZone.id)
+
+                span("on ")
+                b(weekDay)
+                span(" at ")
+                b(time)
+            }
+        }
+    }
+
+    val streamer = streamerInfo.name
+
+    p {
+        b(streamer)
+        span(" is currently offline. Next stream expected ")
+        nextStreamTime()
+        span(".")
     }
 }
 

@@ -132,6 +132,7 @@ kotlin {
                 implementation("io.kvision:kvision-bootstrap:$kvisionVersion")
                 implementation("io.kvision:kvision-state:$kvisionVersion")
                 implementation("io.kvision:kvision-fontawesome:$kvisionVersion")
+                implementation(npm("@js-joda/timezone", "2.18.2"))
             }
         }
         val jsTest by getting {
