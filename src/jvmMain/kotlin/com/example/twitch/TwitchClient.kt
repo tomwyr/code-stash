@@ -104,7 +104,7 @@ class TwitchClient(
                 response.bodyOrNull<T>()?.let(::Ok) ?: Err(TwitchFailure.InvalidResponse)
             }
 
-            400 -> Err(TwitchFailure.Unauthorized)
+            401 -> Err(TwitchFailure.Unauthorized)
             else -> Err(TwitchFailure.Unsuccessful)
         }
     }
