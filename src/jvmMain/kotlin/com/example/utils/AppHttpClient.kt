@@ -9,8 +9,8 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-fun createHttpClient(): HttpClient {
-    return HttpClient(OkHttp) {
+object AppHttpClient {
+    fun create(): HttpClient = HttpClient(OkHttp) {
         install(DefaultRequest) {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)

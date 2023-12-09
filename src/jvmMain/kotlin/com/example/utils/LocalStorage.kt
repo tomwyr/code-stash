@@ -2,8 +2,10 @@ package com.example.utils
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.koin.core.annotation.Factory
 import java.io.File
 
+@Factory
 class LocalStorage {
     companion object {
         private const val FILE_PATH = "db.json"

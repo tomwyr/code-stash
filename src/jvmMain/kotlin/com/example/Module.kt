@@ -1,20 +1,33 @@
 package com.example
 
-import com.example.services.LateService
-import com.example.twitch.TwitchClient
+import com.example.twitch.AppConfig
+import com.example.twitch.StreamerConfig
 import com.example.twitch.TwitchConfig
-import com.example.utils.LocalStorage
-import com.example.utils.createHttpClient
-import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.module
+import com.example.utils.AppHttpClient
+import io.ktor.client.*
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
 
-val appModule = module {
-    singleOf(TwitchConfig::fromYaml)
-    single { get<TwitchConfig>().app }
-    single { get<TwitchConfig>().streamer }
-    single { createHttpClient() }
-    singleOf(::LocalStorage)
-    singleOf(::TwitchClient)
-    factoryOf(::LateService)
+@Module(includes = [ConfigModule::class, HttpModule::class])
+@ComponentScan("com.example")
+class AppModule
+
+@Module
+class ConfigModule {
+    @Single
+    fun twitchConfig(): TwitchConfig = TwitchConfig.fromYaml()
+
+    @Factory
+    fun appConfig(twitchConfig: TwitchConfig): AppConfig = twitchConfig.app
+
+    @Factory
+    fun streamerConfig(twitchConfig: TwitchConfig): StreamerConfig = twitchConfig.streamer
+}
+
+@Module
+class HttpModule {
+    @Single
+    fun httpClient(): HttpClient = AppHttpClient.create()
 }

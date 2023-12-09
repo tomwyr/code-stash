@@ -3,9 +3,10 @@ package com.example
 import com.example.app.App
 import io.ktor.server.application.*
 import io.kvision.remote.kvisionInit
+import org.koin.ksp.generated.*
 
 fun Application.main() {
     App.init(this)
     configurePlugins()
-    kvisionInit(appModule)
+    kvisionInit(AppModule().module)
 }

@@ -21,6 +21,7 @@ repositories {
 val kotlinVersion: String by System.getProperties()
 val kvisionVersion: String by System.getProperties()
 val ktorVersion: String by project
+val koinKspVersion: String by project
 val exposedVersion: String by project
 val hikariVersion: String by project
 val h2Version: String by project
@@ -113,7 +114,9 @@ kotlin {
                 implementation("com.axiomalaska:jdbc-named-parameters:$jdbcNamedParametersVersion")
                 implementation("com.github.andrewoma.kwery:core:$kweryVersion")
                 implementation("com.charleskorn.kaml:kaml:0.55.0")
+                implementation("io.insert-koin:koin-annotations:$koinKspVersion")
             }
+            kotlin.srcDir("build/generated/ksp/jvm/jvmMain/kotlin")
         }
         val jvmTest by getting {
             dependencies {
@@ -135,6 +138,18 @@ kotlin {
                 implementation(kotlin("test-js"))
                 implementation("io.kvision:kvision-testutils:$kvisionVersion")
             }
+        }
+    }
+}
+
+dependencies {
+    add("kspJvm", "io.insert-koin:koin-ksp-compiler:$koinKspVersion")
+}
+
+afterEvaluate {
+    tasks {
+        getByName("kspKotlinJvm").apply {
+            dependsOn("kspCommonMainKotlinMetadata")
         }
     }
 }

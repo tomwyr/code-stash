@@ -7,10 +7,12 @@ import com.example.twitch.*
 import com.github.michaelbull.result.getOrElse
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone.Companion.UTC
+import org.koin.core.annotation.Factory
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
 @Suppress("ACTUAL_WITHOUT_EXPECT")
+@Factory
 actual class LateService(
         private val streamerConfig: StreamerConfig,
         private val twitchClient: TwitchClient,
