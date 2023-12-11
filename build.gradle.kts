@@ -102,6 +102,7 @@ kotlin {
                 implementation("io.ktor:ktor-server-default-headers:$ktorVersion")
                 implementation("io.ktor:ktor-server-compression:$ktorVersion")
                 implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+                implementation("io.ktor:ktor-server-caching-headers:$ktorVersion")
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
@@ -113,8 +114,9 @@ kotlin {
                 implementation("commons-codec:commons-codec:$commonsCodecVersion")
                 implementation("com.axiomalaska:jdbc-named-parameters:$jdbcNamedParametersVersion")
                 implementation("com.github.andrewoma.kwery:core:$kweryVersion")
-                implementation("com.charleskorn.kaml:kaml:0.55.0")
                 implementation("io.insert-koin:koin-annotations:$koinKspVersion")
+                implementation("com.charleskorn.kaml:kaml:0.55.0")
+                implementation("com.github.ben-manes.caffeine:caffeine:2.8.8")
             }
             kotlin.srcDir("build/generated/ksp/jvm/jvmMain/kotlin")
         }
@@ -143,6 +145,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":"))
     add("kspJvm", "io.insert-koin:koin-ksp-compiler:$koinKspVersion")
 }
 

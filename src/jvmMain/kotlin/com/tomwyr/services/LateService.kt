@@ -1,10 +1,12 @@
 package com.tomwyr.services
 
+import com.github.michaelbull.result.getOrElse
 import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus
 import com.tomwyr.StreamerInfo
 import com.tomwyr.twitch.*
-import com.github.michaelbull.result.getOrElse
+import com.tomwyr.utils.LateInfoCache
+import com.tomwyr.utils.extensions.intersects
 import kotlinx.datetime.*
 import org.koin.core.annotation.Factory
 import kotlin.time.Duration
@@ -13,10 +15,15 @@ import kotlin.time.Duration.Companion.hours
 @Suppress("ACTUAL_WITHOUT_EXPECT")
 @Factory
 actual class LateService(
+        private val lateInfoCache: LateInfoCache,
         private val streamerConfig: StreamerConfig,
         private val twitchClient: TwitchClient,
 ) : ILateService {
     override suspend fun getLateInfo(): LateInfo {
+        return lateInfoCache.getOr { fetchLateInfo() }
+    }
+
+    private suspend fun fetchLateInfo(): LateInfo {
         val userId = streamerConfig.id
         val user = twitchClient.getUser(userId)
                 .getOrElse { throw StreamerInfoUnavailable() }
@@ -98,8 +105,4 @@ private class StreamInfoResolver(
             error("Could not calculate start of the nearest stream.")
         }
     }
-}
-
-fun <T : Comparable<T>> ClosedRange<T>.intersects(other: ClosedRange<T>): Boolean {
-    return endInclusive >= other.start && start <= other.endInclusive
 }
