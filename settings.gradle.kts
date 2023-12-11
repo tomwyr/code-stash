@@ -5,4 +5,4 @@ pluginManagement {
         mavenLocal()
     }
 }
-rootProject.name = "addressbook-fullstack-ktor-koin"
+rootProject.name = "late-checker"
