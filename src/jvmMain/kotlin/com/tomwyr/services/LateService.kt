@@ -6,7 +6,6 @@ import com.tomwyr.StreamerInfo
 import com.tomwyr.twitch.*
 import com.github.michaelbull.result.getOrElse
 import kotlinx.datetime.*
-import kotlinx.datetime.TimeZone.Companion.UTC
 import org.koin.core.annotation.Factory
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -93,7 +92,7 @@ private class StreamInfoResolver(
                 if (nextDay in offDays) continue
 
                 val nearestStartDate = currentDate + DatePeriod(days = daysDiff * type.timeMultiplier)
-                return nearestStartDate.atTime(startTime).toInstant(UTC)
+                return nearestStartDate.atTime(startTime).toInstant(timeZone)
             }
 
             error("Could not calculate start of the nearest stream.")
