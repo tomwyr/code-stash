@@ -1,9 +1,9 @@
-app: 
-    clientId: 
-    secret: 
+app:
+    clientId: # Twitch app client id # "abcdefghijklmnopqrst0123456789"
+    secret: # Twitch app secret # "abcdefghijklmnopqrst0123456789"
 
-streamer: 
-    id: 
-    startTime: 
-    timeZone: 
-    offDays: 
+streamer:
+    id: # Streamer Twitch id # "12345678"
+    startTime: # Daily start time of the stream in 24h format # "12:00"
+    timeZone: # Time zone name of the stream start time # "America/New_York"
+    offDays: # Off days in a week when the streamer is offline # ["Mon", "Wed", "Sat"]
