@@ -4,6 +4,8 @@ import com.github.michaelbull.result.getOrElse
 import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus
 import com.tomwyr.StreamerInfo
+import com.tomwyr.app.App
+import com.tomwyr.app.events.LateInfoStale
 import com.tomwyr.twitch.*
 import com.tomwyr.utils.LateInfoCache
 import com.tomwyr.utils.extensions.intersects
@@ -20,7 +22,10 @@ actual class LateService(
         private val twitchClient: TwitchClient,
 ) : ILateService {
     override suspend fun getLateInfo(): LateInfo {
-        return lateInfoCache.getOr { fetchLateInfo() }
+        return lateInfoCache.getOr {
+            App.raise(LateInfoStale())
+            fetchLateInfo()
+        }
     }
 
     private suspend fun fetchLateInfo(): LateInfo {

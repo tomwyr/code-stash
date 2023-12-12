@@ -1,10 +1,10 @@
 package com.tomwyr.twitch
 
-import com.tomwyr.app.App
-import com.tomwyr.app.AppEvent.DeserializationError
-import com.tomwyr.app.AppEvent.UnsuccessfulCallError
-import com.tomwyr.utils.LocalStorage
 import com.github.michaelbull.result.*
+import com.tomwyr.app.App
+import com.tomwyr.app.events.CorruptedResponseBody
+import com.tomwyr.app.events.UnsuccessfulCall
+import com.tomwyr.utils.LocalStorage
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -96,7 +96,7 @@ class TwitchClient(
         val response = runQuery(url, queryParams, accessToken)
 
         if (!response.status.isSuccess()) {
-            App.raise(UnsuccessfulCallError(response))
+            App.raise(UnsuccessfulCall(response))
         }
 
         return when (response.status.value) {
@@ -148,6 +148,6 @@ class TwitchClient(
 suspend inline fun <reified T> HttpResponse.bodyOrNull(): T? = try {
     body<T>()
 } catch (error: Throwable) {
-    App.raise(DeserializationError(this, error))
+    App.raise(CorruptedResponseBody(this, error))
     null
 }

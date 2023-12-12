@@ -1,22 +1,22 @@
 package com.tomwyr.app
 
-import com.tomwyr.app.AppEvent.Type
+import com.tomwyr.app.events.AppError
+import com.tomwyr.app.events.AppEvent
+import com.tomwyr.app.events.AppInfo
 import io.ktor.server.application.*
 import io.ktor.util.logging.*
 
 object App {
-    private lateinit var application: Application
-
-    private val log: Logger
-        get() = application.log
+    private lateinit var log: Logger
 
     fun init(application: Application) {
-        this.application = application
+        this.log = application.log
     }
 
     fun raise(event: AppEvent) {
-        when (event.type) {
-            Type.Error -> log.error(event.message)
+        when (event) {
+            is AppError -> log.error(event.message)
+            is AppInfo -> log.info(event.message)
         }
     }
 }
