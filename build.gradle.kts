@@ -145,7 +145,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":"))
     add("kspJvm", "io.insert-koin:koin-ksp-compiler:$koinKspVersion")
 }
 
