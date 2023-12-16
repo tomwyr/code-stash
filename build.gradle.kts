@@ -160,6 +160,11 @@ tasks.register<Jar>("buildFatJar") {
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
     })
+
+    // Set the main class for the JAR file
+    manifest {
+        attributes["Main-Class"] = "org.jetbrains.ktor.jetty.DevelopmentHost"
+    }
 }
 
 dependencies {
