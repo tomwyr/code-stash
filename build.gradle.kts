@@ -33,6 +33,12 @@ val jdbcNamedParametersVersion: String by project
 
 val mainClassName = "io.ktor.server.netty.EngineMain"
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 kotlin {
     jvmToolchain(20)
     jvm {
