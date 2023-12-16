@@ -54,7 +54,7 @@ kotlin {
     js(IR) {
         browser {
             runTask {
-                mainOutputFileName = "main.bundle.js"
+                mainOutputFileName.set("main.bundle.js")
                 sourceMaps = false
                 devServer = KotlinWebpackConfig.DevServer(
                         open = false,
@@ -69,7 +69,7 @@ kotlin {
                 )
             }
             webpackTask {
-                mainOutputFileName = "main.bundle.js"
+                mainOutputFileName.set("main.bundle.js")
             }
             testTask {
                 useKarma {
