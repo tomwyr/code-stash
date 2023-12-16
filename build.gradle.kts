@@ -54,6 +54,7 @@ kotlin {
     js(IR) {
         browser {
             runTask {
+                mainOutputFileName = "main.bundle.js"
                 sourceMaps = false
                 devServer = KotlinWebpackConfig.DevServer(
                         open = false,
