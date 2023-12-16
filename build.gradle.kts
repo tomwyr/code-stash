@@ -9,7 +9,6 @@ plugins {
     id("io.kvision") version kvisionVersion
 }
 
-version = "1.0.0-SNAPSHOT"
 group = "com.tomwyr"
 
 repositories {
@@ -146,24 +145,6 @@ kotlin {
                 implementation("io.kvision:kvision-testutils:$kvisionVersion")
             }
         }
-    }
-}
-
-tasks.register<Jar>("buildFatJar") {
-    archiveBaseName.set("late-checker")
-    archiveVersion.set("0.1.0")
-    archiveClassifier.set("all")
-
-    from(sourceSets.main.get().output)
-
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-    })
-
-    // Set the main class for the JAR file
-    manifest {
-        attributes["Main-Class"] = "org.jetbrains.ktor.jetty.DevelopmentHost"
     }
 }
 
