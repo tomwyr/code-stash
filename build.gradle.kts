@@ -40,7 +40,6 @@ java {
 }
 
 kotlin {
-    jvmToolchain(20)
     jvm {
         compilations.all {
             kotlinOptions {
