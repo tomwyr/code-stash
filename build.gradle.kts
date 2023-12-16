@@ -149,6 +149,19 @@ kotlin {
     }
 }
 
+tasks.register<Jar>("buildFatJar") {
+    archiveBaseName.set("late-checker")
+    archiveVersion.set("0.1.0")
+    archiveClassifier.set("all")
+
+    from(sourceSets.main.get().output)
+
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+}
+
 dependencies {
     add("kspJvm", "io.insert-koin:koin-ksp-compiler:$koinKspVersion")
 }
