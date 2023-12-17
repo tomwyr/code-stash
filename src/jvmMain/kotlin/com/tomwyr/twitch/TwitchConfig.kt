@@ -6,7 +6,6 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import java.io.File
 
 @Serializable
 data class TwitchConfig(
@@ -15,8 +14,9 @@ data class TwitchConfig(
 ) {
     companion object {
         fun fromYaml(): TwitchConfig {
-            val filePath = ClassLoader.getSystemResource("config.yaml").file
-            val yamlString = File(filePath).readText()
+            val inputStream = Companion::class.java.getResourceAsStream("/config.yaml")
+            inputStream ?: error("Config file not found.")
+            val yamlString = inputStream.bufferedReader().use { it.readText() }
             return Yaml.default.decodeFromString(yamlString)
         }
     }
