@@ -134,7 +134,6 @@ kotlin {
                 implementation("io.kvision:kvision-bootstrap:$kvisionVersion")
                 implementation("io.kvision:kvision-state:$kvisionVersion")
                 implementation("io.kvision:kvision-fontawesome:$kvisionVersion")
-                implementation(npm("@js-joda/core", "3.2.0"))
                 implementation(npm("@js-joda/timezone", "2.18.2"))
             }
         }
