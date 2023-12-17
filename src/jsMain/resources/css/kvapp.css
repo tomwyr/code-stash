@@ -1,18 +1,42 @@
-.loading-indicator {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
+div.wave {
+    position:relative;
+    text-align:center;
+    margin-left: auto;
+    margin-right: auto;
+    .dot {
+        display:inline-block;
+        width:12px;
+        height:12px;
+        border-radius:50%;
+        margin:0 5px;
+        background-color:#6c3aa0;
+        animation: wave 1.6s linear infinite;
+
+        &:nth-child(2) {
+            animation-delay: -1.45s;
+        }
+
+		&:nth-child(3) {
+            animation-delay: -1.3s;
+        }
+    }
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
+@keyframes wave {
+    0%, 40%, 60%, 100% {
+        transform: initial;
     }
-    100% {
-        transform: rotate(360deg);
+
+	10% {
+        transform: translateY(-20px);
+    }
+
+	30% {
+        transform: translateY(15px);
+    }
+
+	50% {
+        transform: translateY(-5px);
     }
 }
 
@@ -32,4 +56,16 @@
 
 .action-button:hover {
     background-color: #07E6C9;
+}
+
+body > div#bmc-wbtn {
+    background-color: #6c3aa0;
+    background-image: url("icons/coffee.svg") !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: 36px 36px !important;
+}
+
+body > #bmc-wbtn > img {
+    display: none;
 }

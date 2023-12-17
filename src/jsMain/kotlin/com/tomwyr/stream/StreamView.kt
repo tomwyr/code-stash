@@ -165,7 +165,11 @@ private fun Container.offlineDescription(streamerInfo: StreamerInfo, streamStart
 }
 
 private fun Container.loadingView() {
-    div(className = "loading-indicator")
+    div(className = "wave") {
+        span(className = "dot")
+        span(className = "dot")
+        span(className = "dot")
+    }
 }
 
 private fun Container.failureView(failure: LateServiceFailure) {
