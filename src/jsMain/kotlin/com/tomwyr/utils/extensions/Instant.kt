@@ -8,7 +8,7 @@ import kotlin.time.Duration
 
 fun kotlinx.datetime.Instant.format(pattern: String, zoneId: String): String {
     val formatter = DateTimeFormatter.ofPattern(pattern)
-    val dateTime = Instant.ofEpochSecond(epochSeconds).atZone(ZoneId.of(zoneId))
+    val dateTime = Instant.ofEpochSecond(epochSeconds.toDouble(), 0).atZone(ZoneId.of(zoneId))
     return formatter.format(dateTime)
 }
 
