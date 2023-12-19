@@ -6,6 +6,13 @@ import kotlinx.datetime.internal.JSJoda.Instant
 import kotlinx.datetime.internal.JSJoda.ZoneId
 import kotlin.time.Duration
 
+
+@JsModule("@js-joda/timezone")
+@JsNonModule
+external object JsJodaTimeZoneModule
+
+private val jsJodaTz = JsJodaTimeZoneModule
+
 fun kotlinx.datetime.Instant.format(pattern: String, zoneId: String): String {
     val formatter = DateTimeFormatter.ofPattern(pattern)
     val dateTime = Instant.ofEpochSecond(epochSeconds.toDouble(), 0).atZone(ZoneId.of(zoneId))
