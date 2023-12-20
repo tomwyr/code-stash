@@ -8,5 +8,5 @@ import kotlinx.coroutines.asCoroutineDispatcher
 val MainScope = CoroutineScope(window.asCoroutineDispatcher())
 
 fun main() {
-    startApplication(::App, module.hot, BootstrapModule, FontAwesomeModule, CoreModule)
+    startApplication(::App, module.hot, CoreModule)
 }
