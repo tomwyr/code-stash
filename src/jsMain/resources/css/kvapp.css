@@ -58,6 +58,12 @@ div.wave {
     background-color: #07E6C9;
 }
 
+body {
+    min-height: 100%;
+    margin: 0;
+    background-color: ghostwhite;
+}
+
 body > div#bmc-wbtn {
     background-color: #6c3aa0;
     background-image: url("icons/coffee.svg") !important;
@@ -68,4 +74,12 @@ body > div#bmc-wbtn {
 
 body > #bmc-wbtn > img {
     display: none;
+}
+
+svg.github-logo path {
+    fill: lightgray;
+}
+
+svg.github-logo:hover path {
+    fill: darkgray;
 }
