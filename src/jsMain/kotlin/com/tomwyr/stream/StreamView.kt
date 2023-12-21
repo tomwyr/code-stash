@@ -4,7 +4,10 @@ import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus
 import com.tomwyr.StreamerInfo
 import com.tomwyr.services.LateServiceFailure
-import com.tomwyr.utils.*
+import com.tomwyr.utils.Failure
+import com.tomwyr.utils.Loading
+import com.tomwyr.utils.Result
+import com.tomwyr.utils.Success
 import com.tomwyr.utils.extensions.*
 import io.kvision.core.*
 import io.kvision.html.*
@@ -97,7 +100,7 @@ private fun Container.successView(lateInfo: LateInfo) {
             colorName = Col.GRAY
         }
 
-        div().bind(StreamModel.refreshStatus) {
+        div().bind(StreamModel.viewRefresh) {
             val description = when (streamStatus) {
                 StreamStatus.Live -> ::liveDescription
                 StreamStatus.Late -> ::lateDescription
@@ -179,7 +182,7 @@ private fun Container.failureView(failure: LateServiceFailure) {
 
     div(className = "action-button") {
         span("Retry")
-    }.onClick { StreamModel.loadLateInfo() }
+    }.onClick { StreamModel.retry() }
 }
 
 private fun Container.footer() {

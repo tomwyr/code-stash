@@ -4,47 +4,54 @@ import com.tomwyr.LateInfo
 import com.tomwyr.MainScope
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
-import com.tomwyr.utils.Failure
-import com.tomwyr.utils.Loading
-import com.tomwyr.utils.Result
-import com.tomwyr.utils.Success
+import com.tomwyr.utils.*
 import io.kvision.state.ObservableValue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
+typealias LateInfoDataFlow = Flow<Result<LateInfo, LateServiceFailure>>
+
+@OptIn(ExperimentalCoroutinesApi::class)
 object StreamModel {
     private val lateService = LateService()
 
-    private var statusRefreshJob: Job? = null
+    private lateinit var lateInfoJob: Job
 
     val lateInfo = ObservableValue<Result<LateInfo, LateServiceFailure>>(Loading)
-    val refreshStatus = ObservableValue(Any())
+    val viewRefresh = ObservableValue(Any())
 
     fun initialize() {
-        startStatusRefresh()
-        loadLateInfo()
+        lateInfoJob = startLateInfoFlow()
     }
 
-    private fun startStatusRefresh() {
-        if (statusRefreshJob != null) return
-        statusRefreshJob = MainScope.launch {
-            while (isActive) {
-                refreshStatus.value = Any()
-                delay(1.seconds)
-            }
-        }
+    fun retry() {
+        lateInfoJob.cancel()
+        lateInfoJob = startLateInfoFlow()
     }
 
-    fun loadLateInfo() {
-        MainScope.launch {
-            try {
-                lateInfo.value = Success(lateService.getLateInfo())
-            } catch (error: LateServiceFailure) {
-                lateInfo.value = Failure(error)
+    private fun startLateInfoFlow(): Job = MainScope.launch {
+        periodicFlow(20.seconds, eager = true)
+                .map { getLateInfo() }
+                .onEach { lateInfo.value = it }
+                .flatMapViewRefresh()
+    }
+
+    private suspend fun LateInfoDataFlow.flatMapViewRefresh() {
+        flatMapLatest {
+            when (it) {
+                is Success -> periodicFlow(1.seconds)
+                is Failure, Loading -> emptyFlow()
             }
-        }
+        }.collect { viewRefresh.value = Any() }
+    }
+
+    private suspend fun getLateInfo() = try {
+        console.log("get late info")
+        Success(lateService.getLateInfo())
+    } catch (error: LateServiceFailure) {
+        Failure(error)
     }
 }
