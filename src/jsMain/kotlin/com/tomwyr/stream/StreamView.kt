@@ -173,10 +173,6 @@ private fun Container.loadingView() {
 }
 
 private fun Container.failureView(failure: LateServiceFailure) {
-    image(Images.error) {
-        width = 3.rem
-        height = 3.rem
-    }
     span(failure.message) {
         margin = 1.rem
         colorName = Col.GRAY
