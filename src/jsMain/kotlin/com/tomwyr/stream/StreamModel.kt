@@ -1,5 +1,6 @@
 package com.tomwyr.stream
 
+import com.tomwyr.AppInfo
 import com.tomwyr.LateInfo
 import com.tomwyr.MainScope
 import com.tomwyr.StreamStatus.*
@@ -20,6 +21,7 @@ typealias LateInfoResult = Result<LateInfo, LateServiceFailure>
 object StreamModel {
     private val lateService = LateService()
 
+    val version = ObservableValue(AppInfo.version.value)
     val lateInfo = ObservableValue<LateInfoResult?>(null)
     val viewRefresh = ObservableValue(Any())
 

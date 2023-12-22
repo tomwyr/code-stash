@@ -1,7 +1,6 @@
 package com.tomwyr.utils.extensions
 
 import com.tomwyr.utils.now
-import kotlinx.datetime.Clock
 import kotlinx.datetime.internal.JSJoda.DateTimeFormatter
 import kotlinx.datetime.internal.JSJoda.Instant
 import kotlinx.datetime.internal.JSJoda.ZoneId

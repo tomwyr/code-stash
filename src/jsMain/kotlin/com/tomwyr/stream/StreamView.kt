@@ -52,10 +52,10 @@ private fun Container.header() {
             colorName = Col.DARKGRAY
             margin = 1.px
         }
-        div {
+        div().bind(StreamModel.version) { version ->
             textAlign = TextAlign.RIGHT
 
-            h4("1.0.0") {
+            h4(version) {
                 margin = 1.px
                 colorName = Col.LIGHTGRAY
             }
@@ -97,6 +97,8 @@ private fun Container.successView(lateInfo: LateInfo) {
 
         span("$streamStatus") {
             colorName = Col.GRAY
+            fontSize = 20.px
+            marginTop = 1.rem
         }
 
         div().bind(StreamModel.viewRefresh) {
@@ -144,7 +146,7 @@ private fun Container.offlineDescription(streamerInfo: StreamerInfo, streamStart
             }
 
             else -> {
-                val weekDay = streamStart.toLocalDateTime(streamerInfo.timeZone).dayOfWeek.shortName
+                val weekDay = streamStart.toLocalDateTime(streamerInfo.timeZone).dayOfWeek.displayName
                 val time = streamStart.format("HH:mm", streamerInfo.timeZone.id)
 
                 span("on ")
@@ -176,7 +178,7 @@ private fun Container.loadingView() {
 private fun Container.failureView(failure: LateServiceFailure) {
     span(failure.message) {
         margin = 1.rem
-        colorName = Col.GRAY
+        colorName = Col.DARKGRAY
     }
 
     div(className = "action-button") {
