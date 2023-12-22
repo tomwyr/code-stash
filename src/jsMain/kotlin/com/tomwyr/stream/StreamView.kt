@@ -5,7 +5,6 @@ import com.tomwyr.StreamStatus
 import com.tomwyr.StreamerInfo
 import com.tomwyr.services.LateServiceFailure
 import com.tomwyr.utils.Failure
-import com.tomwyr.utils.Loading
 import com.tomwyr.utils.Result
 import com.tomwyr.utils.Success
 import com.tomwyr.utils.extensions.*
@@ -64,7 +63,7 @@ private fun Container.header() {
     }
 }
 
-private fun Container.content(result: Result<LateInfo, LateServiceFailure>) {
+private fun Container.content(result: Result<LateInfo, LateServiceFailure>?) {
     div {
         flexGrow = 1
         flexShrink = 0
@@ -75,8 +74,8 @@ private fun Container.content(result: Result<LateInfo, LateServiceFailure>) {
         alignItems = AlignItems.CENTER
 
         when (result) {
+            null -> loadingView()
             is Success -> successView(result.value)
-            is Loading -> loadingView()
             is Failure -> failureView(result.value)
         }
     }

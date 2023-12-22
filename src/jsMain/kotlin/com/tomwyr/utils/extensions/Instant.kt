@@ -1,5 +1,6 @@
 package com.tomwyr.utils.extensions
 
+import com.tomwyr.utils.now
 import kotlinx.datetime.Clock
 import kotlinx.datetime.internal.JSJoda.DateTimeFormatter
 import kotlinx.datetime.internal.JSJoda.Instant
@@ -19,8 +20,7 @@ fun kotlinx.datetime.Instant.format(pattern: String, zoneId: String): String {
 }
 
 fun kotlinx.datetime.Instant.untilNow(): Duration {
-    val now = Clock.System.now()
-    val timePassed = now.minus(this)
+    val timePassed = now().minus(this)
 
     if (timePassed.isNegative()) {
         throw AssertionError("The given time is in the future.")
@@ -30,8 +30,7 @@ fun kotlinx.datetime.Instant.untilNow(): Duration {
 }
 
 fun kotlinx.datetime.Instant.sinceNow(): Duration {
-    val now = Clock.System.now()
-    val timePassed = this.minus(now)
+    val timePassed = this.minus(now())
 
     if (timePassed.isNegative()) {
         throw AssertionError("The given time is in the past.")

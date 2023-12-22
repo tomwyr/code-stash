@@ -9,6 +9,7 @@ import com.tomwyr.app.events.LateInfoStale
 import com.tomwyr.twitch.*
 import com.tomwyr.utils.LateInfoCache
 import com.tomwyr.utils.extensions.intersects
+import com.tomwyr.utils.now
 import kotlinx.datetime.*
 import org.koin.core.annotation.Factory
 import kotlin.time.Duration
@@ -57,7 +58,7 @@ actual class LateService(
 private class StreamInfoResolver(
         private val streamerConfig: StreamerConfig,
         private val maxDelay: Duration = 3.hours,
-        private val now: Instant = Clock.System.now(),
+        private val now: Instant = now(),
 ) {
     enum class StreamType(val timeMultiplier: Int) {
         Next(1),
