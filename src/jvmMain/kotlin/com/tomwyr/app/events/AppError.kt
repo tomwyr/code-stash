@@ -5,37 +5,33 @@ import io.ktor.http.*
 
 abstract class AppError : AppEvent()
 
-class CorruptedResponseBody private constructor(url: String, body: String, error: String) : AppError() {
+class CorruptedResponseBody(url: String, body: String, error: String) : AppError() {
     companion object {
-        suspend operator fun invoke(response: HttpResponse, error: Throwable): CorruptedResponseBody {
-            return CorruptedResponseBody(
-                    url = response.request.url.toString(),
-                    body = response.bodyAsText(),
-                    error = error.toErrorMessage(),
-            )
-        }
+        suspend operator fun invoke(response: HttpResponse, error: Throwable) = CorruptedResponseBody(
+                url = response.request.url.toString(),
+                body = response.bodyAsText(),
+                error = error.toErrorMessage(),
+        )
     }
 
     override val message: String = """
-            |Error while deserializing response data for $url.
+            |Error while deserializing response data for $url
             |Received body: $body
             |Underlying error: $error
             """.trimMargin()
 }
 
-class UnsuccessfulCall private constructor(url: String, status: HttpStatusCode, body: String) : AppError() {
+class UnsuccessfulCall(url: String, status: HttpStatusCode, body: String) : AppError() {
     companion object {
-        suspend operator fun invoke(response: HttpResponse): UnsuccessfulCall {
-            return UnsuccessfulCall(
-                    url = response.request.url.toString(),
-                    status = response.status,
-                    body = response.bodyAsText(),
-            )
-        }
+        suspend operator fun invoke(response: HttpResponse) = UnsuccessfulCall(
+                url = response.request.url.toString(),
+                status = response.status,
+                body = response.bodyAsText(),
+        )
     }
 
     override val message: String = """
-            |Http call failed with status $status.
+            |Http call failed with status $status
             |Requested url: $url
             |Received body: $body
         """.trimMargin()

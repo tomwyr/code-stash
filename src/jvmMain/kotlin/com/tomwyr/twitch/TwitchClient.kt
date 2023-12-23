@@ -2,6 +2,8 @@ package com.tomwyr.twitch
 
 import com.github.michaelbull.result.*
 import com.tomwyr.app.App
+import com.tomwyr.app.events.AuthenticationResult
+import com.tomwyr.app.events.AuthenticationRequired
 import com.tomwyr.app.events.CorruptedResponseBody
 import com.tomwyr.app.events.UnsuccessfulCall
 import com.tomwyr.utils.LocalStorage
@@ -123,6 +125,7 @@ class TwitchClient(
     private suspend fun authorize(): Session {
         val existingSession = localStorage.read<Session>(SESSION_KEY)
         return existingSession ?: run {
+            App.raise(AuthenticationRequired())
             createSession().also { localStorage.write(SESSION_KEY, it) }
         }
     }
@@ -141,6 +144,8 @@ class TwitchClient(
             url(AUTH_URL)
             setBody(body)
         }
+
+        App.raise(AuthenticationResult(response))
         return response.body()
     }
 }
