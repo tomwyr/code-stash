@@ -1,9 +1,7 @@
 package com.tomwyr.services
 
 import com.github.michaelbull.result.getOrElse
-import com.tomwyr.LateInfo
-import com.tomwyr.StreamStatus
-import com.tomwyr.StreamerInfo
+import com.tomwyr.*
 import com.tomwyr.app.App
 import com.tomwyr.app.events.LateInfoStale
 import com.tomwyr.twitch.*
@@ -49,7 +47,7 @@ actual class LateService(
         StreamerInfo(
                 displayName,
                 profileImageUrl,
-                "https://twitch.tv/$login/",
+                StreamUrl(login),
                 streamerConfig.timeZone,
         )
     }

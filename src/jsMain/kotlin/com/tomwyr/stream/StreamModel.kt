@@ -49,7 +49,7 @@ object StreamModel {
             trySend(result)
 
             when (result) {
-                is Success -> delay(result.value.refreshInterval.also { println(it) })
+                is Success -> delay(result.value.refreshInterval)
                 is Failure -> this@getLateInfoFlow.cancel()
             }
         }
