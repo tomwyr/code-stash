@@ -8,6 +8,7 @@ import com.tomwyr.utils.Failure
 import com.tomwyr.utils.Result
 import com.tomwyr.utils.Success
 import com.tomwyr.utils.extensions.*
+import com.tomwyr.utils.here
 import io.kvision.core.*
 import io.kvision.html.*
 import io.kvision.panel.SimplePanel
@@ -146,8 +147,8 @@ private fun Container.offlineDescription(streamerInfo: StreamerInfo, streamStart
             }
 
             else -> {
-                val weekDay = streamStart.toLocalDateTime(streamerInfo.timeZone).dayOfWeek.displayName
-                val time = streamStart.format("HH:mm", streamerInfo.timeZone.id)
+                val weekDay = streamStart.toLocalDateTime(here()).dayOfWeek.displayName
+                val time = streamStart.format("HH:mm", here().id)
 
                 span("on ")
                 b(weekDay)
@@ -161,7 +162,7 @@ private fun Container.offlineDescription(streamerInfo: StreamerInfo, streamStart
 
     p {
         b(streamer)
-        span(" is currently offline. Next stream expected ")
+        span(" is currently offline. Next stream is expected ")
         nextStreamTime()
         span(".")
     }
