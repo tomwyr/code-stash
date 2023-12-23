@@ -15,7 +15,7 @@ class CorruptedResponseBody(url: String, body: String, error: String) : AppError
     }
 
     override val message: String = """
-            |Error while deserializing response data for $url
+            |Error while deserializing response data for $url.
             |Received body: $body
             |Underlying error: $error
             """.trimMargin()
@@ -31,7 +31,7 @@ class UnsuccessfulCall(url: String, status: HttpStatusCode, body: String) : AppE
     }
 
     override val message: String = """
-            |Http call failed with status $status
+            |Http call failed with status $status.
             |Requested url: $url
             |Received body: $body
         """.trimMargin()

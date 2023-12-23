@@ -2,7 +2,6 @@ package com.tomwyr.twitch
 
 import com.github.michaelbull.result.*
 import com.tomwyr.app.App
-import com.tomwyr.app.events.AuthenticationResult
 import com.tomwyr.app.events.AuthenticationRequired
 import com.tomwyr.app.events.CorruptedResponseBody
 import com.tomwyr.app.events.UnsuccessfulCall
@@ -145,7 +144,10 @@ class TwitchClient(
             setBody(body)
         }
 
-        App.raise(AuthenticationResult(response))
+        if (!response.status.isSuccess()) {
+            App.raise(UnsuccessfulCall(response))
+        }
+
         return response.body()
     }
 }
