@@ -187,12 +187,12 @@ private fun Container.failureView(failure: LateServiceFailure) {
 }
 
 private fun Container.footer() {
-    div {
+    div().bind(StreamModel.repoUrl) { repoUrl ->
         width = 100.perc
         flexShrink = 0
         textAlign = TextAlign.LEFT
 
-        link("", url = "https://github.com/tomwyr/late-checker", target = "_blank") {
+        link("", url = repoUrl, target = "_blank") {
             display = Display.INLINEBLOCK
             borderRadius = 50.perc
             margin = 1.rem

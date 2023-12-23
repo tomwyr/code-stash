@@ -22,6 +22,8 @@ object StreamModel {
     private val lateService = LateService()
 
     val version = ObservableValue(AppInfo.version.value)
+    val repoUrl = ObservableValue(AppInfo.repoUrl)
+
     val lateInfo = ObservableValue<LateInfoResult?>(null)
     val viewRefresh = ObservableValue(Any())
 
