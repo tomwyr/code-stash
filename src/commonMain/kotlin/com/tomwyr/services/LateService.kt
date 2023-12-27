@@ -1,6 +1,7 @@
 package com.tomwyr.services
 
 import com.tomwyr.LateInfo
+import com.tomwyr.StreamerConfig
 import io.kvision.annotations.KVService
 import io.kvision.annotations.KVServiceException
 import io.kvision.remote.AbstractServiceException
@@ -8,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 @KVService
 interface ILateService {
-    suspend fun getLateInfo(): LateInfo
+    suspend fun getLateInfo(config: StreamerConfig): LateInfo
 }
 
 @Serializable

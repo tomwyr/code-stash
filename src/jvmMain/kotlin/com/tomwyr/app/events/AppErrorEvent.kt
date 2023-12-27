@@ -3,9 +3,9 @@ package com.tomwyr.app.events
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
-abstract class AppError : AppEvent()
+abstract class AppErrorEvent : AppEvent()
 
-class CorruptedResponseBody(url: String, body: String, error: String) : AppError() {
+class CorruptedResponseBody(url: String, body: String, error: String) : AppErrorEvent() {
     companion object {
         suspend operator fun invoke(response: HttpResponse, error: Throwable) = CorruptedResponseBody(
                 url = response.request.url.toString(),
@@ -21,7 +21,7 @@ class CorruptedResponseBody(url: String, body: String, error: String) : AppError
             """.trimMargin()
 }
 
-class UnsuccessfulCall(url: String, status: HttpStatusCode, body: String) : AppError() {
+class UnsuccessfulCall(url: String, status: HttpStatusCode, body: String) : AppErrorEvent() {
     companion object {
         suspend operator fun invoke(response: HttpResponse) = UnsuccessfulCall(
                 url = response.request.url.toString(),

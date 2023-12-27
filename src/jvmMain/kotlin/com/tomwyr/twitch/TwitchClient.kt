@@ -15,7 +15,7 @@ import org.koin.core.annotation.Factory
 
 @Factory
 class TwitchClient(
-        private val config: AppConfig,
+        private val config: TwitchAppConfig,
         private val client: HttpClient,
         private val localStorage: LocalStorage,
 ) {

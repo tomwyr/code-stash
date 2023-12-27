@@ -1,9 +1,10 @@
 package com.tomwyr
 
+import io.ktor.util.date.*
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.serialization.Serializable
-import kotlin.jvm.JvmInline
 
 @Serializable
 enum class StreamStatus {
@@ -17,7 +18,6 @@ data class StreamerInfo(
         val name: String,
         val imageUrl: String,
         val streamUrl: String,
-        val timeZone: TimeZone,
 )
 
 @Serializable
@@ -25,4 +25,12 @@ data class LateInfo(
         val streamerInfo: StreamerInfo,
         val streamStatus: StreamStatus,
         val streamStart: Instant,
+)
+
+@Serializable
+data class StreamerConfig(
+        val id: StreamerId,
+        val timeZone: TimeZone,
+        val startTime: LocalTime,
+        val offDays: OffDays,
 )

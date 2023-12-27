@@ -1,8 +1,6 @@
 package com.tomwyr.stream
 
-import com.tomwyr.AppInfo
-import com.tomwyr.LateInfo
-import com.tomwyr.MainScope
+import com.tomwyr.*
 import com.tomwyr.StreamStatus.*
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
@@ -11,6 +9,9 @@ import io.kvision.state.ObservableValue
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.*
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -58,7 +59,14 @@ object StreamModel {
     }.consumeAsFlow()
 
     private suspend fun getLateInfo() = try {
-        Success(lateService.getLateInfo())
+        val config = StreamerConfig(
+                id = StreamerId("23161357"),
+                startTime = LocalTime(12, 0),
+                timeZone = TimeZone.of("America/New_York"),
+                offDays = OffDays(listOf(DayOfWeek.THURSDAY))
+        )
+
+        Success(lateService.getLateInfo(config))
     } catch (error: LateServiceFailure) {
         Failure(error)
     }

@@ -4,7 +4,10 @@ import com.github.michaelbull.result.getOrElse
 import com.tomwyr.*
 import com.tomwyr.app.App
 import com.tomwyr.app.events.LateInfoStale
-import com.tomwyr.twitch.*
+import com.tomwyr.twitch.Stream
+import com.tomwyr.twitch.TwitchClient
+import com.tomwyr.twitch.User
+import com.tomwyr.twitch.Video
 import com.tomwyr.utils.LateInfoCache
 import com.tomwyr.utils.extensions.intersects
 import com.tomwyr.utils.now
@@ -17,18 +20,20 @@ import kotlin.time.Duration.Companion.hours
 @Factory
 actual class LateService(
         private val lateInfoCache: LateInfoCache,
-        private val streamerConfig: StreamerConfig,
         private val twitchClient: TwitchClient,
 ) : ILateService {
-    override suspend fun getLateInfo(): LateInfo {
-        return lateInfoCache.getOr {
-            App.raise(LateInfoStale())
-            fetchLateInfo()
+    override suspend fun getLateInfo(config: StreamerConfig): LateInfo {
+        val streamerId = config.id
+
+        return lateInfoCache.getOr(streamerId) {
+            App.raise(LateInfoStale(streamerId))
+            resolveLateInfo(config, fetchLateInfoData(streamerId))
         }
     }
 
-    private suspend fun fetchLateInfo(): LateInfo {
-        val userId = streamerConfig.id
+    private suspend fun fetchLateInfoData(streamerId: StreamerId): LateInfoData {
+        val userId = streamerId.value
+
         val user = twitchClient.getUser(userId)
                 .getOrElse { throw StreamerInfoUnavailable() }
         val currentStream = twitchClient.getCurrentStream(userId)
@@ -36,25 +41,29 @@ actual class LateService(
         val newestVideo = twitchClient.getNewestVideo(userId)
                 .getOrElse { throw NewestVideoUnavailable() }
 
-        val streamerInfo = user?.let(::getStreamerInfo) ?: throw StreamerNotFound()
-        val (streamStatus, streamStart) =
-                StreamInfoResolver(streamerConfig).getStatusAndStart(currentStream, newestVideo)
-
-        return LateInfo(streamerInfo, streamStatus, streamStart)
+        return Triple(user, currentStream, newestVideo)
     }
 
-    private fun getStreamerInfo(user: User): StreamerInfo = with(user) {
-        StreamerInfo(
-                displayName,
-                profileImageUrl,
-                StreamUrl(login),
-                streamerConfig.timeZone,
-        )
+    private fun resolveLateInfo(config: StreamerConfig, data: LateInfoData): LateInfo {
+        val (user, currentStream, newestVideo) = data
+
+        val streamerInfo = user?.toStreamerInfo() ?: throw StreamerNotFound()
+        val (streamStatus, streamStart) =
+                StreamInfoResolver(config).getStatusAndStart(currentStream, newestVideo)
+        return LateInfo(streamerInfo, streamStatus, streamStart)
     }
 }
 
+private typealias LateInfoData = Triple<User?, Stream?, Video?>
+
+private fun User.toStreamerInfo() = StreamerInfo(
+        displayName,
+        profileImageUrl,
+        StreamUrl(login),
+)
+
 private class StreamInfoResolver(
-        private val streamerConfig: StreamerConfig,
+        private val config: StreamerConfig,
         private val maxDelay: Duration = 3.hours,
         private val now: Instant = now(),
 ) {
@@ -62,6 +71,7 @@ private class StreamInfoResolver(
         Next(1),
         Last(-1),
     }
+
 
     fun getStatusAndStart(currentStream: Stream?, newestVideo: Video?): Pair<StreamStatus, Instant> {
         return when {
@@ -72,7 +82,7 @@ private class StreamInfoResolver(
     }
 
     private fun isNowInLateRange(): Boolean {
-        with(streamerConfig) {
+        with(config) {
             val (dayOfWeek, currentDate) = now.toLocalDateTime(timeZone).let { it.dayOfWeek to it.date }
             val lateRange = currentDate.atTime(startTime).toInstant(timeZone).let { it..(it + maxDelay) }
             return dayOfWeek !in offDays && now in lateRange
@@ -88,7 +98,7 @@ private class StreamInfoResolver(
     }
 
     private fun getNearestStreamStart(type: StreamType): Instant {
-        with(streamerConfig) {
+        with(config) {
             val (currentDate, currentTime) = now.toLocalDateTime(timeZone).run { date to time }
             val weekDay = currentDate.dayOfWeek
             val skipToday = when (type) {

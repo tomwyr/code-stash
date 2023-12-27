@@ -1,8 +1,8 @@
 package com.tomwyr.app
 
-import com.tomwyr.app.events.AppError
+import com.tomwyr.app.events.AppErrorEvent
 import com.tomwyr.app.events.AppEvent
-import com.tomwyr.app.events.AppInfo
+import com.tomwyr.app.events.AppInfoEvent
 import io.ktor.server.application.*
 import io.ktor.util.logging.*
 
@@ -15,8 +15,8 @@ object App {
 
     fun raise(event: AppEvent) {
         when (event) {
-            is AppError -> log.error(event.message)
-            is AppInfo -> log.info(event.message)
+            is AppErrorEvent -> log.error(event.message)
+            is AppInfoEvent -> log.info(event.message)
         }
     }
 }
