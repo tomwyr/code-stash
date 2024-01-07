@@ -1,13 +1,14 @@
-package com.tomwyr.stream
+package com.tomwyr.features.stream
 
 import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus
 import com.tomwyr.StreamerInfo
+import com.tomwyr.common.extensions.*
+import com.tomwyr.features.search.streamerSearchView
 import com.tomwyr.services.LateServiceFailure
-import com.tomwyr.utils.Failure
-import com.tomwyr.utils.Result
-import com.tomwyr.utils.Success
-import com.tomwyr.utils.extensions.*
+import com.tomwyr.common.utils.Failure
+import com.tomwyr.common.utils.Result
+import com.tomwyr.common.utils.Success
 import com.tomwyr.utils.here
 import io.kvision.core.*
 import io.kvision.html.*
@@ -18,7 +19,11 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.hours
 
-object StreamView : SimplePanel() {
+fun Container.streamView() {
+    add(StreamView())
+}
+
+class StreamView : SimplePanel() {
     init {
         addAfterInsertHook {
             StreamModel.initialize()
@@ -27,14 +32,15 @@ object StreamView : SimplePanel() {
         bind(StreamModel.lateInfo) { result ->
             container {
                 header()
-                content(result)
+                streamerSearchView()
+                lateInfo(result)
                 footer()
             }
         }
     }
 }
 
-private fun StyledComponent.container(init: StyledComponent.() -> Unit) {
+private fun StreamView.container(init: StreamView.() -> Unit) {
     width = 100.vw
     minHeight = 100.vh
     display = Display.FLEX
@@ -64,7 +70,7 @@ private fun Container.header() {
     }
 }
 
-private fun Container.content(result: Result<LateInfo, LateServiceFailure>?) {
+private fun Container.lateInfo(result: Result<LateInfo, LateServiceFailure>?) {
     div {
         flexGrow = 1
         flexShrink = 0

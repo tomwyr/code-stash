@@ -27,6 +27,7 @@ class TwitchClient(
         private const val STREAMS_URL = "$API_BASE_URL/streams"
         private const val VIDEOS_URL = "$API_BASE_URL/videos"
         private const val USERS_URL = "$API_BASE_URL/users"
+        private const val SEARCH_CHANNELS_URL = "$API_BASE_URL/search/channels"
 
         private const val SESSION_KEY = "session"
     }
@@ -58,6 +59,13 @@ class TwitchClient(
 
     suspend fun getNewestVideo(userId: String): Result<Video?, TwitchFailure> {
         return getVideos(userId, VideosSort.Time, VideoType.Archive, first = 1).map { it.data.firstOrNull() }
+    }
+
+    suspend fun searchChannels(query: String, first: Int): Result<ListResponse<Channel>, TwitchFailure> {
+        return query(SEARCH_CHANNELS_URL, mapOf(
+                "query" to query,
+                "first" to first,
+        ))
     }
 
     private suspend fun getVideos(

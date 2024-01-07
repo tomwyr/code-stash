@@ -72,7 +72,16 @@ enum class VideoType {
 
 @Serializable
 data class User(
+        val id: String,
         val login: String,
         @SerialName("display_name") val displayName: String,
         @SerialName("profile_image_url") val profileImageUrl: String,
+)
+
+@Serializable
+data class Channel(
+        val id: String,
+        @SerialName("broadcaster_login") val broadcasterLogin: String,
+        @SerialName("display_name") val displayName: String,
+        @SerialName("thumbnail_url") val thumbnailUrl: String
 )

@@ -1,4 +1,4 @@
-package com.tomwyr.utils.extensions
+package com.tomwyr.common.extensions
 
 import kotlin.time.Duration
 

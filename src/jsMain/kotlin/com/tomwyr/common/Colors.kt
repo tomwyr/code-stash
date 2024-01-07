@@ -1,4 +1,4 @@
-package com.tomwyr.utils
+package com.tomwyr.common
 
 import io.kvision.core.Color
 

@@ -1,4 +1,4 @@
-package com.tomwyr.utils
+package com.tomwyr.common.utils
 
 sealed class Result<out T, out F>
 class Success<T>(val value: T) : Result<T, Nothing>()

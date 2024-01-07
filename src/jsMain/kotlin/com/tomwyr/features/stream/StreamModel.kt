@@ -1,13 +1,21 @@
-package com.tomwyr.stream
+package com.tomwyr.features.stream
 
 import com.tomwyr.*
 import com.tomwyr.StreamStatus.*
+import com.tomwyr.common.MainScope
+import com.tomwyr.common.launchCatching
+import com.tomwyr.common.utils.Failure
+import com.tomwyr.common.utils.Result
+import com.tomwyr.common.utils.Success
+import com.tomwyr.common.utils.periodicFlow
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
 import com.tomwyr.utils.*
 import io.kvision.state.ObservableValue
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -20,6 +28,8 @@ typealias LateInfoResult = Result<LateInfo, LateServiceFailure>
 
 @OptIn(ExperimentalCoroutinesApi::class)
 object StreamModel {
+    private var initialized = false
+
     private val lateService = LateService()
 
     val version = ObservableValue(AppInfo.version.value)
@@ -29,6 +39,8 @@ object StreamModel {
     val viewRefresh = ObservableValue(Any())
 
     fun initialize() {
+        if (!initialized) initialized = true else return
+
         startRefreshJob()
     }
 
@@ -37,7 +49,7 @@ object StreamModel {
     }
 
     private fun startRefreshJob() {
-        MainScope.launch {
+        MainScope.launchCatching {
             getLateInfoFlow()
                     .onEach { lateInfo.value = it }
                     .flatMapLatest { getViewRefreshFlow(it) }
@@ -45,18 +57,18 @@ object StreamModel {
         }
     }
 
-    private fun CoroutineScope.getLateInfoFlow(): Flow<LateInfoResult> = produce {
-        while (isActive) {
+    private fun getLateInfoFlow(): Flow<LateInfoResult> = flow {
+        while (true) {
             val result = getLateInfo()
 
-            trySend(result)
+            emit(result)
 
             when (result) {
                 is Success -> delay(result.value.refreshInterval)
-                is Failure -> this@getLateInfoFlow.cancel()
+                is Failure -> currentCoroutineContext().cancel()
             }
         }
-    }.consumeAsFlow()
+    }
 
     private suspend fun getLateInfo() = try {
         val config = StreamerConfig(

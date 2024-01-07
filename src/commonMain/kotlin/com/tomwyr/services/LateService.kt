@@ -1,7 +1,9 @@
 package com.tomwyr.services
 
 import com.tomwyr.LateInfo
+import com.tomwyr.SearchQuery
 import com.tomwyr.StreamerConfig
+import com.tomwyr.StreamerInfo
 import io.kvision.annotations.KVService
 import io.kvision.annotations.KVServiceException
 import io.kvision.remote.AbstractServiceException
@@ -9,7 +11,9 @@ import kotlinx.serialization.Serializable
 
 @KVService
 interface ILateService {
-    suspend fun getLateInfo(config: StreamerConfig): LateInfo
+    suspend fun getLateInfo(streamerConfig: StreamerConfig): LateInfo
+
+    suspend fun searchStreamers(searchQuery: SearchQuery): List<StreamerInfo>
 }
 
 @Serializable
@@ -26,3 +30,6 @@ class CurrentStreamUnavailable : LateServiceFailure("Unable to retrieve current 
 
 @KVServiceException
 class NewestVideoUnavailable : LateServiceFailure("Unable to retrieve newest video data. Please try again later.")
+
+@KVServiceException
+class StreamersUnavailable : LateServiceFailure("Unable to retrieve streamers data. Please try again later.")

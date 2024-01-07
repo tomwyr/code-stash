@@ -1,6 +1,6 @@
 package com.tomwyr
 
-import com.tomwyr.stream.StreamView
+import com.tomwyr.features.stream.streamView
 import io.kvision.Application
 import io.kvision.panel.root
 import io.kvision.require
@@ -12,7 +12,7 @@ class App : Application() {
 
     override fun start(state: Map<String, Any>) {
         root("kvapp") {
-            add(StreamView)
+            streamView()
         }
     }
 }

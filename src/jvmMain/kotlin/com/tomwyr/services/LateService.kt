@@ -4,11 +4,10 @@ import com.github.michaelbull.result.getOrElse
 import com.tomwyr.*
 import com.tomwyr.app.App
 import com.tomwyr.app.events.LateInfoStale
-import com.tomwyr.twitch.Stream
-import com.tomwyr.twitch.TwitchClient
-import com.tomwyr.twitch.User
-import com.tomwyr.twitch.Video
+import com.tomwyr.app.events.StreamersStale
+import com.tomwyr.twitch.*
 import com.tomwyr.utils.LateInfoCache
+import com.tomwyr.utils.StreamersCache
 import com.tomwyr.utils.extensions.intersects
 import com.tomwyr.utils.now
 import kotlinx.datetime.*
@@ -20,14 +19,23 @@ import kotlin.time.Duration.Companion.hours
 @Factory
 actual class LateService(
         private val lateInfoCache: LateInfoCache,
+        private val streamersCache: StreamersCache,
         private val twitchClient: TwitchClient,
 ) : ILateService {
-    override suspend fun getLateInfo(config: StreamerConfig): LateInfo {
-        val streamerId = config.id
+    override suspend fun getLateInfo(streamerConfig: StreamerConfig): LateInfo {
+        val streamerId = streamerConfig.id
 
         return lateInfoCache.getOr(streamerId) {
             App.raise(LateInfoStale(streamerId))
-            resolveLateInfo(config, fetchLateInfoData(streamerId))
+            resolveLateInfo(streamerConfig, fetchLateInfoData(streamerId))
+        }
+    }
+
+    override suspend fun searchStreamers(searchQuery: SearchQuery): List<StreamerInfo> {
+        return streamersCache.getOr(searchQuery) {
+            App.raise(StreamersStale(searchQuery))
+            val response = twitchClient.searchChannels(searchQuery.value, 10).getOrElse { throw StreamersUnavailable() }
+            response.data.map { it.toStreamerInfo() }
         }
     }
 
@@ -57,9 +65,17 @@ actual class LateService(
 private typealias LateInfoData = Triple<User?, Stream?, Video?>
 
 private fun User.toStreamerInfo() = StreamerInfo(
+        StreamerId(id),
         displayName,
         profileImageUrl,
         StreamUrl(login),
+)
+
+private fun Channel.toStreamerInfo() = StreamerInfo(
+        StreamerId(id),
+        displayName,
+        thumbnailUrl,
+        StreamUrl(broadcasterLogin),
 )
 
 private class StreamInfoResolver(

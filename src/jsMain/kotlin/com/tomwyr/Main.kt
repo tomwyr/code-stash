@@ -1,11 +1,8 @@
 package com.tomwyr
 
-import io.kvision.*
-import kotlinx.browser.window
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
-
-val MainScope = CoroutineScope(window.asCoroutineDispatcher())
+import io.kvision.CoreModule
+import io.kvision.module
+import io.kvision.startApplication
 
 fun main() {
     startApplication(::App, module.hot, CoreModule)
