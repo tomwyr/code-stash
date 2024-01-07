@@ -1,15 +1,15 @@
 package com.tomwyr.features.search
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import com.tomwyr.SearchQuery
 import com.tomwyr.StreamerInfo
 import com.tomwyr.common.MainScope
+import com.tomwyr.common.extensions.asFlow
 import com.tomwyr.common.launchCatching
-import com.tomwyr.common.utils.Failure
-import com.tomwyr.common.utils.Result
-import com.tomwyr.common.utils.Success
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
-import com.tomwyr.common.extensions.asFlow
 import io.kvision.state.ObservableValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -39,7 +39,7 @@ object StreamerSearchModel {
         }
 
         MainScope.launchCatching {
-            getSearchQueryFlow().mapNotNull { it as? Success }
+            getSearchQueryFlow().mapNotNull { it as? Ok }
                     .mapLatest { searchStreamers(it.value) }
                     .collect { streamers.value = it }
         }
@@ -57,17 +57,17 @@ object StreamerSearchModel {
         val value = input.replace(" ", "")
 
         return when {
-            value.isEmpty() -> Failure(SearchQueryFailure.Empty)
-            !value.matches(SearchQuery.pattern) -> Failure(SearchQueryFailure.InvalidFormat)
-            value.length < SearchQuery.minLength -> Failure(SearchQueryFailure.TooShort)
-            else -> Success(SearchQuery(value))
+            value.isEmpty() -> Err(SearchQueryFailure.Empty)
+            !value.matches(SearchQuery.pattern) -> Err(SearchQueryFailure.InvalidFormat)
+            value.length < SearchQuery.minLength -> Err(SearchQueryFailure.TooShort)
+            else -> Ok(SearchQuery(value))
         }
     }
 
     private suspend fun searchStreamers(searchQuery: SearchQuery) = try {
-        Success(lateService.searchStreamers(searchQuery))
+        Ok(lateService.searchStreamers(searchQuery))
     } catch (error: LateServiceFailure) {
-        Failure(error)
+        Err(error)
     }
 }
 

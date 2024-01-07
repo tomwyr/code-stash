@@ -1,14 +1,14 @@
 package com.tomwyr.features.stream
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus
 import com.tomwyr.StreamerInfo
 import com.tomwyr.common.extensions.*
 import com.tomwyr.features.search.streamerSearchView
 import com.tomwyr.services.LateServiceFailure
-import com.tomwyr.common.utils.Failure
-import com.tomwyr.common.utils.Result
-import com.tomwyr.common.utils.Success
 import com.tomwyr.utils.here
 import io.kvision.core.*
 import io.kvision.html.*
@@ -82,8 +82,8 @@ private fun Container.lateInfo(result: Result<LateInfo, LateServiceFailure>?) {
 
         when (result) {
             null -> loadingView()
-            is Success -> successView(result.value)
-            is Failure -> failureView(result.value)
+            is Ok -> successView(result.value)
+            is Err -> failureView(result.error)
         }
     }
 }

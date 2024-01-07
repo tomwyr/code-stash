@@ -1,7 +1,7 @@
 package com.tomwyr.features.search
 
-import com.tomwyr.common.utils.Failure
-import com.tomwyr.common.utils.Success
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
 import io.kvision.core.Container
 import io.kvision.core.Display
 import io.kvision.core.FlexDirection
@@ -37,8 +37,8 @@ class StreamerSearchView : SimplePanel() {
 
             span().bind(StreamerSearchModel.searchQuery) {
                 content = when (it) {
-                    is Success -> null
-                    is Failure -> when (it.value) {
+                    is Ok -> null
+                    is Err -> when (it.error) {
                         SearchQueryFailure.Empty -> null
                         SearchQueryFailure.InvalidFormat -> "Only letters and digits are allowed."
                         SearchQueryFailure.TooShort -> "At least 3 characters are required"
@@ -49,13 +49,13 @@ class StreamerSearchView : SimplePanel() {
             div().bind(StreamerSearchModel.streamers) { result ->
                 when (result) {
                     null -> Unit
-                    is Success -> ul {
+                    is Ok -> ul {
                         result.value.forEach {
                             li(it.name)
                         }
                     }
 
-                    is Failure -> span("Error. Please try again.")
+                    is Err -> span("Error. Please try again.")
                 }
             }
         }

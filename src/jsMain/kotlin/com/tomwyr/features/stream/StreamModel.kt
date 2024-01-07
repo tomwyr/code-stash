@@ -1,12 +1,12 @@
 package com.tomwyr.features.stream
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import com.tomwyr.*
 import com.tomwyr.StreamStatus.*
 import com.tomwyr.common.MainScope
 import com.tomwyr.common.launchCatching
-import com.tomwyr.common.utils.Failure
-import com.tomwyr.common.utils.Result
-import com.tomwyr.common.utils.Success
 import com.tomwyr.common.utils.periodicFlow
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
@@ -64,8 +64,8 @@ object StreamModel {
             emit(result)
 
             when (result) {
-                is Success -> delay(result.value.refreshInterval)
-                is Failure -> currentCoroutineContext().cancel()
+                is Ok -> delay(result.value.refreshInterval)
+                is Err -> currentCoroutineContext().cancel()
             }
         }
     }
@@ -78,14 +78,14 @@ object StreamModel {
                 offDays = OffDays(listOf(DayOfWeek.THURSDAY))
         )
 
-        Success(lateService.getLateInfo(config))
+        Ok(lateService.getLateInfo(config))
     } catch (error: LateServiceFailure) {
-        Failure(error)
+        Err(error)
     }
 
     private fun getViewRefreshFlow(result: LateInfoResult): Flow<Unit> = when (result) {
-        is Success -> periodicFlow(1.seconds)
-        is Failure -> emptyFlow()
+        is Ok -> periodicFlow(1.seconds)
+        is Err -> emptyFlow()
     }
 }
 
