@@ -1,3 +1,7 @@
+.overlay-blur {
+    backdrop-filter: blur(4px);
+}
+
 div.wave {
     position:relative;
     text-align:center;

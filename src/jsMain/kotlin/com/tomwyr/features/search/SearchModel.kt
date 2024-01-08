@@ -20,7 +20,7 @@ typealias StreamersResult = Result<List<StreamerInfo>, LateServiceFailure>
 typealias SearchQueryResult = Result<SearchQuery, SearchQueryFailure>
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-object StreamerSearchModel {
+object SearchModel {
     private var initialized = false
 
     private val lateService = LateService()
@@ -46,11 +46,7 @@ object StreamerSearchModel {
     }
 
     private fun getSearchQueryFlow(): Flow<SearchQueryResult> {
-        return searchQueryInput.asFlow().distinctUntilChanged().debounce(1.seconds).map {
-            processInput(it).also {
-                console.log(it)
-            }
-        }
+        return searchQueryInput.asFlow().distinctUntilChanged().debounce(1.seconds).map { processInput(it) }
     }
 
     private fun processInput(input: String): SearchQueryResult {
