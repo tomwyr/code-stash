@@ -1,26 +1,47 @@
+* {
+    box-sizing: border-box;
+}
+
+ul {
+    list-style-type: none;
+    padding-inline-start: 0px;
+}
+
+li {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+li:hover {
+    border-radius: 4px;
+    background-color: lightgray;
+}
+
 .overlay-blur {
     backdrop-filter: blur(4px);
 }
 
 div.wave {
-    position:relative;
-    text-align:center;
+    position: relative;
+    text-align: center;
     margin-left: auto;
     margin-right: auto;
+
     .dot {
-        display:inline-block;
-        width:12px;
-        height:12px;
-        border-radius:50%;
-        margin:0 5px;
-        background-color:#6c3aa0;
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin: 0 5px;
+        background-color: #6c3aa0;
         animation: wave 1.6s linear infinite;
 
         &:nth-child(2) {
             animation-delay: -1.45s;
         }
 
-		&:nth-child(3) {
+        &:nth-child(3) {
             animation-delay: -1.3s;
         }
     }
@@ -31,15 +52,15 @@ div.wave {
         transform: initial;
     }
 
-	10% {
+    10% {
         transform: translateY(-20px);
     }
 
-	30% {
+    30% {
         transform: translateY(15px);
     }
 
-	50% {
+    50% {
         transform: translateY(-5px);
     }
 }
@@ -86,4 +107,24 @@ svg.github-logo path {
 
 svg.github-logo:hover path {
     fill: darkgray;
+}
+
+input.search-query {
+    padding: 10px;
+    border: 1px solid darkgray;
+    border-radius: 4px;
+}
+
+input.search-query:focus {
+    padding: 9px;
+    border: 2px solid #6c3aa0;
+    border-radius: 4px;
+}
+
+.search-icon {
+    transform: translateY(-50%);
+}
+
+.search-result-logo {
+    aspect-ratio: 1 / 1
 }

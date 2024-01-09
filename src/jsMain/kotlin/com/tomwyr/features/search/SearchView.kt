@@ -8,6 +8,7 @@ import io.kvision.html.*
 import io.kvision.panel.SimplePanel
 import io.kvision.state.bind
 import io.kvision.utils.perc
+import io.kvision.utils.px
 import io.kvision.utils.rem
 
 fun Container.searchView() {
@@ -20,14 +21,18 @@ class SearchView : SimplePanel() {
 
         width = 100.perc
         height = 100.perc
+        marginTop = 4.rem
         display = Display.FLEX
         flexDirection = FlexDirection.COLUMN
-        justifyContent = JustifyContent.CENTER
         alignItems = AlignItems.CENTER
 
         div {
+            width = 100.perc
+            maxWidth = 384.px
             background = Background(Color.name(Col.WHITE))
             padding = 1.rem
+            borderRadius = 0.75.rem
+            boxShadow = BoxShadow(1.px, 1.px, 2.px, 2.px, Color("#00000033"))
 
             onClick { it.stopPropagation() }
 
@@ -39,14 +44,33 @@ class SearchView : SimplePanel() {
 }
 
 private fun Div.queryInput() {
-    textInput {
-        SearchOverlay.overlayVisible.subscribe { visible ->
-            if (visible) focus()
-        }
+    div {
+        position = Position.RELATIVE
 
-        placeholder = "Streamer name"
-        onInput {
-            SearchModel.searchQueryInput.value = value ?: ""
+        textInput(className = "search-query") {
+            display = Display.BLOCK
+            width = 100.perc
+            fontSize = 14.px
+            paddingLeft = 38.px
+            outline = Outline(style = OutlineStyle.NONE)
+            placeholder = "Streamer name"
+
+            i(className = "fas fa-magnifying-glass search-icon") {
+                color = Color.name(Col.DARKGRAY)
+                position = Position.ABSOLUTE
+                width = 16.px
+                height = 16.px
+                top = 50.perc
+                marginLeft = 12.px
+            }
+
+            SearchOverlay.overlayVisible.subscribe { visible ->
+                if (visible) focus()
+            }
+
+            onInput {
+                SearchModel.searchQueryInput.value = value ?: ""
+            }
         }
     }
 }
@@ -69,8 +93,23 @@ private fun Div.searchResults() {
         when (result) {
             null -> Unit
             is Ok -> ul {
+                marginBottom = 0.px
+
                 result.value.forEach {
-                    li(it.name)
+                    li {
+                        display = Display.FLEX
+                        flexDirection = FlexDirection.ROW
+                        alignItems = AlignItems.CENTER
+                        cursor = Cursor.POINTER
+
+                        image(it.imageUrl, className = "search-result-logo") {
+                            width = 24.px
+                            marginRight = 8.px
+                            borderRadius = 50.perc
+                        }
+
+                        span(it.name)
+                    }
                 }
             }
 
