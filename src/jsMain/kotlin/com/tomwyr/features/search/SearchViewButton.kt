@@ -1,10 +1,11 @@
 package com.tomwyr.features.search
 
 import com.tomwyr.common.addKeyListener
-import io.kvision.core.Container
-import io.kvision.core.onClick
+import io.kvision.core.*
 import io.kvision.html.Div
-import io.kvision.html.span
+import io.kvision.utils.perc
+import io.kvision.utils.px
+import io.kvision.utils.rem
 
 fun Container.searchViewButton() {
     add(SearchViewButton())
@@ -12,6 +13,10 @@ fun Container.searchViewButton() {
 
 class SearchViewButton : Div() {
     init {
+        width = 100.perc
+        maxWidth = 320.px
+        marginLeft = 0.5.rem
+
         addKeyListener {
             if (it.key == "/") {
                 showOverlay()
@@ -19,7 +24,12 @@ class SearchViewButton : Div() {
             }
         }
 
-        span("Search")
+        searchInput {
+            placeholder = "Type / to search"
+            background = Background(Color.name(Col.GHOSTWHITE))
+            cursor = Cursor.POINTER
+            readonly = true
+        }
 
         onClick { showOverlay() }
     }

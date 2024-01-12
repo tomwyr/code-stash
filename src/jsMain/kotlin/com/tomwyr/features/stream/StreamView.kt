@@ -31,8 +31,10 @@ class StreamView : SimplePanel() {
 
         bind(StreamModel.lateInfo) { result ->
             container {
-                header()
-                searchViewButton()
+                header {
+                    appInfo()
+                    searchViewButton()
+                }
                 lateInfo(result)
             }
         }
@@ -49,19 +51,31 @@ private fun StreamView.container(init: StreamView.() -> Unit) {
     init()
 }
 
-private fun Container.header() {
+private fun StreamView.header(init: Div.() -> Unit) {
+    div {
+        width = 100.perc
+        display = Display.FLEX
+        flexDirection = FlexDirection.ROW
+        padding = 1.rem
+        justifyContent = JustifyContent.SPACEBETWEEN
+
+        appInfo()
+        searchViewButton()
+    }
+}
+
+private fun Container.appInfo() {
     div {
         display = Display.BLOCK
-        paddingTop = 4.rem
+        marginRight = 0.5.rem
 
-        h1("Late Checker") {
+        h2("Late Checker") {
             colorName = Col.DARKGRAY
             margin = 1.px
+            whiteSpace = WhiteSpace.NOWRAP
         }
         div().bind(AppModel.version) { version ->
-            textAlign = TextAlign.RIGHT
-
-            h4(version) {
+            h5("v$version") {
                 margin = 1.px
                 colorName = Col.LIGHTGRAY
             }
@@ -74,6 +88,7 @@ private fun Container.lateInfo(result: Result<LateInfo, LateServiceFailure>?) {
         flexGrow = 1
         flexShrink = 0
         flexBasis = auto
+        paddingBottom = 48.px
         display = Display.FLEX
         flexDirection = FlexDirection.COLUMN
         justifyContent = JustifyContent.CENTER

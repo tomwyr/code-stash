@@ -5,7 +5,6 @@ import com.github.michaelbull.result.Ok
 import com.tomwyr.features.common.Padding
 import com.tomwyr.features.common.loadingView
 import io.kvision.core.*
-import io.kvision.form.text.textInput
 import io.kvision.html.*
 import io.kvision.panel.SimplePanel
 import io.kvision.state.bind
@@ -46,33 +45,15 @@ class SearchView : SimplePanel() {
 }
 
 private fun Div.queryInput() {
-    div {
-        position = Position.RELATIVE
+    searchInput {
+        placeholder = "Streamer name..."
 
-        textInput(className = "search-query") {
-            display = Display.BLOCK
-            width = 100.perc
-            fontSize = 14.px
-            paddingLeft = 38.px
-            outline = Outline(style = OutlineStyle.NONE)
-            placeholder = "Streamer name"
+        SearchOverlay.overlayVisible.subscribe { visible ->
+            if (visible) focus()
+        }
 
-            i(className = "fas fa-magnifying-glass search-icon") {
-                color = Color.name(Col.DARKGRAY)
-                position = Position.ABSOLUTE
-                width = 16.px
-                height = 16.px
-                top = 50.perc
-                marginLeft = 12.px
-            }
-
-            SearchOverlay.overlayVisible.subscribe { visible ->
-                if (visible) focus()
-            }
-
-            onInput {
-                SearchModel.searchQueryInput.value = value ?: ""
-            }
+        onInput {
+            SearchModel.searchQueryInput.value = value ?: ""
         }
     }
 }
