@@ -2,6 +2,8 @@ package com.tomwyr.features.search
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
+import com.tomwyr.features.common.Padding
+import com.tomwyr.features.common.loadingView
 import io.kvision.core.*
 import io.kvision.form.text.textInput
 import io.kvision.html.*
@@ -89,31 +91,38 @@ private fun Div.validationMessage() {
 }
 
 private fun Div.searchResults() {
-    div().bind(SearchModel.streamers) { result ->
-        when (result) {
-            null -> Unit
-            is Ok -> ul {
-                marginBottom = 0.px
+    div().bind(SearchModel.streamers) { state ->
+        when (state) {
+            StreamersState.Initial -> Unit
 
-                result.value.forEach {
-                    li {
-                        display = Display.FLEX
-                        flexDirection = FlexDirection.ROW
-                        alignItems = AlignItems.CENTER
-                        cursor = Cursor.POINTER
+            StreamersState.Loading -> loadingView(
+                    padding = Padding(top = 3.25.rem, bottom = 1.75.rem, left = 1.rem, right = 1.rem)
+            )
 
-                        image(it.imageUrl, className = "search-result-logo") {
-                            width = 24.px
-                            marginRight = 8.px
-                            borderRadius = 50.perc
+            is StreamersState.Result -> when (state.result) {
+                is Ok -> ul {
+                    marginBottom = 0.px
+
+                    state.result.value.forEach {
+                        li {
+                            display = Display.FLEX
+                            flexDirection = FlexDirection.ROW
+                            alignItems = AlignItems.CENTER
+                            cursor = Cursor.POINTER
+
+                            image(it.imageUrl, className = "search-result-logo") {
+                                width = 24.px
+                                marginRight = 8.px
+                                borderRadius = 50.perc
+                            }
+
+                            span(it.name)
                         }
-
-                        span(it.name)
                     }
                 }
-            }
 
-            is Err -> span("Error. Please try again.")
+                is Err -> span("Something went wrong. Please try again.")
+            }
         }
     }
 }

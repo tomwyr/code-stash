@@ -19,6 +19,12 @@ import kotlin.time.Duration.Companion.seconds
 typealias StreamersResult = Result<List<StreamerInfo>, LateServiceFailure>
 typealias SearchQueryResult = Result<SearchQuery, SearchQueryFailure>
 
+sealed class StreamersState {
+    data object Initial : StreamersState()
+    data object Loading : StreamersState()
+    class Result(val result: StreamersResult) : StreamersState()
+}
+
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 object SearchModel {
     private var initialized = false
@@ -29,7 +35,7 @@ object SearchModel {
 
     val searchQuery = ObservableValue(processInput(""))
 
-    val streamers = ObservableValue<StreamersResult?>(null)
+    val streamers = ObservableValue<StreamersState>(StreamersState.Initial)
 
     fun initialize() {
         if (!initialized) initialized = true else return
@@ -40,8 +46,9 @@ object SearchModel {
 
         MainScope.launchCatching {
             getSearchQueryFlow().mapNotNull { it as? Ok }
+                    .onEach { streamers.value = StreamersState.Loading }
                     .mapLatest { searchStreamers(it.value) }
-                    .collect { streamers.value = it }
+                    .collect { streamers.value = StreamersState.Result(it) }
         }
     }
 

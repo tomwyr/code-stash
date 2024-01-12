@@ -8,6 +8,7 @@ import com.tomwyr.StreamStatus
 import com.tomwyr.StreamerInfo
 import com.tomwyr.common.extensions.*
 import com.tomwyr.features.common.AppModel
+import com.tomwyr.features.common.loadingView
 import com.tomwyr.features.search.searchViewButton
 import com.tomwyr.services.LateServiceFailure
 import com.tomwyr.utils.here
@@ -169,14 +170,6 @@ private fun Container.offlineDescription(streamerInfo: StreamerInfo, streamStart
         span(" is currently offline. Next stream is expected ")
         nextStreamTime()
         span(".")
-    }
-}
-
-private fun Container.loadingView() {
-    div(className = "wave") {
-        span(className = "dot")
-        span(className = "dot")
-        span(className = "dot")
     }
 }
 
