@@ -1,10 +1,10 @@
 package com.tomwyr.features.search
 
+import com.tomwyr.common.addKeyListener
 import io.kvision.core.Container
 import io.kvision.core.onClick
 import io.kvision.html.Div
 import io.kvision.html.span
-import kotlinx.browser.window
 
 fun Container.searchViewButton() {
     add(SearchViewButton())
@@ -12,12 +12,11 @@ fun Container.searchViewButton() {
 
 class SearchViewButton : Div() {
     init {
-        addAfterInsertHook {
-            window.onkeydown = { showOverlay() }
-        }
-
-        addAfterDestroyHook {
-            window.onkeydown = null
+        addKeyListener {
+            if (it.key == "/") {
+                showOverlay()
+                it.preventDefault()
+            }
         }
 
         span("Search")

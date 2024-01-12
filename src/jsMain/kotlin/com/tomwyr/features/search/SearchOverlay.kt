@@ -1,5 +1,6 @@
 package com.tomwyr.features.search
 
+import com.tomwyr.common.addKeyListener
 import io.kvision.core.*
 import io.kvision.html.Div
 import io.kvision.state.ObservableValue
@@ -22,6 +23,10 @@ object SearchOverlay : Div(className = "overlay-blur") {
         height = 100.perc
         background = Background(Color("#ffffff80"))
         visible = false
+
+        addKeyListener {
+            if (it.key == "Escape") hide()
+        }
 
         onClick { overlayVisible.value = false }
 
