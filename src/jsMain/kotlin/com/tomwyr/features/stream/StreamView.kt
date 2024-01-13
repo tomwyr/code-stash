@@ -119,6 +119,12 @@ private fun Container.loadingView(streamerInfo: StreamerInfo) {
 
 private fun Container.successView(lateInfo: LateInfo) {
     with(lateInfo) {
+        h1(streamerInfo.name) {
+            color = Color.name(Col.DARKGRAY)
+            marginTop = 0.px
+            marginBottom = 16.px
+        }
+
         link("", streamerInfo.streamUrl, target = "_blank") {
             margin = 1.rem
             borderRadius = 50.perc
@@ -138,6 +144,12 @@ private fun Container.successView(lateInfo: LateInfo) {
         }
 
         div().bind(StreamModel.viewRefresh) {
+            marginBottom = 40.px
+
+            if (streamStart == null) {
+                return@bind
+            }
+
             val description = when (streamStatus) {
                 StreamStatus.Live -> ::liveDescription
                 StreamStatus.Late -> ::lateDescription

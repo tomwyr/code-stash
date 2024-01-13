@@ -8,12 +8,7 @@ import com.tomwyr.app.events.StreamersStale
 import com.tomwyr.twitch.*
 import com.tomwyr.utils.LateInfoCache
 import com.tomwyr.utils.StreamersCache
-import com.tomwyr.utils.extensions.intersects
-import com.tomwyr.utils.now
-import kotlinx.datetime.*
 import org.koin.core.annotation.Factory
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 
 @Suppress("ACTUAL_WITHOUT_EXPECT")
 @Factory
@@ -56,8 +51,7 @@ actual class LateService(
         val (user, currentStream, newestVideo) = data
 
         val streamerInfo = user?.toStreamerInfo() ?: throw StreamerNotFound()
-        val (streamStatus, streamStart) =
-                StreamInfoResolver(config).getStatusAndStart(currentStream, newestVideo)
+        val (streamStatus, streamStart) = StreamInfoResolver.create(config, currentStream, newestVideo).getInfo()
         return LateInfo(streamerInfo, streamStatus, streamStart)
     }
 }
@@ -77,62 +71,3 @@ private fun Channel.toStreamerInfo() = StreamerInfo(
         thumbnailUrl,
         StreamUrl(broadcasterLogin),
 )
-
-private class StreamInfoResolver(
-        private val config: StreamerConfig,
-        private val maxDelay: Duration = 3.hours,
-        private val now: Instant = now(),
-) {
-    enum class StreamType(val timeMultiplier: Int) {
-        Next(1),
-        Last(-1),
-    }
-
-
-    fun getStatusAndStart(currentStream: Stream?, newestVideo: Video?): Pair<StreamStatus, Instant> {
-        return when {
-            currentStream != null -> StreamStatus.Live to currentStream.startedAt
-            isNowInLateRange() && !wasOnlineInLateRange(newestVideo) -> StreamStatus.Late to getNearestStreamStart(StreamType.Last)
-            else -> StreamStatus.Offline to getNearestStreamStart(StreamType.Next)
-        }
-    }
-
-    private fun isNowInLateRange(): Boolean {
-        with(config) {
-            val (dayOfWeek, currentDate) = now.toLocalDateTime(timeZone).let { it.dayOfWeek to it.date }
-            val lateRange = currentDate.atTime(startTime).toInstant(timeZone).let { it..(it + maxDelay) }
-            return dayOfWeek !in offDays && now in lateRange
-        }
-    }
-
-    private fun wasOnlineInLateRange(video: Video?): Boolean {
-        if (video == null) return false
-
-        val lateRange = now..(now + maxDelay)
-        val videoRange = with(video) { createdAt..(createdAt + duration) }
-        return lateRange.intersects(videoRange)
-    }
-
-    private fun getNearestStreamStart(type: StreamType): Instant {
-        with(config) {
-            val (currentDate, currentTime) = now.toLocalDateTime(timeZone).run { date to time }
-            val weekDay = currentDate.dayOfWeek
-            val skipToday = when (type) {
-                StreamType.Next -> currentTime >= startTime
-                StreamType.Last -> currentTime <= startTime
-            }
-
-            for (daysDiff in 0..7) {
-                if (daysDiff == 0 && skipToday) continue
-
-                val nextDay = weekDay + daysDiff.toLong() * type.timeMultiplier
-                if (nextDay in offDays) continue
-
-                val nearestStartDate = currentDate + DatePeriod(days = daysDiff * type.timeMultiplier)
-                return nearestStartDate.atTime(startTime).toInstant(timeZone)
-            }
-
-            error("Could not calculate start of the nearest stream.")
-        }
-    }
-}

@@ -24,13 +24,13 @@ data class StreamerInfo(
 data class LateInfo(
         val streamerInfo: StreamerInfo,
         val streamStatus: StreamStatus,
-        val streamStart: Instant,
+        val streamStart: Instant?,
 )
 
 @Serializable
 data class StreamerConfig(
         val id: StreamerId,
-        val timeZone: TimeZone,
-        val startTime: LocalTime,
-        val offDays: OffDays,
+        val timeZone: TimeZone? = null,
+        val startTime: LocalTime? = null,
+        val offDays: OffDays? = null,
 )

@@ -3,8 +3,10 @@ package com.tomwyr.features.stream
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.tomwyr.*
+import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus.*
+import com.tomwyr.StreamerConfig
+import com.tomwyr.StreamerInfo
 import com.tomwyr.common.MainScope
 import com.tomwyr.common.extensions.asFlow
 import com.tomwyr.common.launchCatching
@@ -18,9 +20,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -56,16 +55,16 @@ object StreamModel {
         MainScope.launchCatching {
             selectedStreamer.asFlow().filterNotNull()
                     .onEach { lateInfo.value = LateInfoState.Loading }
-                    .flatMapLatest { getLateInfoFlow() }
+                    .flatMapLatest { getLateInfoFlow(it) }
                     .onEach { lateInfo.value = LateInfoState.Result(it) }
                     .flatMapLatest { getViewRefreshFlow(it) }
                     .collect { viewRefresh.value = Any() }
         }
     }
 
-    private fun getLateInfoFlow(): Flow<LateInfoResult> = flow {
+    private fun getLateInfoFlow(streamerInfo: StreamerInfo): Flow<LateInfoResult> = flow {
         while (true) {
-            val result = getLateInfo() // getLateInfo()
+            val result = getLateInfo(streamerInfo)
 
             emit(result)
 
@@ -76,12 +75,12 @@ object StreamModel {
         }
     }
 
-    private suspend fun getLateInfo() = try {
+    private suspend fun getLateInfo(streamerInfo: StreamerInfo) = try {
         val config = StreamerConfig(
-                id = StreamerId("23161357"),
-                startTime = LocalTime(12, 0),
-                timeZone = TimeZone.of("America/New_York"),
-                offDays = OffDays(listOf(DayOfWeek.THURSDAY))
+                id = streamerInfo.id,
+                // startTime = LocalTime(12, 0),
+                // timeZone = TimeZone.of("America/New_York"),
+                // offDays = OffDays(listOf(DayOfWeek.THURSDAY))
         )
 
         Ok(lateService.getLateInfo(config))
@@ -96,16 +95,22 @@ object StreamModel {
 }
 
 private val LateInfo.refreshInterval: Duration
-    get() = when (streamStatus) {
-        Live -> 1.minutes
-        Late, Offline -> {
-            val startAndNowMinutesDiff = streamStart.minus(now()).absoluteValue.inWholeMinutes.toInt()
-            when (startAndNowMinutesDiff) {
-                0 -> 20.seconds
-                in 1..2 -> 1.minutes
-                in 3..5 -> 2.minutes
-                in 5..10 -> 3.minutes
-                else -> 5.minutes
+    get() {
+        if (streamStart == null) {
+            return 1.minutes
+        }
+
+        return when (streamStatus) {
+            Live -> 1.minutes
+            Late, Offline -> {
+                val startAndNowMinutesDiff = streamStart.minus(now()).absoluteValue.inWholeMinutes.toInt()
+                when (startAndNowMinutesDiff) {
+                    0 -> 20.seconds
+                    in 1..2 -> 1.minutes
+                    in 3..5 -> 2.minutes
+                    in 5..10 -> 3.minutes
+                    else -> 5.minutes
+                }
             }
         }
     }
