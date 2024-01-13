@@ -3,14 +3,18 @@ package com.tomwyr.features.stream
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.tomwyr.*
+import com.tomwyr.LateInfo
+import com.tomwyr.OffDays
 import com.tomwyr.StreamStatus.*
+import com.tomwyr.StreamerConfig
+import com.tomwyr.StreamerId
 import com.tomwyr.common.MainScope
+import com.tomwyr.common.extensions.asFlow
 import com.tomwyr.common.launchCatching
 import com.tomwyr.common.utils.periodicFlow
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
-import com.tomwyr.utils.*
+import com.tomwyr.utils.now
 import io.kvision.state.ObservableValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -34,6 +38,7 @@ object StreamModel {
 
     val lateInfo = ObservableValue<LateInfoResult?>(null)
     val viewRefresh = ObservableValue(Any())
+    val streamer = ObservableValue<StreamerId?>(null)
 
     fun initialize() {
         if (!initialized) initialized = true else return
@@ -47,7 +52,8 @@ object StreamModel {
 
     private fun startRefreshJob() {
         MainScope.launchCatching {
-            getLateInfoFlow()
+            streamer.asFlow().filterNotNull()
+                    .flatMapLatest { getLateInfoFlow() }
                     .onEach { lateInfo.value = it }
                     .flatMapLatest { getViewRefreshFlow(it) }
                     .collect { viewRefresh.value = Any() }

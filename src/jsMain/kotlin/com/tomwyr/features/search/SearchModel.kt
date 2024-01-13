@@ -8,6 +8,7 @@ import com.tomwyr.StreamerInfo
 import com.tomwyr.common.MainScope
 import com.tomwyr.common.extensions.asFlow
 import com.tomwyr.common.launchCatching
+import com.tomwyr.features.stream.StreamModel
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
 import io.kvision.state.ObservableValue
@@ -50,6 +51,10 @@ object SearchModel {
                     .mapLatest { searchStreamers(it.value) }
                     .collect { streamers.value = StreamersState.Result(it) }
         }
+    }
+
+    fun onStreamerClick(streamerInfo: StreamerInfo) {
+        StreamModel.streamer.value = streamerInfo.id
     }
 
     private fun getSearchQueryFlow(): Flow<SearchQueryResult> {

@@ -2,6 +2,7 @@ package com.tomwyr.features.search
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
+import com.tomwyr.StreamerInfo
 import com.tomwyr.features.common.Padding
 import com.tomwyr.features.common.loadingView
 import io.kvision.core.*
@@ -85,25 +86,34 @@ private fun Div.searchResults() {
                     marginBottom = 0.px
 
                     state.result.value.forEach {
-                        li {
-                            display = Display.FLEX
-                            flexDirection = FlexDirection.ROW
-                            alignItems = AlignItems.CENTER
-                            cursor = Cursor.POINTER
-
-                            image(it.imageUrl, className = "search-result-logo") {
-                                width = 24.px
-                                marginRight = 8.px
-                                borderRadius = 50.perc
-                            }
-
-                            span(it.name)
-                        }
+                        streamerTile(it)
                     }
                 }
 
                 is Err -> span("Something went wrong. Please try again.")
             }
+        }
+    }
+}
+
+private fun Container.streamerTile(streamerInfo: StreamerInfo) {
+    li {
+        display = Display.FLEX
+        flexDirection = FlexDirection.ROW
+        alignItems = AlignItems.CENTER
+        cursor = Cursor.POINTER
+
+        image(streamerInfo.imageUrl, className = "search-result-logo") {
+            width = 24.px
+            marginRight = 8.px
+            borderRadius = 50.perc
+        }
+
+        span(streamerInfo.name)
+
+        onClick {
+            SearchOverlay.overlayVisible.value = false
+            SearchModel.onStreamerClick(streamerInfo)
         }
     }
 }
