@@ -3,8 +3,7 @@ package com.tomwyr.features.search
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.tomwyr.StreamerInfo
-import com.tomwyr.features.common.Padding
-import com.tomwyr.features.common.loadingView
+import com.tomwyr.features.common.loadingIndicator
 import io.kvision.core.*
 import io.kvision.html.*
 import io.kvision.panel.SimplePanel
@@ -23,7 +22,6 @@ class SearchView : SimplePanel() {
 
         width = 100.perc
         height = 100.perc
-        marginTop = 4.rem
         display = Display.FLEX
         flexDirection = FlexDirection.COLUMN
         alignItems = AlignItems.CENTER
@@ -61,14 +59,22 @@ private fun Div.queryInput() {
 
 private fun Div.validationMessage() {
     span().bind(SearchModel.searchQuery) {
+        position = Position.RELATIVE
+        top = 2.px
+        left = 4.px
+        fontSize = 14.px
+        color = Color.name(Col.INDIANRED)
+
         content = when (it) {
             is Ok -> null
             is Err -> when (it.error) {
                 SearchQueryFailure.Empty -> null
-                SearchQueryFailure.InvalidFormat -> "Only letters and digits are allowed."
-                SearchQueryFailure.TooShort -> "At least 3 characters are required"
+                SearchQueryFailure.InvalidFormat -> "Only letters, digits and underscore are allowed."
+                SearchQueryFailure.TooShort -> "At least 3 characters are required."
             }
         }
+
+        if (content == null) hide() else show()
     }
 }
 
@@ -77,9 +83,12 @@ private fun Div.searchResults() {
         when (state) {
             StreamersState.Initial -> Unit
 
-            StreamersState.Loading -> loadingView(
-                    padding = Padding(top = 3.25.rem, bottom = 1.75.rem, left = 1.rem, right = 1.rem)
-            )
+            StreamersState.Loading -> loadingIndicator {
+                paddingTop = 3.25.rem
+                paddingBottom = 1.75.rem
+                paddingLeft = 1.rem
+                paddingRight = 1.rem
+            }
 
             is StreamersState.Result -> when (state.result) {
                 is Ok -> ul {

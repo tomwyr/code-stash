@@ -68,7 +68,7 @@ div.wave {
 .action-button {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #00d1b2;
+    background-color: #74cc9f;
     color: white;
     text-align: center;
     font-size: 1rem;
@@ -80,7 +80,7 @@ div.wave {
 }
 
 .action-button:hover {
-    background-color: #07E6C9;
+    background-color: #61df9f;
 }
 
 body {

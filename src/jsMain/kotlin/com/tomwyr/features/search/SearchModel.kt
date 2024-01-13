@@ -54,7 +54,7 @@ object SearchModel {
     }
 
     fun onStreamerClick(streamerInfo: StreamerInfo) {
-        StreamModel.streamer.value = streamerInfo.id
+        StreamModel.selectedStreamer.value = streamerInfo
     }
 
     private fun getSearchQueryFlow(): Flow<SearchQueryResult> {

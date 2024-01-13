@@ -3,11 +3,8 @@ package com.tomwyr.features.stream
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.tomwyr.LateInfo
-import com.tomwyr.OffDays
+import com.tomwyr.*
 import com.tomwyr.StreamStatus.*
-import com.tomwyr.StreamerConfig
-import com.tomwyr.StreamerId
 import com.tomwyr.common.MainScope
 import com.tomwyr.common.extensions.asFlow
 import com.tomwyr.common.launchCatching
@@ -30,19 +27,24 @@ import kotlin.time.Duration.Companion.seconds
 
 typealias LateInfoResult = Result<LateInfo, LateServiceFailure>
 
+sealed class LateInfoState {
+    data object Initial : LateInfoState()
+    data object Loading : LateInfoState()
+    class Result(val result: LateInfoResult) : LateInfoState()
+}
+
 @OptIn(ExperimentalCoroutinesApi::class)
 object StreamModel {
     private var initialized = false
 
     private val lateService = LateService()
 
-    val lateInfo = ObservableValue<LateInfoResult?>(null)
+    val lateInfo = ObservableValue<LateInfoState>(LateInfoState.Initial)
     val viewRefresh = ObservableValue(Any())
-    val streamer = ObservableValue<StreamerId?>(null)
+    val selectedStreamer = ObservableValue<StreamerInfo?>(null)
 
     fun initialize() {
         if (!initialized) initialized = true else return
-
         startRefreshJob()
     }
 
@@ -52,9 +54,10 @@ object StreamModel {
 
     private fun startRefreshJob() {
         MainScope.launchCatching {
-            streamer.asFlow().filterNotNull()
+            selectedStreamer.asFlow().filterNotNull()
+                    .onEach { lateInfo.value = LateInfoState.Loading }
                     .flatMapLatest { getLateInfoFlow() }
-                    .onEach { lateInfo.value = it }
+                    .onEach { lateInfo.value = LateInfoState.Result(it) }
                     .flatMapLatest { getViewRefreshFlow(it) }
                     .collect { viewRefresh.value = Any() }
         }
@@ -62,7 +65,7 @@ object StreamModel {
 
     private fun getLateInfoFlow(): Flow<LateInfoResult> = flow {
         while (true) {
-            val result = getLateInfo()
+            val result = getLateInfo() // getLateInfo()
 
             emit(result)
 

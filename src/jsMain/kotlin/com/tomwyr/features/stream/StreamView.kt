@@ -2,13 +2,12 @@ package com.tomwyr.features.stream
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
 import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus
 import com.tomwyr.StreamerInfo
 import com.tomwyr.common.extensions.*
 import com.tomwyr.features.common.AppModel
-import com.tomwyr.features.common.loadingView
+import com.tomwyr.features.common.loadingIndicator
 import com.tomwyr.features.search.searchViewButton
 import com.tomwyr.services.LateServiceFailure
 import com.tomwyr.utils.here
@@ -29,14 +28,12 @@ class StreamView : SimplePanel() {
     init {
         addAfterInsertHook { StreamModel.initialize() }
 
-        bind(StreamModel.lateInfo) { result ->
-            container {
-                header {
-                    appInfo()
-                    searchViewButton()
-                }
-                lateInfo(result)
+        container {
+            header {
+                appInfo()
+                searchViewButton()
             }
+            lateInfo()
         }
     }
 }
@@ -83,8 +80,8 @@ private fun Container.appInfo() {
     }
 }
 
-private fun Container.lateInfo(result: Result<LateInfo, LateServiceFailure>?) {
-    div {
+private fun Container.lateInfo() {
+    div().bind(StreamModel.lateInfo) { state ->
         flexGrow = 1
         flexShrink = 0
         flexBasis = auto
@@ -94,11 +91,29 @@ private fun Container.lateInfo(result: Result<LateInfo, LateServiceFailure>?) {
         justifyContent = JustifyContent.CENTER
         alignItems = AlignItems.CENTER
 
-        when (result) {
-            null -> loadingView()
-            is Ok -> successView(result.value)
-            is Err -> failureView(result.error)
+        when (state) {
+            is LateInfoState.Initial -> emptyView()
+            is LateInfoState.Loading -> loadingView(StreamModel.selectedStreamer.value!!)
+            is LateInfoState.Result -> when (val result = state.result) {
+                is Ok -> successView(result.value)
+                is Err -> failureView(result.error, StreamModel.selectedStreamer.value!!)
+            }
         }
+    }
+}
+
+private fun Container.emptyView() {
+    span("..........")
+}
+
+private fun Container.loadingView(streamerInfo: StreamerInfo) {
+    h2(streamerInfo.name) {
+        color = Color.name(Col.LIGHTGRAY)
+    }
+
+    loadingIndicator {
+        marginTop = 56.px
+        marginBottom = 56.px
     }
 }
 
@@ -188,13 +203,19 @@ private fun Container.offlineDescription(streamerInfo: StreamerInfo, streamStart
     }
 }
 
-private fun Container.failureView(failure: LateServiceFailure) {
+private fun Container.failureView(failure: LateServiceFailure, streamerInfo: StreamerInfo) {
+    h2(streamerInfo.name) {
+        color = Color.name(Col.LIGHTGRAY)
+    }
+
     span(failure.message) {
         margin = 1.rem
-        colorName = Col.DARKGRAY
+        colorName = Col.GRAY
     }
 
     div(className = "action-button") {
+        marginTop = 20.px
+
         span("Retry")
     }.onClick { StreamModel.retry() }
 }

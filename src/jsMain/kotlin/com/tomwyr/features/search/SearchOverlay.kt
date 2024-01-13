@@ -6,6 +6,7 @@ import io.kvision.html.Div
 import io.kvision.state.ObservableValue
 import io.kvision.utils.perc
 import io.kvision.utils.px
+import io.kvision.utils.rem
 
 fun Container.searchOverlay(init: (Container.() -> Unit)?) {
     add(SearchOverlay)
@@ -21,6 +22,7 @@ object SearchOverlay : Div(className = "overlay-blur") {
         left = 0.px
         width = 100.perc
         height = 100.perc
+        paddingTop = 4.rem
         background = Background(Color("#ffffff80"))
         visible = false
 

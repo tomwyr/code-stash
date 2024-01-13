@@ -46,7 +46,7 @@ value class OffDays(val value: List<DayOfWeek>) {
 @Serializable
 value class SearchQuery(val value: String) {
     companion object {
-        val pattern = Regex("^[0-9a-zA-Z]*$")
+        val pattern = Regex("^[0-9a-zA-Z_]*$")
         val minLength = 3
     }
 
