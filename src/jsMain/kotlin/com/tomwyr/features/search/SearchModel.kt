@@ -8,6 +8,7 @@ import com.tomwyr.StreamerInfo
 import com.tomwyr.common.MainScope
 import com.tomwyr.common.extensions.asFlow
 import com.tomwyr.common.launchCatching
+import com.tomwyr.features.history.HistoryModel
 import com.tomwyr.features.stream.StreamModel
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure

@@ -106,16 +106,14 @@ private fun Div.searchResults() {
 }
 
 private fun Container.streamerTile(streamerInfo: StreamerInfo) {
-    li {
+    li(className = "search-result-item") {
         display = Display.FLEX
         flexDirection = FlexDirection.ROW
         alignItems = AlignItems.CENTER
         cursor = Cursor.POINTER
 
-        image(streamerInfo.imageUrl, className = "search-result-logo") {
-            width = 24.px
+        image(streamerInfo.imageUrl, className = "streamer-avatar") {
             marginRight = 8.px
-            borderRadius = 50.perc
         }
 
         span(streamerInfo.name)

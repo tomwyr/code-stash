@@ -1,9 +1,6 @@
 package com.tomwyr.services
 
-import com.tomwyr.LateInfo
-import com.tomwyr.SearchQuery
-import com.tomwyr.StreamerConfig
-import com.tomwyr.StreamerInfo
+import com.tomwyr.*
 import io.kvision.annotations.KVService
 import io.kvision.annotations.KVServiceException
 import io.kvision.remote.AbstractServiceException
@@ -20,7 +17,7 @@ interface ILateService {
 sealed class LateServiceFailure(override val message: String) : AbstractServiceException()
 
 @KVServiceException
-class StreamerNotFound : LateServiceFailure("Streamer with given ID could not be found.")
+class StreamerNotFound(val streamerId: StreamerId) : LateServiceFailure("Streamer with given ID could not be found.")
 
 @KVServiceException
 class StreamerInfoUnavailable : LateServiceFailure("Unable to retrieve streamer info data. Please try again later.")

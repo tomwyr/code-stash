@@ -8,6 +8,7 @@ import com.tomwyr.StreamerInfo
 import com.tomwyr.common.extensions.*
 import com.tomwyr.features.common.AppModel
 import com.tomwyr.features.common.loadingIndicator
+import com.tomwyr.features.history.historyView
 import com.tomwyr.features.search.searchViewButton
 import com.tomwyr.services.LateServiceFailure
 import com.tomwyr.utils.here
@@ -33,6 +34,7 @@ class StreamView : SimplePanel() {
                 appInfo()
                 searchViewButton()
             }
+            historyView()
             lateInfo()
         }
     }
@@ -120,7 +122,7 @@ private fun Container.loadingView(streamerInfo: StreamerInfo) {
 private fun Container.successView(lateInfo: LateInfo) {
     with(lateInfo) {
         h1(streamerInfo.name) {
-            color = Color.name(Col.DARKGRAY)
+            color = Color.name(Col.DIMGRAY)
             marginTop = 0.px
             marginBottom = 16.px
         }
@@ -138,7 +140,6 @@ private fun Container.successView(lateInfo: LateInfo) {
         }
 
         span("$streamStatus") {
-            colorName = Col.GRAY
             fontSize = 20.px
             marginTop = 1.rem
         }
@@ -222,7 +223,6 @@ private fun Container.failureView(failure: LateServiceFailure, streamerInfo: Str
 
     span(failure.message) {
         margin = 1.rem
-        colorName = Col.GRAY
     }
 
     div(className = "action-button") {

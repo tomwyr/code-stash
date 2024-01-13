@@ -50,7 +50,7 @@ actual class LateService(
     private fun resolveLateInfo(config: StreamerConfig, data: LateInfoData): LateInfo {
         val (user, currentStream, newestVideo) = data
 
-        val streamerInfo = user?.toStreamerInfo() ?: throw StreamerNotFound()
+        val streamerInfo = user?.toStreamerInfo() ?: throw StreamerNotFound(config.id)
         val (streamStatus, streamStart) = StreamInfoResolver.create(config, currentStream, newestVideo).getInfo()
         return LateInfo(streamerInfo, streamStatus, streamStart)
     }

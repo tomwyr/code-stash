@@ -11,8 +11,10 @@ import com.tomwyr.common.MainScope
 import com.tomwyr.common.extensions.asFlow
 import com.tomwyr.common.launchCatching
 import com.tomwyr.common.utils.periodicFlow
+import com.tomwyr.features.history.HistoryModel
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
+import com.tomwyr.services.StreamerNotFound
 import com.tomwyr.utils.now
 import io.kvision.state.ObservableValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,17 +40,35 @@ object StreamModel {
 
     private val lateService = LateService()
 
+    val selectedStreamer = ObservableValue<StreamerInfo?>(null)
+
     val lateInfo = ObservableValue<LateInfoState>(LateInfoState.Initial)
     val viewRefresh = ObservableValue(Any())
-    val selectedStreamer = ObservableValue<StreamerInfo?>(null)
 
     fun initialize() {
         if (!initialized) initialized = true else return
+        initHistoryListener()
         startRefreshJob()
     }
 
     fun retry() {
         startRefreshJob()
+    }
+
+    private fun initHistoryListener() {
+        MainScope.launchCatching {
+            lateInfo.asFlow().mapNotNull { state ->
+                ((state as? LateInfoState.Result)?.result as? Err)?.error as? StreamerNotFound
+            }.collect {
+                HistoryModel.onSelectedStreamerNotFound(it.streamerId)
+            }
+        }
+
+        MainScope.launchCatching {
+            selectedStreamer.asFlow().filterNotNull().collect {
+                HistoryModel.onSelectedStreamerChanged(it)
+            }
+        }
     }
 
     private fun startRefreshJob() {
