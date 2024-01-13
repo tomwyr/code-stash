@@ -1,4 +1,4 @@
-package com.tomwyr.common.extensions
+package com.tomwyr.extensions
 
 import kotlinx.datetime.DayOfWeek
 

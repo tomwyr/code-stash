@@ -4,6 +4,7 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.tomwyr.StreamerInfo
 import com.tomwyr.features.common.loadingIndicator
+import com.tomwyr.utils.addObservableListener
 import io.kvision.core.*
 import io.kvision.html.*
 import io.kvision.panel.SimplePanel
@@ -47,8 +48,8 @@ private fun Div.queryInput() {
     searchInput {
         placeholder = "Streamer name..."
 
-        SearchOverlay.overlayVisible.subscribe { visible ->
-            if (visible) focus()
+        addObservableListener(SearchOverlay.visibility) { visible ->
+            if (visible) focus() else value = ""
         }
 
         onInput {
@@ -119,7 +120,7 @@ private fun Container.streamerTile(streamerInfo: StreamerInfo) {
         span(streamerInfo.name)
 
         onClick {
-            SearchOverlay.overlayVisible.value = false
+            SearchOverlay.visibility.value = false
             SearchModel.onStreamerClick(streamerInfo)
         }
     }

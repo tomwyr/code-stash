@@ -1,4 +1,4 @@
-package com.tomwyr.common.extensions
+package com.tomwyr.extensions
 
 import com.tomwyr.utils.now
 import kotlinx.datetime.Instant

@@ -1,4 +1,4 @@
-package com.tomwyr.common
+package com.tomwyr.utils
 
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope

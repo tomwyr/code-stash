@@ -7,16 +7,16 @@ import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus.*
 import com.tomwyr.StreamerConfig
 import com.tomwyr.StreamerInfo
-import com.tomwyr.common.MainScope
-import com.tomwyr.common.extensions.asFlow
-import com.tomwyr.common.launchCatching
-import com.tomwyr.common.utils.periodicFlow
+import com.tomwyr.data.StreamersStorage
+import com.tomwyr.extensions.asFlow
 import com.tomwyr.features.history.HistoryModel
-import com.tomwyr.features.history.StreamersStorage
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
 import com.tomwyr.services.StreamerNotFound
+import com.tomwyr.utils.MainScope
+import com.tomwyr.utils.launchCatching
 import com.tomwyr.utils.now
+import com.tomwyr.utils.periodicFlow
 import io.kvision.state.ObservableValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -48,6 +48,7 @@ object StreamModel {
 
     fun initialize() {
         if (!initialized) initialized = true else return
+
         initSelectedStreamer()
         initHistoryNotifiers()
         startRefreshJob()

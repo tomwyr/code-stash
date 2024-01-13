@@ -1,4 +1,4 @@
-package com.tomwyr.features.history
+package com.tomwyr.data
 
 import com.tomwyr.StreamerId
 import com.tomwyr.StreamerInfo
@@ -11,7 +11,6 @@ import org.w3c.dom.set
 object StreamersStorage {
     private const val key = "streamers"
     private const val maxCount = 5
-
 
     fun loadAll(): List<StreamerInfo> {
         val data = localStorage[key] ?: ""

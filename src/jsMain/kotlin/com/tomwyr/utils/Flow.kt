@@ -1,4 +1,4 @@
-package com.tomwyr.common.utils
+package com.tomwyr.utils
 
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay

@@ -2,6 +2,7 @@ package com.tomwyr.features.history
 
 import com.tomwyr.StreamerId
 import com.tomwyr.StreamerInfo
+import com.tomwyr.data.StreamersStorage
 import com.tomwyr.features.stream.StreamModel
 import io.kvision.state.ObservableValue
 

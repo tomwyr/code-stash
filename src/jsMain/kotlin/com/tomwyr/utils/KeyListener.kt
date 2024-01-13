@@ -1,4 +1,4 @@
-package com.tomwyr.common
+package com.tomwyr.utils
 
 import io.kvision.core.Component
 import kotlinx.browser.window

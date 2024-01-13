@@ -5,7 +5,7 @@ import com.github.michaelbull.result.Ok
 import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus
 import com.tomwyr.StreamerInfo
-import com.tomwyr.common.extensions.*
+import com.tomwyr.extensions.*
 import com.tomwyr.features.common.AppModel
 import com.tomwyr.features.common.loadingIndicator
 import com.tomwyr.features.history.historyView
@@ -58,8 +58,7 @@ private fun StreamView.header(init: Div.() -> Unit) {
         padding = 1.rem
         justifyContent = JustifyContent.SPACEBETWEEN
 
-        appInfo()
-        searchViewButton()
+        init()
     }
 }
 

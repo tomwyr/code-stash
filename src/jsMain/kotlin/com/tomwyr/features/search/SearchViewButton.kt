@@ -1,6 +1,6 @@
 package com.tomwyr.features.search
 
-import com.tomwyr.common.addKeyListener
+import com.tomwyr.utils.addKeyListener
 import io.kvision.core.*
 import io.kvision.html.Div
 import io.kvision.utils.perc
@@ -35,6 +35,6 @@ class SearchViewButton : Div() {
     }
 
     private fun showOverlay() {
-        SearchOverlay.overlayVisible.value = true
+        SearchOverlay.visibility.value = true
     }
 }
