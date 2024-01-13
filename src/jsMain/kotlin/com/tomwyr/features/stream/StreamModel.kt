@@ -12,6 +12,7 @@ import com.tomwyr.common.extensions.asFlow
 import com.tomwyr.common.launchCatching
 import com.tomwyr.common.utils.periodicFlow
 import com.tomwyr.features.history.HistoryModel
+import com.tomwyr.features.history.StreamersStorage
 import com.tomwyr.services.LateService
 import com.tomwyr.services.LateServiceFailure
 import com.tomwyr.services.StreamerNotFound
@@ -47,7 +48,8 @@ object StreamModel {
 
     fun initialize() {
         if (!initialized) initialized = true else return
-        initHistoryListener()
+        initSelectedStreamer()
+        initHistoryNotifiers()
         startRefreshJob()
     }
 
@@ -55,7 +57,13 @@ object StreamModel {
         startRefreshJob()
     }
 
-    private fun initHistoryListener() {
+    private fun initSelectedStreamer() {
+        StreamersStorage.loadAll().firstOrNull()?.let {
+            selectedStreamer.value = it
+        }
+    }
+
+    private fun initHistoryNotifiers() {
         MainScope.launchCatching {
             lateInfo.asFlow().mapNotNull { state ->
                 ((state as? LateInfoState.Result)?.result as? Err)?.error as? StreamerNotFound
