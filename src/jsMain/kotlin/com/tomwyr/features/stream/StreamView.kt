@@ -104,7 +104,24 @@ private fun Container.lateInfo() {
 }
 
 private fun Container.emptyView() {
-    span("..........")
+    div {
+        display = Display.FLEX
+        flexDirection = FlexDirection.COLUMN
+        textAlign = TextAlign.CENTER
+
+        h2("Welcome to Late Checker") {
+            color = Color.name(Col.DIMGRAY)
+            margin = 24.px
+        }
+        h4("Search streamers by clicking the search button") {
+            color = Color.name(Col.DARKGRAY)
+            margin = 4.px
+        }
+        h4("or pressing the '/' key") {
+            color = Color.name(Col.DARKGRAY)
+            margin = 4.px
+        }
+    }
 }
 
 private fun Container.loadingView(streamerInfo: StreamerInfo) {

@@ -147,15 +147,11 @@ input.search-query:focus {
     height: 32px;
     opacity: 35%;
     transition: opacity .55s ease-in-out;
-    -moz-transition: opacity .55s ease-in-out;
-    -webkit-transition: opacity .55s ease-in-out;
 }
 
 .stream-history-item:hover > img {
     opacity: 100%;
     transition: opacity .55s ease-in-out;
-    -moz-transition: opacity .55s ease-in-out;
-    -webkit-transition: opacity .55s ease-in-out;
 }
 
 .stream-history-item > span {
@@ -164,14 +160,27 @@ input.search-query:focus {
     max-width: 0;
     overflow: hidden;
     transition: all .55s ease-in-out;
-    -moz-transition: all .55s ease-in-out;
-    -webkit-transition: all .55s ease-in-out;
 }
 
 .stream-history-item:hover > span {
     margin: 0 8px;
     max-width: 100%;
     transition: all .55s ease-in-out;
-    -moz-transition: all .55s ease-in-out;
-    -webkit-transition: all .55s ease-in-out;
 }
+
+@keyframes append-animate {
+    from {
+        max-height: 0;
+    }
+	to {
+        max-height: 100vh;
+    }
+}
+.search-results-panel {
+    overflow: hidden;
+}
+.search-results-panel > ul {
+    animation: append-animate .3s linear;
+}
+
+

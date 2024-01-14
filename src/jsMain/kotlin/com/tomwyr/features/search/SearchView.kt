@@ -80,7 +80,7 @@ private fun Div.validationMessage() {
 }
 
 private fun Div.searchResults() {
-    div().bind(SearchModel.streamers) { state ->
+    div(className = "search-results-panel").bind(SearchModel.streamers) { state ->
         when (state) {
             StreamersState.Initial -> Unit
 
