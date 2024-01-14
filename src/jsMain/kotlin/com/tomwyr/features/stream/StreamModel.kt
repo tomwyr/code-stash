@@ -3,6 +3,7 @@ package com.tomwyr.features.stream
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.mapError
 import com.tomwyr.LateInfo
 import com.tomwyr.StreamStatus.*
 import com.tomwyr.StreamerConfig
@@ -27,11 +28,16 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-typealias LateInfoResult = Result<LateInfo, LateServiceFailure>
+typealias LateInfoResult = Result<LateInfo, LateInfoError>
+
+class LateInfoError(
+        val streamerInfo: StreamerInfo,
+        val cause: LateServiceFailure,
+)
 
 sealed class LateInfoState {
     data object Initial : LateInfoState()
-    data object Loading : LateInfoState()
+    class Loading(val streamerInfo: StreamerInfo) : LateInfoState()
     class Result(val result: LateInfoResult) : LateInfoState()
 }
 
@@ -42,9 +48,12 @@ object StreamModel {
     private val lateService = LateService()
 
     val selectedStreamer = ObservableValue<StreamerInfo?>(null)
-
     val lateInfo = ObservableValue<LateInfoState>(LateInfoState.Initial)
     val viewRefresh = ObservableValue(Any())
+
+    private val selectedStreamerFlow = selectedStreamer.asFlow()
+            .distinctUntilChanged()
+            .filterNotNull()
 
     fun initialize() {
         if (!initialized) initialized = true else return
@@ -67,14 +76,14 @@ object StreamModel {
     private fun initHistoryNotifiers() {
         MainScope.launchCatching {
             lateInfo.asFlow().mapNotNull { state ->
-                ((state as? LateInfoState.Result)?.result as? Err)?.error as? StreamerNotFound
+                ((state as? LateInfoState.Result)?.result as? Err)?.error?.cause as? StreamerNotFound
             }.collect {
                 HistoryModel.onSelectedStreamerNotFound(it.streamerId)
             }
         }
 
         MainScope.launchCatching {
-            selectedStreamer.asFlow().filterNotNull().collect {
+            selectedStreamerFlow.collect {
                 HistoryModel.onSelectedStreamerChanged(it)
             }
         }
@@ -82,8 +91,8 @@ object StreamModel {
 
     private fun startRefreshJob() {
         MainScope.launchCatching {
-            selectedStreamer.asFlow().filterNotNull()
-                    .onEach { lateInfo.value = LateInfoState.Loading }
+            selectedStreamerFlow
+                    .onEach { lateInfo.value = LateInfoState.Loading(it) }
                     .flatMapLatest { getLateInfoFlow(it) }
                     .onEach { lateInfo.value = LateInfoState.Result(it) }
                     .flatMapLatest { getViewRefreshFlow(it) }
@@ -94,6 +103,7 @@ object StreamModel {
     private fun getLateInfoFlow(streamerInfo: StreamerInfo): Flow<LateInfoResult> = flow {
         while (true) {
             val result = getLateInfo(streamerInfo)
+                    .mapError { LateInfoError(streamerInfo, it) }
 
             emit(result)
 

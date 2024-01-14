@@ -10,7 +10,6 @@ import com.tomwyr.features.common.AppModel
 import com.tomwyr.features.common.loadingIndicator
 import com.tomwyr.features.history.historyView
 import com.tomwyr.features.search.searchViewButton
-import com.tomwyr.services.LateServiceFailure
 import com.tomwyr.utils.here
 import io.kvision.core.*
 import io.kvision.html.*
@@ -94,10 +93,10 @@ private fun Container.lateInfo() {
 
         when (state) {
             is LateInfoState.Initial -> emptyView()
-            is LateInfoState.Loading -> loadingView(StreamModel.selectedStreamer.value!!)
+            is LateInfoState.Loading -> loadingView(state.streamerInfo)
             is LateInfoState.Result -> when (val result = state.result) {
                 is Ok -> successView(result.value)
-                is Err -> failureView(result.error, StreamModel.selectedStreamer.value!!)
+                is Err -> failureView(result.error)
             }
         }
     }
@@ -113,7 +112,7 @@ private fun Container.emptyView() {
             color = Color.name(Col.DIMGRAY)
             margin = 24.px
         }
-        h4("Search streamers by clicking the search button") {
+        h4("Search streamers by clicking on the search box") {
             color = Color.name(Col.DARKGRAY)
             margin = 4.px
         }
@@ -232,12 +231,12 @@ private fun Container.offlineDescription(streamerInfo: StreamerInfo, streamStart
     }
 }
 
-private fun Container.failureView(failure: LateServiceFailure, streamerInfo: StreamerInfo) {
-    h2(streamerInfo.name) {
+private fun Container.failureView(error: LateInfoError) {
+    h2(error.streamerInfo.name) {
         color = Color.name(Col.LIGHTGRAY)
     }
 
-    span(failure.message) {
+    span(error.cause.message) {
         margin = 1.rem
     }
 
