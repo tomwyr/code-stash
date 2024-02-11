@@ -1,0 +1,7 @@
+.gradle
+.env
+
+build
+gradle/wrapper
+gradlew
+gradlew.bat
