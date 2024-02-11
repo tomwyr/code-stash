@@ -1,7 +1,5 @@
 package core
 
-import java.util.*
-
 data class TeamProposal(
         val membersByRole: Map<ProjectRole, List<TeamMember>>,
         val composition: Map<ProjectRole, TeamMember>,
@@ -30,7 +28,7 @@ value class ProfileUrl(val value: String)
 @JvmInline
 value class MemberName(val value: String)
 
-enum class TechSkill(val apiName: String) {
+enum class TechSkill(val displayName: String) {
     Assembly("Assembly"),
     Astro("Astro"),
     Awk("Awk"),
