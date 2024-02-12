@@ -1,4 +1,4 @@
-package data
+package data.apis
 
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
@@ -8,19 +8,12 @@ import com.aallam.openai.client.OpenAI
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import data.OpenAiClient.Error.AnswerNotFound
-import data.OpenAiClient.Error.UnknownQuery
+import data.apis.OpenAiApi.Error.AnswerNotFound
+import data.apis.OpenAiApi.Error.UnknownQuery
 import utils.Env
 import java.util.*
 
-@JvmInline
-value class QueryId(val value: String) {
-    companion object {
-        fun random(): QueryId = QueryId(UUID.randomUUID().toString())
-    }
-}
-
-object OpenAiClient {
+object OpenAiApi {
     private val client = OpenAI(Env.openAiApiKey)
     private val model = ModelId("gpt-3.5-turbo")
 
@@ -52,6 +45,13 @@ object OpenAiClient {
             return Ok(answer)
         } else {
             return Err(AnswerNotFound)
+        }
+    }
+
+    @JvmInline
+    value class QueryId(val value: String) {
+        companion object {
+            fun random(): QueryId = QueryId(UUID.randomUUID().toString())
         }
     }
 

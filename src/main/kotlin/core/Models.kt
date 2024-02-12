@@ -1,20 +1,22 @@
 package core
 
 data class TeamProposal(
-        val membersByRole: Map<ProjectRole, List<TeamMember>>,
-        val composition: Map<ProjectRole, TeamMember>,
+        val composition: List<ProjectRole>,
 )
 
 data class ProjectRole(
-        val name: RoleName,
+        val skill: TechSkill,
         val member: TeamMember,
 )
 
 data class TeamMember(
         val name: MemberName,
         val profileUrl: ProfileUrl,
+        val avatarUrl: AvatarUrl,
         val skills: List<TechSkill>,
-)
+) {
+    companion object
+}
 
 @JvmInline
 value class ProjectDescription(val value: String)
@@ -26,9 +28,12 @@ value class RoleName(val value: String)
 value class ProfileUrl(val value: String)
 
 @JvmInline
+value class AvatarUrl(val value: String)
+
+@JvmInline
 value class MemberName(val value: String)
 
-enum class TechSkill(val displayName: String) {
+enum class TechSkill(val language: String) {
     Assembly("Assembly"),
     Astro("Astro"),
     Awk("Awk"),
@@ -98,5 +103,7 @@ enum class TechSkill(val displayName: String) {
     VimSnippet("Vim Snippet"),
     VisualBasicDotNet("Visual Basic .NET"),
     XSsed("XSsed"),
-    Yacc("Yacc"),
+    Yacc("Yacc");
+
+    companion object
 }
