@@ -12,9 +12,9 @@ fun TeamMember.Companion.fromGitHub(
     }.distinct()
 
     return TeamMember(
-            name = MemberName(user.login),
-            profileUrl = ProfileUrl(user.htmlUrl),
-            avatarUrl = AvatarUrl(user.avatarUrl),
+            name = user.login,
+            profileUrl = user.htmlUrl,
+            avatarUrl = user.avatarUrl,
             skills = skills,
     )
 }

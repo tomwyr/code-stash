@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+    implementation ("org.slf4j:slf4j-nop:2.0.12")
     implementation("io.github.cdimascio:dotenv-java:3.0.0")
     implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.18")
     implementation("com.aallam.openai:openai-client:3.6.3")

@@ -8,23 +8,25 @@ import data.mappers.fromGitHub
 import data.mappers.fromOpenAiAnswer
 
 object TeamFinder {
-    suspend fun find(description: ProjectDescription): Result<TeamComposition, Error> {
-        return getProjectSkills(description).andThen { skills -> searchTeam(skills) }
+    suspend fun find(projectDescription: String): Result<TeamComposition, Error> {
+        return getProjectSkills(projectDescription)
+                .andThen { skills -> searchTeam(skills) }
+                .map { roles -> TeamComposition(projectDescription, roles) }
     }
 
-    private suspend fun getProjectSkills(description: ProjectDescription): Result<List<TechSkill>, Error> {
+    private suspend fun getProjectSkills(projectDescription: String): Result<List<TechSkill>, Error> {
         val answer = OpenAiApi.run {
-            val (queryId, message) = generateQueryId() to techQuery(description)
+            val (queryId, message) = generateQueryId() to techQuery(projectDescription)
             query(queryId, message).andThen { query(queryId, skillsQuery) }
         }
 
         return answer.map(TechSkill::fromOpenAiAnswer).mapError { FindingFailed }
     }
 
-    private suspend fun searchTeam(skills: List<TechSkill>): Result<TeamComposition, Error> {
+    private suspend fun searchTeam(skills: List<TechSkill>): Result<List<ProjectRole>, Error> {
         val roles = skills.map { skill ->
             val member = GitHubApi.run {
-                val user = searchUsers(skill, limit = 1).single()
+                val user = searchUsers(skill.language, limit = 1).single()
                 val repos = getUserLanguages(user.login)
                 TeamMember.fromGitHub(user, repos)
             }
@@ -32,7 +34,7 @@ object TeamFinder {
             ProjectRole(skill, member)
         }
 
-        return Ok(TeamComposition(roles))
+        return Ok(roles)
     }
 
     sealed class Error {
@@ -40,9 +42,9 @@ object TeamFinder {
     }
 }
 
-private fun techQuery(description: ProjectDescription): String = """
+private fun techQuery(projectDescription: String): String = """
 |What tech stack would be best to develop the following application:
-|${description.value}
+|$projectDescription
 """.trimMargin()
 
 private val skillsQuery = """

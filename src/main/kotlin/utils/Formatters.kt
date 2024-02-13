@@ -1,25 +1,29 @@
 package utils
 
+import core.ProjectRole
 import core.TeamComposition
 
-fun TeamComposition.format(): String {
-    val skills = composition.joinToString("\n\n") { role ->
-        val (skill, member) = role
-
-        """
-        |Skill:  ${skill.language}
-        |Name:   ${member.name.value}
-        |Avatar: ${member.avatarUrl.value}
-        |GitHub: ${member.profileUrl.value}
-        |Skills: ${member.skills.joinToString()}
-        """.trimMargin()
-    }
+fun TeamComposition.describe(): String {
+    val skills = roles.joinToString("\n\n") { it.describe() }
 
     return """
-    |Team Composition
+    |Team Composition:
     |
-    |Skills
+    |[Description]
+    |$projectDescription
     |
+    |[Roles]
     |$skills
+    |
+    """.trimMargin()
+}
+
+fun ProjectRole.describe(): String {
+    return """
+    |Skill:  ${skill.language}
+    |Name:   ${member.name}
+    |Avatar: ${member.avatarUrl}
+    |GitHub: ${member.profileUrl}
+    |Stack:  ${member.skills.joinToString()}
     """.trimMargin()
 }

@@ -1,6 +1,5 @@
 package data.apis
 
-import core.TechSkill
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -17,10 +16,10 @@ import java.net.URLEncoder
 object GitHubApi {
     private val client = createClient()
 
-    suspend fun searchUsers(skill: TechSkill, limit: Int): List<User> {
+    suspend fun searchUsers(language: String, limit: Int): List<User> {
         require(limit in 1..5)
 
-        val url = buildSearchUsersUrl(skill, limit)
+        val url = buildSearchUsersUrl(language, limit)
         val data = client.get(url).body<SearchUsersData>()
         return data.items
     }
@@ -30,9 +29,9 @@ object GitHubApi {
         return client.get(url).body<List<UserRepo>>()
     }
 
-    private fun buildSearchUsersUrl(skill: TechSkill, limit: Int): String {
+    private fun buildSearchUsersUrl(language: String, limit: Int): String {
         val usersUrl = "https://api.github.com/search/users"
-        val query = "language:${skill.name} type:User".uriEncoded
+        val query = "language:$language type:User".uriEncoded
         val sort = "sort=followers"
         val perPage = "per_page=$limit"
         return "$usersUrl?q=$query&$sort&$perPage"

@@ -1,7 +1,8 @@
 package core
 
 data class TeamComposition(
-        val composition: List<ProjectRole>,
+        val projectDescription: String,
+        val roles: List<ProjectRole>,
 )
 
 data class ProjectRole(
@@ -10,28 +11,13 @@ data class ProjectRole(
 )
 
 data class TeamMember(
-        val name: MemberName,
-        val profileUrl: ProfileUrl,
-        val avatarUrl: AvatarUrl,
+        val name: String,
+        val profileUrl: String,
+        val avatarUrl: String,
         val skills: List<TechSkill>,
 ) {
     companion object
 }
-
-@JvmInline
-value class ProjectDescription(val value: String)
-
-@JvmInline
-value class RoleName(val value: String)
-
-@JvmInline
-value class ProfileUrl(val value: String)
-
-@JvmInline
-value class AvatarUrl(val value: String)
-
-@JvmInline
-value class MemberName(val value: String)
 
 enum class TechSkill(val language: String) {
     Assembly("Assembly"),
