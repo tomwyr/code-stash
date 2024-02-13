@@ -9,6 +9,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import utils.Env
 import java.net.URLEncoder
@@ -37,17 +38,19 @@ object GitHubApi {
         return "$usersUrl?q=$query&$sort&$perPage"
     }
 
+    @Serializable
     class SearchUsersData(
             val items: List<User>,
     )
 
+    @Serializable
     class User(
             val login: String,
             @SerialName("avatar_url") val avatarUrl: String,
             @SerialName("html_url") val htmlUrl: String,
-            @SerialName("languages_url") val languagesUrl: List<String>
     )
 
+    @Serializable
     class UserRepo(
             val language: String?,
     )
@@ -63,7 +66,7 @@ private fun createClient() = HttpClient(CIO) {
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true
-            isLenient = true
+            ignoreUnknownKeys = true
         })
     }
 }

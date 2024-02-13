@@ -2,14 +2,12 @@ package data.apis
 
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.api.chat.ChatResponseFormat
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import data.apis.OpenAiApi.Error.AnswerNotFound
-import data.apis.OpenAiApi.Error.UnknownQuery
 import utils.Env
 import java.util.*
 
@@ -28,16 +26,10 @@ object OpenAiApi {
     }
 
     suspend fun query(queryId: QueryId, message: String): Result<String, Error> {
-        val history = chatHistory[queryId] ?: return Err(UnknownQuery)
+        val history = chatHistory.getOrPut(queryId, ::emptyList)
         val messages = history + ChatMessage.User(message)
 
-        val completion = client.chatCompletion(
-                ChatCompletionRequest(
-                        model = model,
-                        messages = messages,
-                        responseFormat = ChatResponseFormat.JsonObject,
-                )
-        )
+        val completion = client.chatCompletion(ChatCompletionRequest(model, messages))
         val answer = completion.choices.firstNotNullOfOrNull { choice -> choice.message.content }
 
         if (answer != null) {

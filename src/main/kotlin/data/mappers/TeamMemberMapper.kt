@@ -9,7 +9,7 @@ fun TeamMember.Companion.fromGitHub(
 ): TeamMember {
     val skills = repos.mapNotNull { repo ->
         repo.language?.let(TechSkill::fromGitHubLanguage)
-    }
+    }.distinct()
 
     return TeamMember(
             name = MemberName(user.login),

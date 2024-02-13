@@ -8,7 +8,7 @@ import data.mappers.fromGitHub
 import data.mappers.fromOpenAiAnswer
 
 object TeamFinder {
-    suspend fun find(description: ProjectDescription): Result<TeamProposal, Error> {
+    suspend fun find(description: ProjectDescription): Result<TeamComposition, Error> {
         return getProjectSkills(description).andThen { skills -> searchTeam(skills) }
     }
 
@@ -21,7 +21,7 @@ object TeamFinder {
         return answer.map(TechSkill::fromOpenAiAnswer).mapError { FindingFailed }
     }
 
-    private suspend fun searchTeam(skills: List<TechSkill>): Result<TeamProposal, Error> {
+    private suspend fun searchTeam(skills: List<TechSkill>): Result<TeamComposition, Error> {
         val roles = skills.map { skill ->
             val member = GitHubApi.run {
                 val user = searchUsers(skill, limit = 1).single()
@@ -32,7 +32,7 @@ object TeamFinder {
             ProjectRole(skill, member)
         }
 
-        return Ok(TeamProposal(roles))
+        return Ok(TeamComposition(roles))
     }
 
     sealed class Error {

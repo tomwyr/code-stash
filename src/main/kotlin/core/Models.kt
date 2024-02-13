@@ -1,6 +1,6 @@
 package core
 
-data class TeamProposal(
+data class TeamComposition(
         val composition: List<ProjectRole>,
 )
 
