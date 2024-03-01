@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'tech_skill.dart';
 
-part '../team.g.dart';
+part 'team.g.dart';
 
 @JsonSerializable()
 class TeamComposition {

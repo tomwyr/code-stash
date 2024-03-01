@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'core/team.dart';
+part of 'team.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

@@ -1,3 +1,5 @@
 import 'api/run.dart';
 
-void main() => runApi();
+void main() {
+  runApi();
+}
