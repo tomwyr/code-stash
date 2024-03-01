@@ -1,0 +1,44 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "dart",
+			"command": "dart",
+			"cwd": "backend",
+			"args": [
+				"run",
+				"build_runner",
+				"build"
+			],
+			"problemMatcher": [],
+			"label": "build backend",
+			"detail": "dart: dart run build_runner buil"
+		},
+		{
+			"type": "dart",
+			"command": "dart",
+			"cwd": "frontend",
+			"args": [
+				"run",
+				"build_runner",
+				"build"
+			],
+			"problemMatcher": [],
+			"label": "build frontend",
+			"detail": "dart: dart run build_runner build"
+		},
+		{
+			"type": "dart",
+			"command": "dart",
+			"cwd": "common",
+			"args": [
+				"run",
+				"build_runner",
+				"build"
+			],
+			"problemMatcher": [],
+			"label": "build common",
+			"detail": "dart: dart run build_runner build"
+		},
+	]
+}
