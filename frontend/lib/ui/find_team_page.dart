@@ -1,4 +1,5 @@
 import 'package:code_connect_common/code_connect_common.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:rust_core/result.dart';
 
@@ -13,8 +14,8 @@ class FindTeamPage extends StatefulWidget {
 }
 
 class _FindTeamPageState extends State<FindTeamPage> {
-  final controller = TextEditingController();
-  final api = CodeConnectApi();
+  final controller = TextEditingController(text: mockDescription);
+  final teamFinder = CodeConnectApi();
 
   TeamComposition? composition;
   bool loading = false;
@@ -64,7 +65,9 @@ class _FindTeamPageState extends State<FindTeamPage> {
         ],
       );
 
-  Widget buildData(TeamComposition composition) => Text(composition.describe());
+  Widget buildData(TeamComposition composition) => SingleChildScrollView(
+        child: Text(composition.describe()),
+      );
 
   String? validateProjectDescription(String? value) {
     if (value == null || value.isEmpty) {
@@ -87,10 +90,10 @@ class _FindTeamPageState extends State<FindTeamPage> {
       closeBanner = controller.close;
     }
 
-    Future<Result<TeamComposition, Error>?> tryFindTeam() async {
+    Future<Result<TeamComposition, TeamFinderError>?> tryFindTeam() async {
       try {
-        return await api.findTeam(projectDescription);
-      } catch (error) {
+        return await teamFinder.find(projectDescription);
+      } on DioException catch (error) {
         if (context.mounted) {
           showError(error);
         }
@@ -98,7 +101,7 @@ class _FindTeamPageState extends State<FindTeamPage> {
       }
     }
 
-    void processResult(Result<TeamComposition, Error> result) {
+    void processResult(Result<TeamComposition, TeamFinderError> result) {
       switch (result) {
         case Ok(:var ok):
           setState(() {

@@ -1,7 +1,7 @@
 import 'package:dart_openai/dart_openai.dart';
 import 'package:rust_core/result.dart';
 
-import '../../../utils/env.dart';
+import '../../../../utils/env.dart';
 import 'models.dart';
 
 class OpenAiApi {
@@ -26,14 +26,17 @@ class OpenAiApi {
 
     if (answer != null) {
       _chatHistory[queryId] = messages;
-      return Ok(answer);
+      return answer.toOk();
     } else {
-      return Err(AnswerNotFound());
+      return AnswerNotFound().toErr();
     }
   }
 
   ChatMessage _createChatMessage(String text) {
-    return ChatMessage(role: ChatRole.user, content: [ChatMessageContent.text(text)]);
+    return ChatMessage(
+      role: ChatRole.user,
+      content: [ChatMessageContent.text(text)],
+    );
   }
 
   OpenAI _createClient() {

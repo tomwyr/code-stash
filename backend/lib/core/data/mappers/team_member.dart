@@ -1,7 +1,6 @@
 import 'package:code_connect_common/code_connect_common.dart';
 import 'package:collection/collection.dart';
 
-import '../../utils/extensions.dart';
 import '../apis/github/models.dart';
 import 'tech_skill.dart';
 

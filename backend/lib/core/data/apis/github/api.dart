@@ -1,7 +1,8 @@
 import 'package:code_connect_common/code_connect_common.dart';
 import 'package:dio/dio.dart';
+import 'package:rust_core/result.dart';
 
-import '../../../utils/env.dart';
+import '../../../../utils/env.dart';
 import 'models.dart';
 
 class GitHubApi {
@@ -13,21 +14,21 @@ class GitHubApi {
     },
   ));
 
-  Future<List<User>> searchUsers(String language, int limit) async {
+  Future<Result<List<User>, GitHubApiError>> searchUsers(String language, int limit) async {
     if (limit < 1 || limit > 5) {
       throw ArgumentError.value(limit);
     }
 
     final path = _buildSearchUsersPath(language, limit);
     final response = await _client.get(path);
-    final data = response.body(SearchUsersData.fromJson);
-    return data.items;
+    final data = response.body<SearchUsersData>();
+    return data.items.toOk();
   }
 
-  Future<List<UserRepo>> getUserLanguages(String login) async {
+  Future<Result<List<UserRepo>, GitHubApiError>> getUserLanguages(String login) async {
     final path = '/users/$login/repos';
     final response = await _client.get(path);
-    return response.bodyList(UserRepo.fromJson);
+    return response.bodyList<UserRepo>().toOk();
   }
 
   String _buildSearchUsersPath(String language, int limit) {

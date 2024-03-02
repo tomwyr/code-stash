@@ -7,9 +7,9 @@ class CodeConnectApi {
     baseUrl: 'http://localhost:8080',
   ));
 
-  Future<Result<TeamComposition, Error>> findTeam(String projectDescription) async {
+  Future<Result<TeamComposition, TeamFinderError>> find(String projectDescription) async {
     final input = FindTeamInput(projectDescription: projectDescription);
-    final response = await _client.get('/team/find/', data: input.toJson());
-    return response.body(TeamComposition.fromJson).toOk();
+    final response = _client.get('/team/find/', data: input.toJson());
+    return response.toResult<TeamComposition, TeamFinderError>();
   }
 }
