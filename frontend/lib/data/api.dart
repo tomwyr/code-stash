@@ -2,9 +2,11 @@ import 'package:code_connect_common/code_connect_common.dart';
 import 'package:dio/dio.dart';
 import 'package:rust_core/result.dart';
 
+import '../utils/env.dart';
+
 class CodeConnectApi {
   final _client = Dio(BaseOptions(
-    baseUrl: 'http://localhost:8080',
+    baseUrl: Env.apiBaseUrl,
   ));
 
   Future<Result<TeamComposition, TeamFinderError>> find(String projectDescription) async {
