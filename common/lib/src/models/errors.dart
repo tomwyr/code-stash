@@ -9,7 +9,7 @@ sealed class TeamFinderError {
         _ => throw UnexpectedSealedTypeError(TeamFinderError, json['type']),
       };
 
-  Map<String, dynamic> toJosn() => {
+  Map<String, dynamic> toJson() => {
         'type': switch (this) {
           GitHubServiceUnavailable() => 'GitHubServiceUnavailable',
           OpenAiServiceUnavailable() => 'OpenAiServiceUnavailable',

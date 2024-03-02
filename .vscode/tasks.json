@@ -12,7 +12,7 @@
 			],
 			"problemMatcher": [],
 			"label": "build backend",
-			"detail": "dart: dart run build_runner buil"
+			"detail": "dart: dart run build_runner build"
 		},
 		{
 			"type": "dart",
@@ -39,6 +39,45 @@
 			"problemMatcher": [],
 			"label": "build common",
 			"detail": "dart: dart run build_runner build"
+		},
+		{
+			"type": "dart",
+			"command": "dart",
+			"cwd": "backend",
+			"args": [
+				"run",
+				"build_runner",
+				"watch"
+			],
+			"problemMatcher": [],
+			"label": "watch backend",
+			"detail": "dart: dart run build_runner watch"
+		},
+		{
+			"type": "dart",
+			"command": "dart",
+			"cwd": "frontend",
+			"args": [
+				"run",
+				"build_runner",
+				"watch"
+			],
+			"problemMatcher": [],
+			"label": "watch frontend",
+			"detail": "dart: dart run build_runner watch"
+		},
+		{
+			"type": "dart",
+			"command": "dart",
+			"cwd": "common",
+			"args": [
+				"run",
+				"build_runner",
+				"watch"
+			],
+			"problemMatcher": [],
+			"label": "watch common",
+			"detail": "dart: dart run build_runner watch"
 		},
 	]
 }

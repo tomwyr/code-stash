@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'find_team_page.dart';
+import 'features/find_team/page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

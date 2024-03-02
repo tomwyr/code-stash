@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:rust_core/result.dart';
 
+import '../../../code_connect_common.dart';
 import '../json/json.dart';
 
 class ResultConverter<S, F extends Object>
