@@ -8,5 +8,5 @@ import 'team_service.dart';
 
 Future<void> runApi() async {
   final handler = Pipeline().addMiddleware(logRequests()).addHandler(TeamService().handler);
-  await serve(handler, InternetAddress.anyIPv4, int.parse(Env.appPort));
+  await serve(handler, InternetAddress.anyIPv4, int.parse(Env.port));
 }

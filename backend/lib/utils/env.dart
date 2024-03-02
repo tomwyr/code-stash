@@ -5,7 +5,7 @@ import 'package:dotenv/dotenv.dart';
 class Env {
   static final _getVar = _getFromEnvironment();
 
-  static final appPort = _getVar('APP_PORT');
+  static final port = _getVar('PORT');
   static final openAiApiKey = _getVar('OPENAI_API_KEY');
   static final gitHubApiKey = _getVar('GITHUB_API_KEY');
 }
