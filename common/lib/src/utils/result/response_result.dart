@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:rust_core/result.dart';
 
@@ -10,21 +12,44 @@ class ResponseResult<S, F extends Object> {
   Future<Result<S, F>> convert(Future<Response> future) async {
     try {
       final response = await future;
-      return convertResult(response, 200);
+      return _convertResult(response, 200);
     } on DioException catch (error) {
-      if (error.response case var response?) {
-        return convertResult(response, 500);
-      } else {
+      final response = error.response;
+      if (response == null || !_isErrResponse(response)) {
         rethrow;
       }
+      return _convertResult(response, 500);
     }
   }
 
-  Future<Result<S, F>> convertResult(Response response, int statusCode) async {
+  bool _isErrResponse(Response response) {
+    if (response.statusCode != 500) {
+      return false;
+    }
+
+    final json = _jsonOrNull(response);
+    if (json case {'type': 'ok' || 'err', 'data': Map<String, dynamic>()}) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Result<S, F> _convertResult(Response response, int statusCode) {
     if (response.statusCode != statusCode) {
       throw NotResultResponseError(Result<S, F>, response);
     }
-    return converter.fromJson(response.data);
+
+    final json = jsonDecode(response.data);
+    return converter.fromJson(json);
+  }
+
+  Map<String, dynamic>? _jsonOrNull(Response response) {
+    try {
+      return jsonDecode(response.data);
+    } on FormatException {
+      return null;
+    }
   }
 }
 

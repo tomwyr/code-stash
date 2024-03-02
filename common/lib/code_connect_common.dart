@@ -11,3 +11,4 @@ export 'src/models/errors.dart';
 export 'src/models/inputs.dart';
 export 'src/utils/json/json.dart';
 export 'src/utils/json/json_types.dart';
+export 'src/utils/result/result_converter.dart';

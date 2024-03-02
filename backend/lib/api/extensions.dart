@@ -13,12 +13,12 @@ extension RequestBody on Request {
 }
 
 extension ResultToResponse<S, F extends Object> on Result<S, F> {
-  Response toResponse() => switch (this) {
-        Ok(:var ok) => jsonResponse(HttpStatus.ok, ok),
-        Err(:var err) => jsonResponse(HttpStatus.internalServerError, err),
-      };
-}
-
-Response jsonResponse(int statusCode, dynamic body) {
-  return Response(statusCode, body: jsonEncode(body.toJson()));
+  Response toResponse() {
+    final body = jsonEncode(ResultConverter().toJson(this));
+    final statusCode = switch (this) {
+      Ok() => HttpStatus.ok,
+      Err() => HttpStatus.internalServerError,
+    };
+    return Response(statusCode, body: body);
+  }
 }

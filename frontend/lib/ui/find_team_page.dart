@@ -116,12 +116,14 @@ class _FindTeamPageState extends State<FindTeamPage> {
       loading = true;
     });
 
-    final result = await tryFindTeam();
-    if (result != null) processResult(result);
-
-    setState(() {
-      loading = false;
-    });
+    try {
+      final result = await tryFindTeam();
+      if (result != null) processResult(result);
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 }
 

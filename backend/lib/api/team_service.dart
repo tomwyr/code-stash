@@ -3,7 +3,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
 import '../core/finder/team_finder.dart';
-import 'utils.dart';
+import 'extensions.dart';
 
 part 'team_service.g.dart';
 
