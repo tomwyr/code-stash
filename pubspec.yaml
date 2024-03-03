@@ -1,7 +1,7 @@
 name: code_connect
-description: A starting point for Dart libraries or applications.
+description: Code Connect streamlines connecting software engineers with new project ideas.
 publish_to: none
-version: 1.0.0
+version: 0.1.0
 
 environment:
   sdk: ^3.3.0
