@@ -14,7 +14,7 @@ dependencies:
   flutter_dotenv: ^5.1.0
   flutter_mobx: ^2.2.0+2
   mobx: ^2.3.0+1
-  rust_core: ^0.3.6
+  rust_core: ^0.4.0
 
 dev_dependencies:
   build_runner: ^2.4.8

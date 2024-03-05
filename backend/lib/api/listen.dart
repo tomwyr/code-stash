@@ -8,7 +8,7 @@ import 'package:time/time.dart';
 import '../utils/env.dart';
 import 'team_service.dart';
 
-Future<void> runApi() async {
+Future<void> listen() async {
   final handler = Pipeline()
       .addMiddleware(logRequests())
       .addMiddleware(throttle(1.seconds))

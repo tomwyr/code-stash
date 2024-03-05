@@ -1,7 +1,7 @@
-import 'api/run.dart';
+import 'api/listen.dart';
 import 'utils/json_types.dart';
 
-void main() {
+Future<void> main() async {
   registerJsonTypes();
-  runApi();
+  await listen();
 }

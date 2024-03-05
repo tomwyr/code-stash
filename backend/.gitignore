@@ -2,5 +2,8 @@
 # Created by `dart pub`
 .dart_tool/
 
+# Build outputs
+build
+
 # Environment config
 .env
