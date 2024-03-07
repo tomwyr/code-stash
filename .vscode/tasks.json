@@ -2,82 +2,140 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "dart",
-			"command": "dart",
-			"cwd": "backend",
-			"args": [
-				"run",
-				"build_runner",
-				"build"
-			],
-			"problemMatcher": [],
 			"label": "build backend",
-			"detail": "dart: dart run build_runner build"
-		},
-		{
-			"type": "dart",
-			"command": "dart",
-			"cwd": "frontend",
-			"args": [
-				"run",
-				"build_runner",
-				"build"
-			],
-			"problemMatcher": [],
-			"label": "build frontend",
-			"detail": "dart: dart run build_runner build"
-		},
-		{
-			"type": "dart",
-			"command": "dart",
-			"cwd": "common",
-			"args": [
-				"run",
-				"build_runner",
-				"build"
-			],
-			"problemMatcher": [],
-			"label": "build common",
-			"detail": "dart: dart run build_runner build"
-		},
-		{
-			"type": "dart",
-			"command": "dart",
+			"detail": "dart: dart run build_runner build",
 			"cwd": "backend",
+			"type": "dart",
+			"command": "dart",
 			"args": [
 				"run",
 				"build_runner",
-				"watch"
+				"build"
 			],
-			"problemMatcher": [],
-			"label": "watch backend",
-			"detail": "dart: dart run build_runner watch"
 		},
 		{
-			"type": "dart",
-			"command": "dart",
+			"label": "build frontend",
+			"detail": "dart: dart run build_runner build",
 			"cwd": "frontend",
-			"args": [
-				"run",
-				"build_runner",
-				"watch"
-			],
-			"problemMatcher": [],
-			"label": "watch frontend",
-			"detail": "dart: dart run build_runner watch"
-		},
-		{
 			"type": "dart",
 			"command": "dart",
+			"args": [
+				"run",
+				"build_runner",
+				"build"
+			],
+		},
+		{
+			"label": "build common",
+			"detail": "dart: dart run build_runner build",
 			"cwd": "common",
+			"type": "dart",
+			"command": "dart",
+			"args": [
+				"run",
+				"build_runner",
+				"build"
+			],
+		},
+		{
+			"label": "build all",
+			"detail": "dart: dart run build_runner_build",
+			"type": "shell",
+			"dependsOn": [
+				"build backend",
+				"build frontend",
+				"build common",
+			],
+		},
+		{
+			"label": "watch backend",
+			"detail": "dart: dart run build_runner watch",
+			"cwd": "backend",
+			"type": "dart",
+			"command": "dart",
 			"args": [
 				"run",
 				"build_runner",
 				"watch"
 			],
-			"problemMatcher": [],
+		},
+		{
+			"label": "watch frontend",
+			"detail": "dart: dart run build_runner watch",
+			"cwd": "frontend",
+			"type": "dart",
+			"command": "dart",
+			"args": [
+				"run",
+				"build_runner",
+				"watch"
+			],
+		},
+		{
 			"label": "watch common",
-			"detail": "dart: dart run build_runner watch"
+			"detail": "dart: dart run build_runner watch",
+			"cwd": "common",
+			"type": "dart",
+			"command": "dart",
+			"args": [
+				"run",
+				"build_runner",
+				"watch"
+			],
+		},
+		{
+			"label": "pub get root",
+			"detail": "dart: dart pub get",
+			"type": "dart",
+			"command": "dart",
+			"args": [
+				"pub",
+				"get",
+			],
+		},
+		{
+			"label": "pub get backend",
+			"detail": "dart: dart pub get",
+			"cwd": "backend",
+			"type": "dart",
+			"command": "dart",
+			"args": [
+				"pub",
+				"get",
+			],
+		},
+		{
+			"label": "pub get frontend",
+			"detail": "dart: dart pub get",
+			"cwd": "frontend",
+			"type": "dart",
+			"command": "dart",
+			"args": [
+				"pub",
+				"get",
+			],
+		},
+		{
+			"label": "pub get common",
+			"detail": "dart: dart pub get",
+			"cwd": "common",
+			"type": "dart",
+			"command": "dart",
+			"args": [
+				"pub",
+				"get",
+			],
+		},
+		{
+			"label": "pub get all",
+			"detail": "dart: dart pub get",
+			"type": "shell",
+			"dependsOn": [
+				"pub get backend",
+				"pub get frontend",
+				"pub get common",
+				"pub get root",
+			],
 		},
 	]
 }
