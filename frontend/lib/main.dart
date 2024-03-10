@@ -5,7 +5,7 @@ import 'utils/env.dart';
 import 'utils/json_types.dart';
 
 void main() async {
-  Env.init();
+  await loadEnv();
   registerJsonTypes();
   runApp(const App());
 }
