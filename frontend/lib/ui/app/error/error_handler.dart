@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 
-import '../widgets/error_displayer.dart';
+import '../../widgets/error_displayer.dart';
+
+part 'texts.dart';
 
 class AppErrorHandler {
   late DisplayError _displayError;
@@ -11,7 +13,7 @@ class AppErrorHandler {
 
   void call(Object error, StackTrace stackTrace) {
     final message = switch (error) {
-      DioException() => _texts.genericError,
+      DioException(response: Response(statusCode: 500)) => _texts.serverError,
       _ => null,
     };
 
@@ -20,5 +22,3 @@ class AppErrorHandler {
     }
   }
 }
-
-const _texts = (genericError: 'Something went wrong. Please try again in a few minutes.');

@@ -8,7 +8,7 @@ ThemeData get appTheme => ThemeData().copyWith(
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: colors.complementary,
         selectionHandleColor: colors.complementary,
-        selectionColor: colors.complementary.withOpacity(0.5),
+        selectionColor: colors.complementary.withOpacity(0.25),
       ),
       inputDecorationTheme: InputDecorationTheme(
         activeIndicatorBorder: BorderSide(color: colors.complementary),
@@ -38,7 +38,7 @@ class AppColors {
   final complementary = Color(0xffffce90);
   final onBrand = Colors.black;
   final background = Colors.white;
-  final hint = Colors.grey[600];
+  final hint = Colors.grey;
   final canvas = Colors.grey[50]!;
   final card = Colors.grey[200]!;
 }

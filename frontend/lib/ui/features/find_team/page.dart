@@ -5,7 +5,8 @@ import 'package:mobx/mobx.dart';
 
 import '../../../utils/formatters.dart';
 import '../../app/theme.dart';
-import '../../utils/auto_dispose.dart';
+import '../../widgets/auto_dispose.dart';
+import '../../widgets/error_displayer.dart';
 import '../../widgets/text_builder.dart';
 import 'store.dart';
 
@@ -32,22 +33,10 @@ class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
       (_) => store.error,
       (error) {
         if (error != null) {
-          showError(_texts.findingError);
+          context.showError(_texts.findingError);
         }
       },
     )..disposeBy(this);
-  }
-
-  void showError(String error) {
-    VoidCallback closeBanner = () {};
-    final banner = MaterialBanner(
-      content: Text(error),
-      actions: [
-        CloseButton(onPressed: () => closeBanner()),
-      ],
-    );
-    final controller = ScaffoldMessenger.of(context).showMaterialBanner(banner);
-    closeBanner = controller.close;
   }
 
   @override
@@ -99,6 +88,8 @@ class _FormState extends State<_Form> with AutoDispose {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _Header(),
+        const SizedBox(height: 24),
         Text(
           _texts.title,
           style: Theme.of(context).textTheme.titleMedium,
@@ -129,6 +120,45 @@ class _FormState extends State<_Form> with AutoDispose {
   }
 }
 
+class _Header extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Transform.translate(
+              offset: Offset(-8, 0),
+              child: Icon(
+                Icons.keyboard_arrow_right,
+                color: colors.complementary,
+                size: 28,
+              ),
+            ),
+            Transform.translate(
+              offset: Offset(-12, 0),
+              child: Text(
+                _texts.header,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _texts.subHeader,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w400,
+              ),
+        ),
+      ],
+    );
+  }
+}
+
 class _SubmitButton extends StatelessWidget {
   const _SubmitButton({
     required this.textController,
@@ -140,8 +170,7 @@ class _SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
+    return Center(
       child: TextBuilder(
         controller: textController,
         builder: (text) => ElevatedButton(
@@ -185,6 +214,7 @@ class _TextInput extends StatelessWidget {
       controller: params.controller,
       readOnly: loading,
       maxLines: null,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return _texts.inputEmptyError;
@@ -206,19 +236,25 @@ class _TextInput extends StatelessWidget {
 class _Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(_texts.loadingPlaceholder),
-        SizedBox(height: 24),
-        SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.5,
-            color: colors.complementary,
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(height: 24),
+          SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              color: colors.complementary,
+            ),
           ),
-        ),
-      ],
+          SizedBox(height: 12),
+          Text(
+            _texts.loadingPlaceholder,
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+        ],
+      ),
     );
   }
 }

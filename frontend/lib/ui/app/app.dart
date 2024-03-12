@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../features/find_team/page.dart';
 import '../widgets/error_displayer.dart';
-import 'error.dart';
+import 'error/error_handler.dart';
 import 'layout.dart';
 import 'theme.dart';
 

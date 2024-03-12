@@ -38,7 +38,10 @@ class ErrorDisplayerState extends State<ErrorDisplayer> {
         ),
       ],
     );
-    final controller = ScaffoldMessenger.of(context).showMaterialBanner(banner);
+
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.clearMaterialBanners();
+    final controller = messenger.showMaterialBanner(banner);
     closeBanner = controller.close;
   }
 
@@ -53,5 +56,5 @@ class ErrorDisplayerState extends State<ErrorDisplayer> {
 }
 
 extension BuildContextErrorDisplayer on BuildContext {
-  ErrorDisplayerState get errorDisplayer => ErrorDisplayer.of(this);
+  DisplayError get showError => ErrorDisplayer.of(this).showError;
 }

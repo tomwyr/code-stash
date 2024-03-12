@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'ui/app/app.dart';
-import 'ui/app/error.dart';
+import 'ui/app/error/error_handler.dart';
 import 'utils/env.dart';
 import 'utils/json_types.dart';
 
