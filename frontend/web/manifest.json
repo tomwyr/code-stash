@@ -1,6 +1,6 @@
 {
-    "name": "code_connect_frontend",
-    "short_name": "code_connect_frontend",
+    "name": "Code Connect",
+    "short_name": "Code Connect",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

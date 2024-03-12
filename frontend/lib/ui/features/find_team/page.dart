@@ -4,10 +4,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../utils/formatters.dart';
+import '../../app/theme.dart';
 import '../../utils/auto_dispose.dart';
 import '../../widgets/text_builder.dart';
 import 'store.dart';
-import 'texts.dart';
+
+part 'texts.dart';
 
 class FindTeamPage extends StatefulWidget {
   const FindTeamPage({super.key});
@@ -17,12 +19,7 @@ class FindTeamPage extends StatefulWidget {
 }
 
 class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
-  final texts = findTeamTexts;
   final store = FindTeamStore();
-
-  late final controller = TextEditingController(
-    text: texts.exampleDescription,
-  )..disposeBy(this);
 
   @override
   void initState() {
@@ -35,7 +32,7 @@ class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
       (_) => store.error,
       (error) {
         if (error != null) {
-          showError(texts.findingError);
+          showError(_texts.findingError);
         }
       },
     )..disposeBy(this);
@@ -55,60 +52,173 @@ class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Center(
-          child: Observer(
-            builder: (context) => switch (store) {
-              FindTeamStore(loading: true) => buildLoading(),
-              FindTeamStore(:var composition?) => buildData(composition),
-              _ => buildInput(),
-            },
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Observer(
+        builder: (context) {
+          if (store.composition case var composition?) {
+            return buildResult(composition);
+          }
+
+          return _Form(
+            loading: store.loading,
+            onSubmit: store.findTeam,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildResult(TeamComposition composition) => SingleChildScrollView(
+        child: Text(composition.describe()),
+      );
+}
+
+class _Form extends StatefulWidget {
+  const _Form({
+    required this.loading,
+    required this.onSubmit,
+  });
+
+  final bool loading;
+  final void Function(String text) onSubmit;
+
+  @override
+  State<_Form> createState() => _FormState();
+}
+
+class _FormState extends State<_Form> with AutoDispose {
+  late final textParams = (
+    key: GlobalKey<FormFieldState>(),
+    focus: FocusNode()..disposeBy(this),
+    controller: TextEditingController()..disposeBy(this),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _texts.title,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        _TextInput(
+          loading: widget.loading,
+          params: textParams,
+        ),
+        const SizedBox(height: 24),
+        if (!widget.loading)
+          _SubmitButton(
+            textController: textParams.controller,
+            onSubmit: onSubmit,
+          )
+        else
+          _Loading(),
+      ],
+    );
+  }
+
+  void onSubmit(String text) {
+    if (text.isNotEmpty) {
+      widget.onSubmit(text);
+    } else {
+      textParams.key.currentState?.validate();
+      textParams.focus.requestFocus();
+    }
+  }
+}
+
+class _SubmitButton extends StatelessWidget {
+  const _SubmitButton({
+    required this.textController,
+    required this.onSubmit,
+  });
+
+  final TextEditingController textController;
+  final void Function(String text) onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextBuilder(
+        controller: textController,
+        builder: (text) => ElevatedButton(
+          onPressed: () => onSubmit(text),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(width: 16),
+              const SizedBox(width: 2),
+              Text(_texts.submitLabel),
+              const SizedBox(width: 2),
+              Icon(Icons.keyboard_arrow_right, size: 20),
+            ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget buildInput() => Column(
-        children: [
-          TextFormField(
-            maxLines: null,
-            controller: controller,
-            validator: validateProjectDescription,
-            decoration: InputDecoration(
-              hintText: texts.inputHint,
-            ),
+typedef _TextInputParams = ({
+  GlobalKey key,
+  FocusNode focus,
+  TextEditingController controller,
+});
+
+class _TextInput extends StatelessWidget {
+  const _TextInput({
+    required this.loading,
+    required this.params,
+  });
+
+  final bool loading;
+  final _TextInputParams params;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      key: params.key,
+      focusNode: params.focus,
+      controller: params.controller,
+      readOnly: loading,
+      maxLines: null,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return _texts.inputEmptyError;
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: _texts.inputHint,
+        hintMaxLines: 5,
+        hintStyle: TextStyle(
+          color: colors.hint,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+}
+
+class _Loading extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(_texts.loadingPlaceholder),
+        SizedBox(height: 24),
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.5,
+            color: colors.complementary,
           ),
-          const SizedBox(height: 24),
-          TextBuilder(
-            controller: controller,
-            builder: (text) => ElevatedButton(
-              onPressed: text.isNotEmpty ? () => store.findTeam(text) : null,
-              child: Text(texts.submitLabel),
-            ),
-          ),
-        ],
-      );
-
-  Widget buildLoading() => Column(
-        children: [
-          Text(texts.loadingPlaceholder),
-          SizedBox(height: 24),
-          CircularProgressIndicator(),
-        ],
-      );
-
-  Widget buildData(TeamComposition composition) => SingleChildScrollView(
-        child: Text(composition.describe()),
-      );
-
-  String? validateProjectDescription(String? value) {
-    if (value == null || value.isEmpty) {
-      return texts.inputEmptyError;
-    }
-
-    return null;
+        ),
+      ],
+    );
   }
 }

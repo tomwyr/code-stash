@@ -26,3 +26,9 @@ extension TextEditingControllerDisposeBy on TextEditingController {
     autoDispose.register(dispose);
   }
 }
+
+extension FocusNodeDispose on FocusNode {
+  void disposeBy(AutoDispose autoDispose) {
+    autoDispose.register(dispose);
+  }
+}
