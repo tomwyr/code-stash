@@ -1,6 +1,6 @@
-import '../utils/sealed.dart';
+part of 'errors.dart';
 
-sealed class TeamFinderError {
+sealed class TeamFinderError extends AppError {
   TeamFinderError();
 
   factory TeamFinderError.fromJson(Map<String, dynamic> json) => switch (json['type']) {

@@ -15,7 +15,7 @@ abstract class _FindTeamStore with Store {
   TeamComposition? _composition;
 
   @readonly
-  TeamFinderError? _error;
+  AppError? _error;
 
   @readonly
   bool _loading = false;

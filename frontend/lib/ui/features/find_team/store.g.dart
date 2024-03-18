@@ -30,16 +30,16 @@ mixin _$FindTeamStore on _FindTeamStore, Store {
   late final _$_errorAtom =
       Atom(name: '_FindTeamStore._error', context: context);
 
-  TeamFinderError? get error {
+  AppError? get error {
     _$_errorAtom.reportRead();
     return super._error;
   }
 
   @override
-  TeamFinderError? get _error => error;
+  AppError? get _error => error;
 
   @override
-  set _error(TeamFinderError? value) {
+  set _error(AppError? value) {
     _$_errorAtom.reportWrite(value, super._error, () {
       super._error = value;
     });
