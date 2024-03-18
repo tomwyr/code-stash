@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../app/layout.dart';
 import '../../app/theme.dart';
+import '../../app/tokens.dart';
 import 'store.dart';
 
 part 'texts.dart';
@@ -29,7 +29,7 @@ class _FindHistoryListState extends State<FindHistoryList> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.all(appTokens.contentPadding),
+          padding: EdgeInsets.all(appTokensDefault.contentPadding),
           child: Text(
             _texts.title,
             style: Theme.of(context).textTheme.titleMedium,
@@ -69,7 +69,7 @@ class _ListItem extends StatelessWidget {
       child: InkWell(
         onTap: () {},
         child: Padding(
-          padding: EdgeInsets.all(appTokens.contentPadding),
+          padding: EdgeInsets.all(appTokensDefault.contentPadding),
           child: Text(
             item,
             maxLines: 3,

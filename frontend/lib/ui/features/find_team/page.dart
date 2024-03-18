@@ -4,7 +4,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../utils/formatters.dart';
+import '../../app/layout.dart';
 import '../../app/theme.dart';
+import '../../app/widgets.dart';
 import '../../widgets/auto_dispose.dart';
 import '../../widgets/error_displayer.dart';
 import '../../widgets/text_builder.dart';
@@ -126,28 +128,10 @@ class _Header extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Transform.translate(
-              offset: Offset(-8, 0),
-              child: Icon(
-                Icons.keyboard_arrow_right,
-                color: colors.complementary,
-                size: 28,
-              ),
-            ),
-            Transform.translate(
-              offset: Offset(-12, 0),
-              child: Text(
-                _texts.header,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
+        if (!context.mobileLayout) ...[
+          AppHeader(),
+          const SizedBox(height: 12),
+        ],
         Text(
           _texts.subHeader,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(

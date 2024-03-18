@@ -1,12 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../utils/env.dart';
-import '../features/find_history/list.dart';
+import 'theme.dart';
+import 'tokens.dart';
+import 'widgets.dart';
 
 class AppLayout extends StatelessWidget {
   const AppLayout({
     super.key,
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return context.mobileLayout ? _Mobile(child: child) : _Desktop(child: child);
+  }
+}
+
+class _Mobile extends StatelessWidget {
+  const _Mobile({
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: colors.background,
+      child: Scaffold(
+        endDrawer: Drawer(
+          child: AppSideBar(),
+        ),
+        body: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 440),
+            child: Column(
+              children: [
+                _DesktopAppBar(),
+                Flexible(
+                  child: AppBody(child: child),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DesktopAppBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      leading: AppIcon(),
+      title: AppHeader(),
+      titleSpacing: 0,
+      actions: [
+        IconButton(
+          onPressed: Scaffold.of(context).openEndDrawer,
+          icon: Icon(Icons.history),
+        ),
+      ],
+    );
+  }
+}
+
+class _Desktop extends StatelessWidget {
+  const _Desktop({
     required this.child,
   });
 
@@ -30,79 +93,8 @@ class AppLayout extends StatelessWidget {
   }
 }
 
-class AppLogo extends StatelessWidget {
-  const AppLogo({super.key});
+extension BuildContextLayout on BuildContext {
+  bool get mobileLayout => MediaQuery.of(this).size.width < 900;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      padding: EdgeInsets.all(_tokens.contentMargin) + EdgeInsets.only(top: 8),
-      alignment: Alignment.topRight,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: () => launchUrlString(Env.projectRepoUrl),
-          child: Padding(
-            padding: EdgeInsets.all(_tokens.contentPadding),
-            child: Image.asset(
-              'assets/icon-name.png',
-              height: 32,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  AppTokens get appTokens => mobileLayout ? appTokensCompact : appTokensDefault;
 }
-
-class AppBody extends StatelessWidget {
-  const AppBody({
-    super.key,
-    required this.child,
-  });
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(_tokens.contentMargin),
-      constraints: BoxConstraints(
-        maxWidth: 600,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
-        clipBehavior: Clip.hardEdge,
-        child: Scaffold(
-          body: Padding(
-            padding: EdgeInsets.all(_tokens.contentPadding),
-            child: child,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AppSideBar extends StatelessWidget {
-  const AppSideBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 250,
-      child: Padding(
-        padding: EdgeInsets.all(_tokens.contentMargin),
-        child: FindHistoryList(),
-      ),
-    );
-  }
-}
-
-const _tokens = (
-  contentMargin: 8.0,
-  contentPadding: 12.0,
-);
-
-const appTokens = _tokens;

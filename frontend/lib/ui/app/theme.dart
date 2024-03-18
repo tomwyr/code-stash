@@ -23,6 +23,12 @@ ThemeData get appTheme => ThemeData().copyWith(
           color: colors.onBrand,
         ),
       ),
+      appBarTheme: AppBarTheme(
+        color: colors.background,
+      ),
+      drawerTheme: DrawerThemeData(
+        backgroundColor: colors.background,
+      ),
     );
 
 ColorScheme get colorScheme => ColorScheme.light(
