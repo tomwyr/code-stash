@@ -8,7 +8,8 @@ const _texts = (
   findingError: 'Could not get team composition. Try again in a few minutes.',
   inputHint:
       'E.g. I want to build a system that lets users purchase catering diet based on food preferences they provide in an app.',
-  inputEmptyError: 'Cannot compose a team for a project with no description.',
+  inputEmptyError: 'Cannot compose a team for a project without a description.',
+  inputTooShortError: 'The project description should be at least $inputMinLength characters long.',
   submitLabel: 'Find Team',
   loadingPlaceholder: 'Finding a team for the provided description...',
 );

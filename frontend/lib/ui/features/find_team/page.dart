@@ -12,6 +12,7 @@ import '../../widgets/error_displayer.dart';
 import '../../widgets/text_builder.dart';
 import 'store.dart';
 
+part 'input.dart';
 part 'texts.dart';
 
 class FindTeamPage extends StatefulWidget {
@@ -79,11 +80,8 @@ class _Form extends StatefulWidget {
 }
 
 class _FormState extends State<_Form> with AutoDispose {
-  late final textParams = (
-    key: GlobalKey<FormFieldState>(),
-    focus: FocusNode()..disposeBy(this),
-    controller: TextEditingController()..disposeBy(this),
-  );
+  final inputKey = GlobalKey<_TextInputState>();
+  late final controller = TextEditingController()..disposeBy(this);
 
   @override
   Widget build(BuildContext context) {
@@ -97,13 +95,14 @@ class _FormState extends State<_Form> with AutoDispose {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         _TextInput(
+          key: inputKey,
           loading: widget.loading,
-          params: textParams,
+          controller: controller,
         ),
         const SizedBox(height: 24),
         if (!widget.loading)
           _SubmitButton(
-            textController: textParams.controller,
+            textController: controller,
             onSubmit: onSubmit,
           )
         else
@@ -112,12 +111,10 @@ class _FormState extends State<_Form> with AutoDispose {
     );
   }
 
-  void onSubmit(String text) {
-    if (text.isNotEmpty) {
-      widget.onSubmit(text);
-    } else {
-      textParams.key.currentState?.validate();
-      textParams.focus.requestFocus();
+  void onSubmit() {
+    final result = inputKey.currentState!.validate();
+    if (result != null) {
+      widget.onSubmit(result);
     }
   }
 }
@@ -150,7 +147,7 @@ class _SubmitButton extends StatelessWidget {
   });
 
   final TextEditingController textController;
-  final void Function(String text) onSubmit;
+  final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +155,7 @@ class _SubmitButton extends StatelessWidget {
       child: TextBuilder(
         controller: textController,
         builder: (text) => ElevatedButton(
-          onPressed: () => onSubmit(text),
+          onPressed: onSubmit,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -175,35 +172,64 @@ class _SubmitButton extends StatelessWidget {
   }
 }
 
-typedef _TextInputParams = ({
-  GlobalKey key,
-  FocusNode focus,
-  TextEditingController controller,
-});
-
-class _TextInput extends StatelessWidget {
+class _TextInput extends StatefulWidget {
   const _TextInput({
+    super.key,
     required this.loading,
-    required this.params,
+    required this.controller,
   });
 
   final bool loading;
-  final _TextInputParams params;
+  final TextEditingController controller;
+
+  @override
+  State<_TextInput> createState() => _TextInputState();
+}
+
+class _TextInputState extends State<_TextInput> with AutoDispose {
+  final formKey = GlobalKey<FormFieldState>();
+  late final focus = FocusNode()..disposeBy(this);
+
+  late final controller = widget.controller;
+
+  var tooShortError = false;
+
+  String? validate() {
+    final text = controller.text.trim();
+
+    final error = validateInput(text);
+    if (error == null) return text;
+
+    switch (error) {
+      case InputError.empty:
+        formKey.currentState?.validate();
+        focus.requestFocus();
+      case InputError.tooShort:
+        showLengthError();
+        focus.requestFocus();
+    }
+
+    return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(hideLengthError);
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      key: params.key,
-      focusNode: params.focus,
-      controller: params.controller,
-      readOnly: loading,
+      key: formKey,
+      focusNode: focus,
+      controller: controller,
+      readOnly: widget.loading,
       maxLines: null,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return _texts.inputEmptyError;
-        }
-        return null;
+      validator: (value) => switch (validateInput(value)) {
+        InputError.empty => _texts.inputEmptyError,
+        InputError.tooShort || null => null
       },
       decoration: InputDecoration(
         hintText: _texts.inputHint,
@@ -212,8 +238,21 @@ class _TextInput extends StatelessWidget {
           color: colors.hint,
           fontWeight: FontWeight.w400,
         ),
+        errorText: tooShortError ? _texts.inputTooShortError : null,
       ),
     );
+  }
+
+  void showLengthError() {
+    if (!tooShortError) {
+      setState(() => tooShortError = true);
+    }
+  }
+
+  void hideLengthError() {
+    if (tooShortError) {
+      setState(() => tooShortError = false);
+    }
   }
 }
 
