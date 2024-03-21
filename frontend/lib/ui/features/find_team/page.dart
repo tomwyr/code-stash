@@ -23,7 +23,8 @@ class FindTeamPage extends StatefulWidget {
 }
 
 class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
-  final store = FindTeamStore();
+  var store = FindTeamStore();
+  var controller = TextEditingController();
 
   @override
   void initState() {
@@ -42,6 +43,13 @@ class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
     )..disposeBy(this);
   }
 
+  void clearResult() {
+    setState(() {
+      store = FindTeamStore();
+      controller = TextEditingController();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBody(
@@ -52,11 +60,17 @@ class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
             _Header(),
             const SizedBox(height: 24),
             if (store.composition case var composition?)
-              Flexible(child: _Result(composition: composition))
+              Flexible(
+                child: _Result(
+                  composition: composition,
+                  onClearResult: clearResult,
+                ),
+              )
             else
               Flexible(
                 child: _Form(
                   loading: store.loading,
+                  controller: controller,
                   onSubmit: store.findTeam,
                 ),
               ),
@@ -70,10 +84,12 @@ class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
 class _Form extends StatefulWidget {
   const _Form({
     required this.loading,
+    required this.controller,
     required this.onSubmit,
   });
 
   final bool loading;
+  final TextEditingController controller;
   final void Function(String text) onSubmit;
 
   @override
@@ -82,7 +98,6 @@ class _Form extends StatefulWidget {
 
 class _FormState extends State<_Form> with AutoDispose {
   final inputKey = GlobalKey<_TextInputState>();
-  late final controller = TextEditingController()..disposeBy(this);
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +112,12 @@ class _FormState extends State<_Form> with AutoDispose {
         _TextInput(
           key: inputKey,
           loading: widget.loading,
-          controller: controller,
+          controller: widget.controller,
         ),
         const SizedBox(height: 24),
         if (!widget.loading)
           _SubmitButton(
-            textController: controller,
+            textController: widget.controller,
             onSubmit: onSubmit,
           )
         else
@@ -156,20 +171,41 @@ class _SubmitButton extends StatelessWidget {
       child: Center(
         child: TextBuilder(
           controller: textController,
-          builder: (text) => ElevatedButton(
-            onPressed: onSubmit,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(width: 16),
-                const SizedBox(width: 2),
-                Text(_texts.submitLabel),
-                const SizedBox(width: 2),
-                Icon(Icons.keyboard_arrow_right, size: 20),
-              ],
-            ),
+          builder: (text) => _ActionButton(
+            title: _texts.submitLabel,
+            icon: Icons.keyboard_arrow_right,
+            onSubmit: onSubmit,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.title,
+    required this.icon,
+    required this.onSubmit,
+  });
+
+  final String title;
+  final IconData icon;
+  final VoidCallback onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onSubmit,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(width: 16),
+          const SizedBox(width: 2),
+          Text(title),
+          const SizedBox(width: 2),
+          Icon(icon, size: 20),
+        ],
       ),
     );
   }
@@ -287,9 +323,13 @@ class _Loading extends StatelessWidget {
 }
 
 class _Result extends StatelessWidget {
-  const _Result({required this.composition});
+  const _Result({
+    required this.composition,
+    required this.onClearResult,
+  });
 
   final TeamComposition composition;
+  final VoidCallback onClearResult;
 
   @override
   Widget build(BuildContext context) {
@@ -318,6 +358,15 @@ class _Result extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: 24),
+        Center(
+          child: _ActionButton(
+            title: _texts.startOverLabel,
+            icon: Icons.restart_alt,
+            onSubmit: onClearResult,
+          ),
+        ),
+        const SizedBox(height: 12),
       ],
     );
   }

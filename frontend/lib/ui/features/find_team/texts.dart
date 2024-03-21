@@ -11,6 +11,7 @@ const _texts = (
   inputEmptyError: 'Cannot compose a team for a project without a description.',
   inputTooShortError: 'The project description should be at least $inputMinLength characters long.',
   submitLabel: 'Find Team',
+  startOverLabel: 'Start Over',
   loadingPlaceholder: 'Finding a team for the provided description...',
   resultTitle:
       'Based on the description you provided, here is your tailored team, curated to specifically fit your project needs.',
