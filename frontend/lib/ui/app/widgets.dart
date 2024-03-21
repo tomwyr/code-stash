@@ -92,14 +92,20 @@ class AppBody extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.all(tokens.contentMargin),
-      constraints: BoxConstraints(maxWidth: 600),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
-        clipBehavior: Clip.hardEdge,
-        child: Scaffold(
-          body: Padding(
-            padding: EdgeInsets.all(tokens.contentPadding),
-            child: child,
+      child: Scaffold(
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            clipBehavior: Clip.hardEdge,
+            child: ColoredBox(
+              color: Theme.of(context).colorScheme.background,
+              child: Padding(
+                padding: EdgeInsets.all(context.appTokens.contentPadding) +
+                    EdgeInsets.symmetric(horizontal: 12),
+                child: child,
+              ),
+            ),
           ),
         ),
       ),

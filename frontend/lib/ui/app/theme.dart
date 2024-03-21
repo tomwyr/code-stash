@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 ThemeData get appTheme => ThemeData().copyWith(
       textTheme: Typography.material2021(colorScheme: colorScheme).black,
-      scaffoldBackgroundColor: colors.background,
+      scaffoldBackgroundColor: Colors.transparent,
       canvasColor: colors.canvas,
       colorScheme: colorScheme,
       textSelectionTheme: TextSelectionThemeData(

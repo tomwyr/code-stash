@@ -44,8 +44,7 @@ class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+    return AppBody(
       child: Observer(
         builder: (context) {
           if (store.composition case var composition?) {
@@ -87,6 +86,7 @@ class _FormState extends State<_Form> with AutoDispose {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         _Header(),
         const SizedBox(height: 24),
@@ -151,20 +151,23 @@ class _SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: TextBuilder(
-        controller: textController,
-        builder: (text) => ElevatedButton(
-          onPressed: onSubmit,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(width: 16),
-              const SizedBox(width: 2),
-              Text(_texts.submitLabel),
-              const SizedBox(width: 2),
-              Icon(Icons.keyboard_arrow_right, size: 20),
-            ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Center(
+        child: TextBuilder(
+          controller: textController,
+          builder: (text) => ElevatedButton(
+            onPressed: onSubmit,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(width: 16),
+                const SizedBox(width: 2),
+                Text(_texts.submitLabel),
+                const SizedBox(width: 2),
+                Icon(Icons.keyboard_arrow_right, size: 20),
+              ],
+            ),
           ),
         ),
       ),
@@ -262,7 +265,7 @@ class _Loading extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          SizedBox(height: 24),
+          SizedBox(height: 12),
           SizedBox(
             width: 24,
             height: 24,
@@ -276,6 +279,7 @@ class _Loading extends StatelessWidget {
             _texts.loadingPlaceholder,
             style: Theme.of(context).textTheme.labelMedium,
           ),
+          SizedBox(height: 24),
         ],
       ),
     );

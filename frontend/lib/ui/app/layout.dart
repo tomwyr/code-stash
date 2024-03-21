@@ -39,9 +39,7 @@ class _Mobile extends StatelessWidget {
             child: Column(
               children: [
                 _DesktopAppBar(),
-                Flexible(
-                  child: AppBody(child: child),
-                ),
+                _BodyItem(child: child),
               ],
             ),
           ),
@@ -83,11 +81,27 @@ class _Desktop extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppLogo(),
-          Flexible(
-            child: AppBody(child: child),
-          ),
+          _BodyItem(child: child),
           AppSideBar(),
         ],
+      ),
+    );
+  }
+}
+
+class _BodyItem extends StatelessWidget {
+  const _BodyItem({
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 600),
+        child: child,
       ),
     );
   }

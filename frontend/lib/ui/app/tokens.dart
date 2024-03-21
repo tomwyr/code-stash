@@ -3,12 +3,12 @@ typedef AppTokens = ({
   double contentPadding,
 });
 
-final AppTokens appTokensDefault = (
-  contentMargin: 8,
-  contentPadding: 12,
-);
+AppTokens get appTokensDefault => (
+      contentMargin: 8,
+      contentPadding: 12,
+    );
 
-final AppTokens appTokensCompact = (
-  contentMargin: 0,
-  contentPadding: 4,
-);
+AppTokens get appTokensCompact => (
+      contentMargin: 0,
+      contentPadding: 4,
+    );
