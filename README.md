@@ -14,8 +14,6 @@ The project consists of three main sub-modules:
 
 ### Env vars
 
-The environment variables need to be stored in `.environment` file in order to work properly. It is due to the deployment configuration currently not being able to build the app with a default `.env` file placed in the root directory.
-
 Environment variables that the app requires to run:
 
 ## Backend

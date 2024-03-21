@@ -5,4 +5,4 @@ class Env {
   static final projectRepoUrl = dotenv.get('PROJECT_REPO_URL');
 }
 
-Future<void> loadEnv() => dotenv.load(fileName: '.environment');
+Future<void> loadEnv() => dotenv.load();
