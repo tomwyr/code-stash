@@ -13,3 +13,20 @@ The project consists of three main sub-modules:
 ### Env vars
 
 The environment variables need to be stored in `.environment` file in order to work properly. It is due to the deployment configuration currently not being able to build the app with a default `.env` file placed in the root directory.
+
+Environment variables that the app requires to run:
+
+## Backend
+
+Environment variables that the app requires to run:
+
+- **API_BASE_URL** - Url of the deployed backend application.
+- **PROJECT_REPO_URL** - Url pointing to this project repository.
+
+### Env vars
+
+Environment variables that the app requires to run:
+
+- **PORT** - The port on which the application should listen for incoming requests.
+- **OPENAI_API_KEY** - A secret key to access the OpenAI api. Can be found or created in your OpenAI account under the [API keys](https://platform.openai.com/api-keys) section.
+- **GITHUB_API_KEY** - An api key to access the GitHub api. Can be created in your GitHub account under the [Personal access tokens](https://github.com/settings/tokens) section.
