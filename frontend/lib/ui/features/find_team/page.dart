@@ -2,8 +2,8 @@ import 'package:code_connect_common/code_connect_common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../../utils/formatters.dart';
 import '../../app/layout.dart';
 import '../../app/theme.dart';
 import '../../app/widgets.dart';
@@ -46,23 +46,25 @@ class _FindTeamPageState extends State<FindTeamPage> with AutoDispose {
   Widget build(BuildContext context) {
     return AppBody(
       child: Observer(
-        builder: (context) {
-          if (store.composition case var composition?) {
-            return buildResult(composition);
-          }
-
-          return _Form(
-            loading: store.loading,
-            onSubmit: store.findTeam,
-          );
-        },
+        builder: (context) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _Header(),
+            const SizedBox(height: 24),
+            if (store.composition case var composition?)
+              Flexible(child: _Result(composition: composition))
+            else
+              Flexible(
+                child: _Form(
+                  loading: store.loading,
+                  onSubmit: store.findTeam,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
-
-  Widget buildResult(TeamComposition composition) => SingleChildScrollView(
-        child: Text(composition.describe()),
-      );
 }
 
 class _Form extends StatefulWidget {
@@ -88,10 +90,8 @@ class _FormState extends State<_Form> with AutoDispose {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        _Header(),
-        const SizedBox(height: 24),
         Text(
-          _texts.title,
+          _texts.formTitle,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         _TextInput(
@@ -282,6 +282,169 @@ class _Loading extends StatelessWidget {
           SizedBox(height: 24),
         ],
       ),
+    );
+  }
+}
+
+class _Result extends StatelessWidget {
+  const _Result({required this.composition});
+
+  final TeamComposition composition;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          composition.projectDescription,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey,
+              ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          _texts.resultTitle,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 12),
+        Flexible(
+          child: GridView.count(
+            crossAxisCount: 2,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            children: [
+              for (var role in composition.roles) _RoleTile(role: role),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RoleTile extends StatelessWidget {
+  const _RoleTile({required this.role});
+
+  final ProjectRole role;
+
+  EdgeInsets get avatarTopPadding => EdgeInsets.only(top: 4);
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(8);
+
+    return Material(
+      shape: RoundedRectangleBorder(borderRadius: radius),
+      child: InkWell(
+        onTap: () => launchUrlString(role.member.profileUrl),
+        borderRadius: radius,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Padding(
+            padding: EdgeInsets.all(context.mobileLayout ? 12 : 16) - avatarTopPadding,
+            child: buildContent(context),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildContent(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (context.mobileLayout)
+          Row(
+            children: [
+              buildAvatar(),
+              const SizedBox(width: 12),
+              Flexible(
+                child: buildMatchedSkill(context),
+              ),
+            ],
+          )
+        else
+          Center(
+            child: Column(
+              children: [
+                buildAvatar(),
+                const SizedBox(height: 4),
+                buildMatchedSkill(context),
+              ],
+            ),
+          ),
+        Expanded(
+          child: buildSkills(context),
+        ),
+      ],
+    );
+  }
+
+  Widget buildAvatar() {
+    return Padding(
+      padding: avatarTopPadding,
+      child: ClipOval(
+        child: Image.network(
+          role.member.avatarUrl,
+          width: 48,
+          height: 48,
+        ),
+      ),
+    );
+  }
+
+  Widget buildMatchedSkill(BuildContext context) {
+    return Text(
+      role.member.name,
+      style: Theme.of(context).textTheme.titleMedium,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget buildSkills(BuildContext context) {
+    final matchedSkill = role.skill.language;
+    final otherSkills = role.member.skills
+        .where((skill) => skill != role.skill)
+        .map((skill) => skill.language)
+        .join(', ');
+
+    return Stack(
+      clipBehavior: Clip.hardEdge,
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: Column(
+            crossAxisAlignment:
+                context.mobileLayout ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 16),
+              Text(
+                _texts.matchedSkillSubtitle,
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                matchedSkill,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _texts.otherSkillsSubtitle,
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                otherSkills,
+                textAlign: context.mobileLayout ? TextAlign.start : TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

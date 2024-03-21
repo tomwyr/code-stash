@@ -64,7 +64,7 @@ class _ListItem extends StatelessWidget {
     return Material(
       type: MaterialType.button,
       color: colors.card,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(8),
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: () {},

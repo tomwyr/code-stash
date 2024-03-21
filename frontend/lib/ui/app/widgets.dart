@@ -96,7 +96,7 @@ class AppBody extends StatelessWidget {
         body: Align(
           alignment: Alignment.topCenter,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(8),
             clipBehavior: Clip.hardEdge,
             child: ColoredBox(
               color: Theme.of(context).colorScheme.background,
