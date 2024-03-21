@@ -2,6 +2,8 @@
 
 The repository contains software that together builds the Code Connect application.
 
+![1](https://github.com/tomwyr/code-connect/assets/9600796/aeedc79d-54b0-4a91-8999-e7169c4b7a87)
+
 The project consists of three main sub-modules:
 
 - backend - Shelf application providing core functionalities of the system.
