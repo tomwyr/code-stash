@@ -10,6 +10,10 @@ The project consists of three main sub-modules:
 - frontend - Flutter multiplatform application allowing users interact with the system.
 - common - Dart library housing elements of the system shared by the frontend and the backend.
 
+## Deployment
+
+The project uses [Globe](globe.dev) as the deployment platform for both, the backend and the frontend application. For more information head to Globe's [documentation](https://docs.globe.dev/).
+
 ## Frontend
 
 ### Env vars
