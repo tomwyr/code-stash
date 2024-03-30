@@ -11,7 +11,7 @@ class CodeConnectApi {
 
   ApiResult<TeamComposition> find(String projectDescription) async {
     final input = FindTeamInput(projectDescription: projectDescription);
-    final response = _client.get('/team/find/', data: input.toJson());
+    final response = _client.post('/team/find/', data: input.toJson());
     return response.toResult<TeamComposition, TeamFinderError>().toApiResult();
   }
 }

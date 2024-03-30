@@ -20,12 +20,10 @@ The project uses [Globe](globe.dev) as the deployment platform for both, the bac
 
 Environment variables that the app requires to run:
 
-## Backend
-
-Environment variables that the app requires to run:
-
 - **API_BASE_URL** - Url of the deployed backend application.
 - **PROJECT_REPO_URL** - Url pointing to this project repository.
+
+## Backend
 
 ### Env vars
 

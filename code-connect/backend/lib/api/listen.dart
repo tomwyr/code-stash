@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
+import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_throttle/shelf_throttle.dart';
 import 'package:time/time.dart';
 
@@ -12,6 +13,7 @@ Future<void> listen() async {
   final handler = Pipeline()
       .addMiddleware(logRequests())
       .addMiddleware(throttle(1.seconds))
+      .addMiddleware(corsHeaders())
       .addHandler(TeamService().handler);
   await serve(handler, InternetAddress.anyIPv4, int.parse(Env.port));
 }

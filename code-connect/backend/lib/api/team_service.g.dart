@@ -9,7 +9,7 @@ part of 'team_service.dart';
 Router _$TeamServiceRouter(TeamService service) {
   final router = Router();
   router.add(
-    'GET',
+    'POST',
     r'/team/find/',
     service.findTeam,
   );

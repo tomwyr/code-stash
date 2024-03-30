@@ -8,7 +8,7 @@ import 'extensions.dart';
 part 'team_service.g.dart';
 
 class TeamService {
-  @Route.get('/team/find/')
+  @Route.post('/team/find/')
   Future<Response> findTeam(Request request) async {
     final input = await request.body<FindTeamInput>();
     final result = await TeamFinder().find(input.projectDescription);
