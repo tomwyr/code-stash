@@ -2,7 +2,7 @@
 
 The repository contains software that together builds the Code Connect application.
 
-![1](https://github.com/tomwyr/code-connect/assets/9600796/aeedc79d-54b0-4a91-8999-e7169c4b7a87)
+![ss](https://github.com/tomwyr/playground/assets/9600796/c132cf0d-f9eb-40ba-aaa8-61eca7b4d14c)
 
 The project consists of three main sub-modules:
 
