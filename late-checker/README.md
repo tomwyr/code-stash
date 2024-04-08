@@ -4,7 +4,7 @@ The latest version of the app is available and can be accessed [here](https://la
 
 Due to the current hosting setup, the initial load can take up to one minute.
 
-![2](https://github.com/tomwyr/late-checker/assets/9600796/dd2696fe-d2e3-4b75-b18b-5d107f1f770b)
+![ss](https://github.com/tomwyr/playground/assets/9600796/dd37135b-0109-4a30-8de2-26972f551237)
 
 ## Configuration
 Update `config.yaml` file with the necessary configuration:
