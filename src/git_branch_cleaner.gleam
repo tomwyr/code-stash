@@ -5,7 +5,6 @@ import gleam/regex.{Match}
 import gleam/result
 import gleam/set
 import gleam/string
-import utils
 
 pub fn main() {
   case find_branches_to_cleanup() {
@@ -14,59 +13,86 @@ pub fn main() {
   }
 }
 
+fn get_lookup_max_depth() {
+  25
+}
+
+fn get_reference_branch() {
+  Branch(name: "master")
+}
+
 fn find_branches_to_cleanup() {
   let ref_branch = get_reference_branch()
   let max_depth = get_lookup_max_depth()
 
-  use local_branches <- result.map(get_local_only_branches())
-
-  let local_branches_from_ref =
-    filter_branches_with_common_base(
-      from: local_branches,
-      branching_off: ref_branch,
+  use local_branches <- result.try(get_local_only_branches())
+  use ref_local_sub_branches <- result.try(
+    local_branches
+    |> filter_branches_sharing_ancestor(
+      with: ref_branch,
       not_deeper_than: max_depth,
-    )
+    ),
+  )
 
   use branch_diffs <- result.map(
-    local_branches_from_ref
+    ref_local_sub_branches
     |> list.map(diff_branches(starting_from: _, present_in: ref_branch))
-    |> utils.group_results(),
+    |> result.all(),
   )
 
   branch_diffs
-  |> list.filter(keeping: base_merged_in_target)
+  |> list.filter(keeping: is_base_merged_in_target)
   |> list.map(fn(diff) { diff.base.branch })
-}
-
-fn get_lookup_max_depth() -> Int {
-  25
-}
-
-fn get_reference_branch() -> Branch {
-  Branch(name: "master")
 }
 
 fn get_local_only_branches() {
   use local_branches <- result.try(
     git.local_branches()
+    |> result.map_error(GitCommandError)
     |> result.map(parse_branch_log(_, Local)),
   )
-  use remote_branches <- result.map(
+  use remote_branches <- result.try(
     git.remote_branches()
+    |> result.map_error(GitCommandError)
     |> result.map(parse_branch_log(_, Remote)),
   )
 
   set.from_list(local_branches)
   |> set.difference(set.from_list(remote_branches))
   |> set.to_list()
+  |> result.all()
 }
 
-fn filter_branches_with_common_base(
-  from branches: List(Branch),
-  branching_off base: Branch,
+fn filter_branches_sharing_ancestor(
+  branches: List(Branch),
+  with base: Branch,
   not_deeper_than max_depth: Int,
 ) {
-  todo
+  let slice_for_branch = fn(branch: Branch) {
+    use branch_log <- result.try(
+      git.log_limited(of: branch.name, limit: max_depth)
+      |> result.map_error(GitCommandError),
+    )
+    use commits <- result.map(parse_commits_log(branch_log))
+    BranchSlice(branch: branch, commits: commits)
+  }
+
+  use branch_slices <- result.try(
+    branches
+    |> list.map(slice_for_branch)
+    |> result.all(),
+  )
+  use base_slice <- result.map(slice_for_branch(base))
+
+  let base_commits = set.from_list(base_slice.commits)
+  let intersects_base = fn(slice: BranchSlice) {
+    slice.commits
+    |> list.any(set.contains(in: base_commits, this: _))
+  }
+
+  branch_slices
+  |> list.filter(intersects_base)
+  |> list.map(fn(slice) { slice.branch })
 }
 
 fn parse_branch_log(branch_log: String, branch_type: BranchType) {
@@ -74,27 +100,31 @@ fn parse_branch_log(branch_log: String, branch_type: BranchType) {
     Local -> "^(?:\\*| ) (.+)$"
     Remote -> "^  (?:.+?\\/)(.+)$"
   }
-  let assert Ok(commit_regex) = regex.from_string(pattern)
+  let assert Ok(branch_regex) = regex.from_string(pattern)
 
-  let scan_result_to_branch = fn(matches: List(regex.Match)) {
-    let assert [Match(content: branch_name, ..)] = matches
-    Branch(name: branch_name)
+  let parse_branch_line = fn(branch_line: String) {
+    let matches = regex.scan(with: branch_regex, content: branch_line)
+    case matches {
+      [Match(content: branch_name, ..)] -> Ok(Branch(name: branch_name))
+      _ -> Error(GitParsingError(content: branch_line, parse_type: BranchLog))
+    }
   }
 
   branch_log
   |> string.split("\n")
-  |> list.map(regex.scan(with: commit_regex, content: _))
-  |> list.map(scan_result_to_branch)
+  |> list.map(parse_branch_line)
 }
 
 fn diff_branches(starting_from base: Branch, present_in target: Branch) {
   use base_only_commits <- result.try(
     git.log_diff(from: target.name, to: base.name)
-    |> result.map(parse_commits),
+    |> result.map_error(GitCommandError)
+    |> result.try(parse_commits_log),
   )
   use target_only_commits <- result.map(
     git.log_diff(from: base.name, to: target.name)
-    |> result.map(parse_commits),
+    |> result.map_error(GitCommandError)
+    |> result.try(parse_commits_log),
   )
 
   BranchDiff(
@@ -103,25 +133,26 @@ fn diff_branches(starting_from base: Branch, present_in target: Branch) {
   )
 }
 
-fn parse_commits(from commits_log: String) -> List(Commit) {
-  let assert Ok(commit_regex) = regex.from_string("^(.+?) (.+)$")
+fn parse_commits_log(commits_log: String) {
+  let assert Ok(commit_regex) =
+    regex.from_string("^(\\w+) (?:\\(.+?\\) )?(.+)$")
 
-  let scan_result_to_commit = fn(matches: List(regex.Match)) {
-    let assert [
-      Match(content: commit_hash, ..),
-      Match(content: commit_message, ..),
-      ..
-    ] = matches
-    Commit(hash: commit_hash, message: commit_message)
+  let parse_log_line = fn(commit_line: String) {
+    let matches = regex.scan(with: commit_regex, content: commit_line)
+    case matches {
+      [Match(content: commit_hash, ..), Match(content: commit_message, ..), ..] ->
+        Ok(Commit(hash: commit_hash, message: commit_message))
+      _ -> Error(GitParsingError(content: commit_line, parse_type: CommitLog))
+    }
   }
 
   commits_log
   |> string.split("\n")
-  |> list.map(regex.scan(with: commit_regex, content: _))
-  |> list.map(scan_result_to_commit)
+  |> list.map(parse_log_line)
+  |> result.all()
 }
 
-fn base_merged_in_target(branch_diff: BranchDiff) -> Bool {
+fn is_base_merged_in_target(branch_diff: BranchDiff) {
   let merge_commit_message =
     branch_diff.base.commits
     |> list.map(fn(commit) { commit.message })
@@ -135,7 +166,7 @@ type Commit {
   Commit(hash: String, message: String)
 }
 
-pub type Branch {
+type Branch {
   Branch(name: String)
 }
 
@@ -150,4 +181,14 @@ type BranchDiff {
 type BranchType {
   Local
   Remote
+}
+
+type CleanupBranchesError {
+  GitCommandError(error: git.ShellError)
+  GitParsingError(content: String, parse_type: GitParseType)
+}
+
+type GitParseType {
+  CommitLog
+  BranchLog
 }
