@@ -19,6 +19,9 @@ pub type Commit {
   Commit(hash: String, message: String)
 }
 
+pub type GitRunner =
+  fn(List(String)) -> Result(String, ShellError)
+
 pub type GitError {
   GitCommandError(error: ShellError)
   GitParsingError(content: String, parse_type: GitParseType)

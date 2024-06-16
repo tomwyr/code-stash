@@ -1,12 +1,15 @@
+import git_branch_cleaner/finder
+import git_branch_cleaner/types.{type ShellError}
 import gleeunit
-import gleeunit/should
 
 pub fn main() {
   gleeunit.main()
 }
 
-// gleeunit test functions end in `_test`
-pub fn hello_world_test() {
-  1
-  |> should.equal(1)
+pub fn runs_finder_test() {
+  finder.find_branches_to_cleanup(git_runner: do_nothing)
+}
+
+fn do_nothing(_: List(String)) -> Result(String, ShellError) {
+  Ok("")
 }
