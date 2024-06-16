@@ -1,10 +1,12 @@
 import gleam/int
 import shellout
 
-pub type ShellError =
-  #(Int, String)
+import git_branch_cleaner/types.{type ShellError}
 
-pub fn log_limited(of branch: String, limit number: Int) -> Result(String, ShellError) {
+pub fn log_limited(
+  of branch: String,
+  limit number: Int,
+) -> Result(String, ShellError) {
   let args = ["log", "--oneline", branch, "-n", int.to_string(number)]
   exec_git(with: args)
 }
@@ -24,6 +26,6 @@ pub fn remote_branches() -> Result(String, ShellError) {
   exec_git(with: ["branch", "-r"])
 }
 
-fn exec_git(with arguments: List(String)) -> Result(String, ShellError) {
+fn exec_git(with arguments: List(String)) {
   shellout.command(run: "git", with: arguments, in: ".", opt: [])
 }
