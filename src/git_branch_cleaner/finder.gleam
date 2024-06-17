@@ -32,6 +32,7 @@ fn diff_branches_against_ref(
 
   use ref_sub_branches <- result.try(
     local_branches
+    |> list.filter(fn(branch) { branch != ref_branch })
     |> listx.try_filter(git.has_common_ancestor(
       branch: _,
       with: ref_branch,
