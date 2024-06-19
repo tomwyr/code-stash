@@ -1,10 +1,12 @@
 import git_branch_cleaner/git/git
 import git_branch_cleaner/types.{
-  type Branch, type BranchDiff, type GitError, type GitRunner, Branch,
-  BranchDiff,
+  type Branch, type BranchDiff, type Commit, type GitError, type GitRunner,
+  Branch, BranchDiff,
 }
 import git_branch_cleaner/utils/listx
 import gleam/list
+import gleam/option.{Some}
+import gleam/regex.{Match}
 import gleam/result
 
 pub fn find_branches_to_cleanup(
@@ -50,14 +52,43 @@ fn diff_branches_against_ref(
   |> result.all()
 }
 
-fn is_base_merged_in_target(branch_diff: BranchDiff) {
-  let merge_commit_message =
-    branch_diff.base.commits
-    |> list.map(fn(commit) { commit.message })
-    |> list.fold("", fn(acc, message) { acc <> "\n\n" <> message })
+fn is_base_merged_in_target(branch_diff: BranchDiff) -> Bool {
+  case branch_diff.base.commits {
+    [] -> False
+    [single] -> has_single_commit_merged_in_target(single, branch_diff)
+    many -> has_many_commits_merged_in_target(many, branch_diff)
+  }
+}
 
+fn has_single_commit_merged_in_target(commit: Commit, branch_diff: BranchDiff) {
   branch_diff.target.commits
-  |> list.any(fn(commit) { commit.message == merge_commit_message })
+  |> list.map(fn(commit) { commit.message })
+  |> list.contains(commit.message)
+}
+
+fn has_many_commits_merged_in_target(
+  commits: List(Commit),
+  branch_diff: BranchDiff,
+) {
+  let base_merge_commit_message =
+    commits
+    |> list.map(fn(commit) { "* " <> commit.message })
+    |> list.reduce(fn(prev, next) { prev <> "\n\n" <> next })
+    |> result.unwrap("")
+
+  let assert Ok(merge_commit_pattern) = regex.from_string(".*(\n\n\\* .*)+")
+  let target_merge_commit_messages =
+    branch_diff.target.commits
+    |> list.filter_map(fn(commit) {
+      let matches = regex.scan(merge_commit_pattern, commit.message)
+      case matches {
+        [Match(_, [Some(commit_message)])] -> Ok(commit_message)
+        _ -> Error(Nil)
+      }
+    })
+
+  target_merge_commit_messages
+  |> list.contains(base_merge_commit_message)
 }
 
 fn get_lookup_max_depth() {

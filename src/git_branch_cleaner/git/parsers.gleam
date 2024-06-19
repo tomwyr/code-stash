@@ -27,10 +27,14 @@ pub fn parse_commits_log(commits_log: String) -> Result(List(Commit), GitError) 
   let assert Ok(commit_regex) =
     regex.from_string("^(\\w+) (?:\\(.+?\\) )?(.+)$")
 
-  commits_log
-  |> string.split("\n")
-  |> list.map(parse_commit_line(_, with: commit_regex))
-  |> result.all()
+  case commits_log {
+    "" -> Ok([])
+    _ ->
+      commits_log
+      |> string.split("\n")
+      |> list.map(parse_commit_line(_, with: commit_regex))
+      |> result.all()
+  }
 }
 
 fn parse_branch_line(branch_line: String, with branch_regex: Regex) {

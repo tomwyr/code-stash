@@ -16,7 +16,7 @@ pub fn log_diff(
   to target_branch: String,
   using run_git_with: GitRunner,
 ) -> Result(String, ShellError) {
-  run_git_with(["log", "--oneline", base_branch, target_branch])
+  run_git_with(["log", "--oneline", base_branch <> ".." <> target_branch])
 }
 
 pub fn local_branches(
