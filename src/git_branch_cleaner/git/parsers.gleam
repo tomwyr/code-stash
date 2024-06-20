@@ -4,7 +4,7 @@ import git_branch_cleaner/types.{
 }
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/regex.{type Regex, Match}
+import gleam/regex.{Match}
 import gleam/result
 import gleam/string
 
@@ -12,40 +12,40 @@ pub fn parse_branch_log(
   branch_log: String,
   branch_type: BranchType,
 ) -> List(Result(Branch, GitError)) {
-  let assert Ok(branch_regex) =
-    regex.from_string(case branch_type {
-      Local -> "^(?:\\*| ) (.+)$"
-      Remote -> "^  (?:.+?\\/)(.+)$"
-    })
-
   branch_log
   |> string.split("\n")
-  |> list.map(parse_branch_line(_, with: branch_regex))
+  |> list.map(parse_branch_line(_, with: branch_type))
 }
 
 pub fn parse_commits_log(commits_log: String) -> Result(List(Commit), GitError) {
-  let assert Ok(commit_regex) = regex.from_string("^(\\w+) (.+)(?:\n(.+))?$")
-
   case commits_log {
     "" -> Ok([])
     _ ->
       commits_log
       |> string.split("\n")
-      |> list.map(parse_commit_line(_, with: commit_regex))
+      |> list.map(parse_commit_line)
       |> result.all()
   }
 }
 
-fn parse_branch_line(branch_line: String, with branch_regex: Regex) {
+fn parse_branch_line(branch_line: String, with branch_type: BranchType) {
+  let assert Ok(branch_regex) =
+    regex.from_string(case branch_type {
+      Local -> "^(?:\\*| ) (.+)$"
+      Remote -> "^  (?:.+?\\/)(.+)$"
+    })
   let matches = regex.scan(with: branch_regex, content: branch_line)
+
   case matches {
     [Match(_, [Some(branch_name)])] -> Ok(Branch(name: branch_name))
     _ -> Error(GitParsingError(content: branch_line, parse_type: BranchLog))
   }
 }
 
-fn parse_commit_line(commit_line: String, with commit_regex: Regex) {
+fn parse_commit_line(commit_line: String) {
+  let assert Ok(commit_regex) = regex.from_string("^(\\w+) (.+)(?:\n(.+))?$")
   let matches = regex.scan(with: commit_regex, content: commit_line)
+
   case matches {
     [Match(_, [Some(commit_hash), Some(commit_summary), ..rest])] -> {
       let description = case rest {
