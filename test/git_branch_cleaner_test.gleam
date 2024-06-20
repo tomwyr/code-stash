@@ -15,7 +15,7 @@ pub fn finds_no_branches_for_single_branch_repo_test() {
       remote_branches: ["origin/master"],
       log_limited: fn(_) {
         [
-          "ef0309adc (origin/master, master) Commit 3", "489f7827f Commit 2",
+          "ef0309adc Commit 3", "489f7827f Commit 2",
           "4ffda615a Commit 1",
         ]
       },
@@ -37,9 +37,9 @@ pub fn finds_no_branches_for_branch_not_merged_into_ref_test() {
       log_limited: fn(branch) {
         case branch {
           "master" -> [
-            "ef0309adc (origin/master, master) Commit 3", "4ffda615a Commit 1",
+            "ef0309adc Commit 3", "4ffda615a Commit 1",
           ]
-          "feature" -> ["489f7827f (feature) Commit 2", "4ffda615a Commit 1"]
+          "feature" -> ["489f7827f Commit 2", "4ffda615a Commit 1"]
           _ -> panic
         }
       },
@@ -61,16 +61,16 @@ pub fn finds_branch_merged_into_ref_test() {
       log_limited: fn(branch) {
         case branch {
           "master" -> [
-            "489f7827f (origin/master, master) Commit 2", "4ffda615a Commit 1",
+            "489f7827f Commit 2", "4ffda615a Commit 1",
           ]
-          "feature" -> ["489f7827f (feature) Commit 2", "4ffda615a Commit 1"]
+          "feature" -> ["489f7827f Commit 2", "4ffda615a Commit 1"]
           _ -> panic
         }
       },
       log_diff: fn(base, target) {
         case base, target {
-          "feature", "master" -> ["489f7827f (origin/master, master) Commit 2"]
-          "master", "feature" -> ["489f7827f (feature) Commit 2"]
+          "feature", "master" -> ["489f7827f Commit 2"]
+          "master", "feature" -> ["489f7827f Commit 2"]
           _, _ -> panic
         }
       },

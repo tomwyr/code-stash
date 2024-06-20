@@ -24,8 +24,7 @@ pub fn parse_branch_log(
 }
 
 pub fn parse_commits_log(commits_log: String) -> Result(List(Commit), GitError) {
-  let assert Ok(commit_regex) =
-    regex.from_string("^(\\w+) (?:\\(.+?\\) )?(.+)$")
+  let assert Ok(commit_regex) = regex.from_string("^(\\w+) (.+)$")
 
   case commits_log {
     "" -> Ok([])

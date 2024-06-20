@@ -29,7 +29,7 @@ pub fn run_test_git(
           remote_branches
           |> list.map(fn(branch) { "  " <> branch }),
         )
-      "log --oneline" <> _ -> {
+      "log" <> _ -> {
         [
           maybe_log_limited(args_str, log_limited),
           maybe_log_diff(args_str, log_diff),
@@ -48,7 +48,9 @@ pub fn run_test_git(
 fn maybe_log_limited(args_str: String, log_limited: fn(String) -> List(String)) {
   fn() {
     let assert Ok(log_limited_regex) =
-      regex.from_string("^log --oneline (\\w+) -n \\d+$")
+      regex.from_string(
+        "^log --format=\\\"%h %s%n%w\\(0,2,2\\)%b\\\" (\\w+) -n \\d+$",
+      )
     let log_limited_match = regex.scan(log_limited_regex, args_str)
 
     case log_limited_match {
@@ -64,7 +66,9 @@ fn maybe_log_diff(
 ) {
   fn() {
     let assert Ok(log_diff_regex) =
-      regex.from_string("^log --oneline (\\w+)\\.\\.(\\w+)$")
+      regex.from_string(
+        "^log --format=\\\"%h %s%n%w\\(0,2,2\\)%b\\\" (\\w+)\\.\\.(\\w+)$",
+      )
     let log_diff_match = regex.scan(log_diff_regex, args_str)
 
     case log_diff_match {

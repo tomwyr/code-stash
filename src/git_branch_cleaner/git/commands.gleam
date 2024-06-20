@@ -3,12 +3,14 @@ import shellout
 
 import git_branch_cleaner/types.{type GitRunner, type ShellError}
 
+const format_arg = "--format=\"%h %s%n%w(0,2,2)%b\""
+
 pub fn log_limited(
   of branch: String,
   limit number: Int,
   using run_git_with: GitRunner,
 ) -> Result(String, ShellError) {
-  run_git_with(["log", "--oneline", branch, "-n", int.to_string(number)])
+  run_git_with(["log", format_arg, branch, "-n", int.to_string(number)])
 }
 
 pub fn log_diff(
@@ -16,7 +18,7 @@ pub fn log_diff(
   to target_branch: String,
   using run_git_with: GitRunner,
 ) -> Result(String, ShellError) {
-  run_git_with(["log", "--oneline", base_branch <> ".." <> target_branch])
+  run_git_with(["log", format_arg, base_branch <> ".." <> target_branch])
 }
 
 pub fn local_branches(
