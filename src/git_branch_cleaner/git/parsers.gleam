@@ -3,7 +3,7 @@ import git_branch_cleaner/types.{
   Commit, CommitLog, GitParsingError, Local, Remote,
 }
 import gleam/list
-import gleam/option.{Some}
+import gleam/option.{None, Some}
 import gleam/regex.{type Regex, Match}
 import gleam/result
 import gleam/string
@@ -24,7 +24,7 @@ pub fn parse_branch_log(
 }
 
 pub fn parse_commits_log(commits_log: String) -> Result(List(Commit), GitError) {
-  let assert Ok(commit_regex) = regex.from_string("^(\\w+) (.+)$")
+  let assert Ok(commit_regex) = regex.from_string("^(\\w+) (.+)(?:\n(.+))?$")
 
   case commits_log {
     "" -> Ok([])
@@ -47,8 +47,17 @@ fn parse_branch_line(branch_line: String, with branch_regex: Regex) {
 fn parse_commit_line(commit_line: String, with commit_regex: Regex) {
   let matches = regex.scan(with: commit_regex, content: commit_line)
   case matches {
-    [Match(_, [Some(commit_hash), Some(commit_message)])] ->
-      Ok(Commit(hash: commit_hash, message: commit_message))
+    [Match(_, [Some(commit_hash), Some(commit_summary), ..rest])] -> {
+      let description = case rest {
+        [description] -> description
+        _ -> None
+      }
+      Ok(Commit(
+        hash: commit_hash,
+        summary: commit_summary,
+        description: description,
+      ))
+    }
     _ -> Error(GitParsingError(content: commit_line, parse_type: CommitLog))
   }
 }

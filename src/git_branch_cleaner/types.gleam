@@ -1,3 +1,5 @@
+import gleam/option.{type Option}
+
 pub type Branch {
   Branch(name: String)
 }
@@ -16,7 +18,7 @@ pub type BranchType {
 }
 
 pub type Commit {
-  Commit(hash: String, message: String)
+  Commit(hash: String, summary: String, description: Option(String))
 }
 
 pub type GitRunner =

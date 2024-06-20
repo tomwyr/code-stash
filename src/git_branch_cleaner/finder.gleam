@@ -62,33 +62,33 @@ fn is_base_merged_in_target(branch_diff: BranchDiff) -> Bool {
 
 fn has_single_commit_merged_in_target(commit: Commit, branch_diff: BranchDiff) {
   branch_diff.target.commits
-  |> list.map(fn(commit) { commit.message })
-  |> list.contains(commit.message)
+  |> list.map(fn(commit) { commit.summary })
+  |> list.contains(commit.summary)
 }
 
 fn has_many_commits_merged_in_target(
   commits: List(Commit),
   branch_diff: BranchDiff,
 ) {
-  let base_merge_commit_message =
+  let base_merge_commit_description =
     commits
-    |> list.map(fn(commit) { "* " <> commit.message })
+    |> list.map(fn(commit) { "* " <> commit.summary })
     |> list.reduce(fn(prev, next) { prev <> "\n\n" <> next })
     |> result.unwrap("")
 
   let assert Ok(merge_commit_pattern) = regex.from_string(".*(\n\n\\* .*)+")
-  let target_merge_commit_messages =
+  let target_merge_commit_description =
     branch_diff.target.commits
     |> list.filter_map(fn(commit) {
-      let matches = regex.scan(merge_commit_pattern, commit.message)
+      let matches = regex.scan(merge_commit_pattern, commit.summary)
       case matches {
-        [Match(_, [Some(commit_message)])] -> Ok(commit_message)
+        [Match(_, [Some(commit_summary)])] -> Ok(commit_summary)
         _ -> Error(Nil)
       }
     })
 
-  target_merge_commit_messages
-  |> list.contains(base_merge_commit_message)
+  target_merge_commit_description
+  |> list.contains(base_merge_commit_description)
 }
 
 fn get_lookup_max_depth() {
