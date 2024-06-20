@@ -14,10 +14,7 @@ pub fn finds_no_branches_for_single_branch_repo_test() {
       local_branches: ["master"],
       remote_branches: ["origin/master"],
       log_limited: fn(_) {
-        [
-          "ef0309adc Commit 3", "489f7827f Commit 2",
-          "4ffda615a Commit 1",
-        ]
+        ["d34cd1061 Commit 3", "48ae1312c Commit 2", "e3bd998e5 Commit 1"]
       },
       log_diff: ignore_log_diff,
     )
@@ -36,10 +33,8 @@ pub fn finds_no_branches_for_branch_not_merged_into_ref_test() {
       remote_branches: ["origin/master"],
       log_limited: fn(branch) {
         case branch {
-          "master" -> [
-            "ef0309adc Commit 3", "4ffda615a Commit 1",
-          ]
-          "feature" -> ["489f7827f Commit 2", "4ffda615a Commit 1"]
+          "master" -> ["77776f5ae Commit 3", "2a6ceec75 Commit 1"]
+          "feature" -> ["c2c8e45f8 Commit 2", "2a6ceec75 Commit 1"]
           _ -> panic
         }
       },
@@ -60,17 +55,15 @@ pub fn finds_branch_merged_into_ref_test() {
       remote_branches: ["origin/master"],
       log_limited: fn(branch) {
         case branch {
-          "master" -> [
-            "489f7827f Commit 2", "4ffda615a Commit 1",
-          ]
-          "feature" -> ["489f7827f Commit 2", "4ffda615a Commit 1"]
+          "master" -> ["d40d5be9a Commit 2", "629733525 Commit 1"]
+          "feature" -> ["d40d5be9a Commit 2", "629733525 Commit 1"]
           _ -> panic
         }
       },
       log_diff: fn(base, target) {
         case base, target {
-          "feature", "master" -> ["489f7827f Commit 2"]
-          "master", "feature" -> ["489f7827f Commit 2"]
+          "feature", "master" -> ["d40d5be9a Commit 2"]
+          "master", "feature" -> ["d40d5be9a Commit 2"]
           _, _ -> panic
         }
       },
