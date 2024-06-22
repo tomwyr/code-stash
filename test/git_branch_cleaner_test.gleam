@@ -62,8 +62,43 @@ pub fn finds_branch_merged_into_ref_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "feature", "master" -> ["d40d5be9a Commit 2"]
           "master", "feature" -> ["d40d5be9a Commit 2"]
+          "feature", "master" -> ["d40d5be9a Commit 2"]
+          _, _ -> panic
+        }
+      },
+    )
+
+  let result = finder.find_branches_to_cleanup(git_runner: git_runner)
+
+  result
+  |> should.be_ok()
+  |> should.equal([Branch(name: "feature")])
+}
+
+pub fn finds_branch_with_multiple_commits_merged_into_ref_test() {
+  let git_runner =
+    run_test_git(
+      local_branches: ["master", "feature"],
+      remote_branches: ["origin/master"],
+      log_limited: fn(branch) {
+        case branch {
+          "master" -> [
+            "6708db115 Commit 4\n  * Commit 3\n\n  * Commit 2",
+            "3643c1bc4 Commit 1",
+          ]
+          "feature" -> [
+            "41d41abf0 Commit 3", "be424315f Commit 2", "3643c1bc4 Commit 1",
+          ]
+          _ -> panic
+        }
+      },
+      log_diff: fn(base, target) {
+        case base, target {
+          "master", "feature" -> [
+            "6708db115 Commit 4\n  * Commit 3\n\n  * Commit 2",
+          ]
+          "feature", "master" -> ["41d41abf0 Commit 3", "be424315f Commit 2"]
           _, _ -> panic
         }
       },

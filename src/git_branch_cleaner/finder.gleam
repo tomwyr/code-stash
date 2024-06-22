@@ -5,8 +5,7 @@ import git_branch_cleaner/types.{
 }
 import git_branch_cleaner/utils/listx
 import gleam/list
-import gleam/option.{Some}
-import gleam/regex.{Match}
+import gleam/option
 import gleam/result
 
 pub fn find_branches_to_cleanup(
@@ -72,22 +71,16 @@ fn has_many_commits_merged_in_target(
 ) {
   let base_merge_commit_description =
     commits
-    |> list.map(fn(commit) { "* " <> commit.summary })
+    |> list.map(fn(commit) { "  * " <> commit.summary })
     |> list.reduce(fn(prev, next) { prev <> "\n\n" <> next })
     |> result.unwrap("")
 
-  let assert Ok(merge_commit_pattern) = regex.from_string(".*(\n\n\\* .*)+")
-  let target_merge_commit_description =
+  let target_commit_descriptions =
     branch_diff.target.commits
-    |> list.filter_map(fn(commit) {
-      let matches = regex.scan(merge_commit_pattern, commit.summary)
-      case matches {
-        [Match(_, [Some(commit_summary)])] -> Ok(commit_summary)
-        _ -> Error(Nil)
-      }
-    })
+    |> list.map(fn(commit) { commit.description })
+    |> option.values()
 
-  target_merge_commit_description
+  target_commit_descriptions
   |> list.contains(base_merge_commit_description)
 }
 

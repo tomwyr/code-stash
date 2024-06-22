@@ -4,7 +4,7 @@ import git_branch_cleaner/types.{
 }
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/regex.{Match}
+import gleam/regex.{type Match, Match}
 import gleam/result
 import gleam/string
 
@@ -20,11 +20,15 @@ pub fn parse_branch_log(
 pub fn parse_commits_log(commits_log: String) -> Result(List(Commit), GitError) {
   case commits_log {
     "" -> Ok([])
-    _ ->
-      commits_log
-      |> string.split("\n")
-      |> list.map(parse_commit_line)
+    _ -> {
+      let assert Ok(commit_regex) =
+        regex.from_string("(\\w+) (.+)((?:\n+  .+)+)?")
+      let matches = regex.scan(with: commit_regex, content: commits_log)
+
+      matches
+      |> list.map(parse_commit_match)
       |> result.all()
+    }
   }
 }
 
@@ -42,14 +46,12 @@ fn parse_branch_line(branch_line: String, with branch_type: BranchType) {
   }
 }
 
-fn parse_commit_line(commit_line: String) {
-  let assert Ok(commit_regex) = regex.from_string("^(\\w+) (.+)(?:\n(.+))?$")
-  let matches = regex.scan(with: commit_regex, content: commit_line)
-
-  case matches {
-    [Match(_, [Some(commit_hash), Some(commit_summary), ..rest])] -> {
+fn parse_commit_match(commit_match: Match) {
+  case commit_match {
+    Match(_, [Some(commit_hash), Some(commit_summary), ..rest]) -> {
       let description = case rest {
-        [description] -> description
+        // Remove leading line break catched by each description group.
+        [Some("\n" <> description)] -> Some(description)
         _ -> None
       }
       Ok(Commit(
@@ -58,6 +60,10 @@ fn parse_commit_line(commit_line: String) {
         description: description,
       ))
     }
-    _ -> Error(GitParsingError(content: commit_line, parse_type: CommitLog))
+    _ ->
+      Error(GitParsingError(
+        content: commit_match.content,
+        parse_type: CommitLog,
+      ))
   }
 }
