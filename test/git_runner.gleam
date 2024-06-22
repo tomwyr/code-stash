@@ -49,7 +49,7 @@ fn maybe_log_limited(args_str: String, log_limited: fn(String) -> List(String)) 
   fn() {
     let assert Ok(log_limited_regex) =
       regex.from_string(
-        "^log --format=\\\"%h %s%n%w\\(0,2,2\\)%b\\\" (\\w+) -n \\d+$",
+        "^log --format=\\\"%h %s%n%w\\(0,2,2\\)%b\\\" (.+) -n \\d+$",
       )
     let log_limited_match = regex.scan(log_limited_regex, args_str)
 
@@ -67,7 +67,7 @@ fn maybe_log_diff(
   fn() {
     let assert Ok(log_diff_regex) =
       regex.from_string(
-        "^log --format=\\\"%h %s%n%w\\(0,2,2\\)%b\\\" (\\w+)\\.\\.(\\w+)$",
+        "^log --format=\\\"%h %s%n%w\\(0,2,2\\)%b\\\" (.+)\\.\\.(.+)$",
       )
     let log_diff_match = regex.scan(log_diff_regex, args_str)
 
