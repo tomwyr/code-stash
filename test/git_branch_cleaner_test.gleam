@@ -1,6 +1,7 @@
 import git_branch_cleaner/finder
-import git_branch_cleaner/types.{Branch}
+import git_branch_cleaner/types.{type Branch, type GitRunner, Branch}
 import git_runner.{run_test_git}
+import gleam/list
 import gleeunit
 import gleeunit/should
 
@@ -9,28 +10,24 @@ pub fn main() {
 }
 
 pub fn finds_no_branches_for_single_branch_repo_test() {
-  let git_runner =
-    run_test_git(
+  test_find_branches_to_cleanup(
+    using: run_test_git(
       local_branches: ["master"],
-      remote_branches: ["origin/master"],
+      remote_branches: [],
       log_limited: fn(_) {
         ["d34cd1061 Commit 3", "48ae1312c Commit 2", "e3bd998e5 Commit 1"]
       },
       log_diff: ignore_log_diff,
-    )
-
-  let result = finder.find_branches_to_cleanup(git_runner: git_runner)
-
-  result
-  |> should.be_ok()
-  |> should.equal([])
+    ),
+    expect: [],
+  )
 }
 
 pub fn finds_no_branches_for_branch_not_merged_into_ref_test() {
-  let git_runner =
-    run_test_git(
+  test_find_branches_to_cleanup(
+    using: run_test_git(
       local_branches: ["master", "feature"],
-      remote_branches: ["origin/master"],
+      remote_branches: [],
       log_limited: fn(branch) {
         case branch {
           "master" -> ["77776f5ae Commit 3", "2a6ceec75 Commit 1"]
@@ -39,20 +36,16 @@ pub fn finds_no_branches_for_branch_not_merged_into_ref_test() {
         }
       },
       log_diff: ignore_log_diff,
-    )
-
-  let result = finder.find_branches_to_cleanup(git_runner: git_runner)
-
-  result
-  |> should.be_ok()
-  |> should.equal([])
+    ),
+    expect: [],
+  )
 }
 
 pub fn finds_branch_merged_into_ref_test() {
-  let git_runner =
-    run_test_git(
+  test_find_branches_to_cleanup(
+    using: run_test_git(
       local_branches: ["master", "feature"],
-      remote_branches: ["origin/master"],
+      remote_branches: [],
       log_limited: fn(branch) {
         case branch {
           "master" -> ["d40d5be9a Commit 2", "629733525 Commit 1"]
@@ -67,20 +60,16 @@ pub fn finds_branch_merged_into_ref_test() {
           _, _ -> panic
         }
       },
-    )
-
-  let result = finder.find_branches_to_cleanup(git_runner: git_runner)
-
-  result
-  |> should.be_ok()
-  |> should.equal([Branch(name: "feature")])
+    ),
+    expect: ["feature"],
+  )
 }
 
 pub fn finds_branch_with_multiple_commits_merged_into_ref_test() {
-  let git_runner =
-    run_test_git(
+  test_find_branches_to_cleanup(
+    using: run_test_git(
       local_branches: ["master", "feature"],
-      remote_branches: ["origin/master"],
+      remote_branches: [],
       log_limited: fn(branch) {
         case branch {
           "master" -> [
@@ -102,20 +91,16 @@ pub fn finds_branch_with_multiple_commits_merged_into_ref_test() {
           _, _ -> panic
         }
       },
-    )
-
-  let result = finder.find_branches_to_cleanup(git_runner: git_runner)
-
-  result
-  |> should.be_ok()
-  |> should.equal([Branch(name: "feature")])
+    ),
+    expect: ["feature"],
+  )
 }
 
 pub fn finds_no_branches_for_branch_merged_but_not_deleted_from_remote_test() {
-  let git_runner =
-    run_test_git(
+  test_find_branches_to_cleanup(
+    using: run_test_git(
       local_branches: ["master", "feature"],
-      remote_branches: ["origin/master", "origin/feature"],
+      remote_branches: ["origin/feature"],
       log_limited: fn(branch) {
         case branch {
           "master" -> [
@@ -137,20 +122,16 @@ pub fn finds_no_branches_for_branch_merged_but_not_deleted_from_remote_test() {
           _, _ -> panic
         }
       },
-    )
-
-  let result = finder.find_branches_to_cleanup(git_runner: git_runner)
-
-  result
-  |> should.be_ok()
-  |> should.equal([])
+    ),
+    expect: [],
+  )
 }
 
 pub fn finds_multiple_branches_with_multiple_commits_merged_into_ref_test() {
-  let git_runner =
-    run_test_git(
+  test_find_branches_to_cleanup(
+    using: run_test_git(
       local_branches: ["master", "feature-a", "feature-b"],
-      remote_branches: ["origin/master"],
+      remote_branches: [],
       log_limited: fn(branch) {
         case branch {
           "master" -> [
@@ -181,20 +162,16 @@ pub fn finds_multiple_branches_with_multiple_commits_merged_into_ref_test() {
           _, _ -> panic
         }
       },
-    )
-
-  let result = finder.find_branches_to_cleanup(git_runner: git_runner)
-
-  result
-  |> should.be_ok()
-  |> should.equal([Branch("feature-a"), Branch("feature-b")])
+    ),
+    expect: ["feature-a", "feature-b"],
+  )
 }
 
 pub fn finds_multiple_branches_with_single_commits_merged_into_ref_test() {
-  let git_runner =
-    run_test_git(
+  test_find_branches_to_cleanup(
+    using: run_test_git(
       local_branches: ["master", "feature-a", "feature-b"],
-      remote_branches: ["origin/master"],
+      remote_branches: [],
       log_limited: fn(branch) {
         case branch {
           "master" -> [
@@ -214,13 +191,18 @@ pub fn finds_multiple_branches_with_single_commits_merged_into_ref_test() {
           _, _ -> panic
         }
       },
-    )
+    ),
+    expect: ["feature-a", "feature-b"],
+  )
+}
 
-  let result = finder.find_branches_to_cleanup(git_runner: git_runner)
-
-  result
+fn test_find_branches_to_cleanup(
+  using git_runner: GitRunner,
+  expect branches: List(String),
+) {
+  finder.find_branches_to_cleanup(git_runner: git_runner)
   |> should.be_ok()
-  |> should.equal([Branch("feature-a"), Branch("feature-b")])
+  |> should.equal(branches |> list.map(Branch))
 }
 
 fn ignore_log_diff(_: String, _: String) {
