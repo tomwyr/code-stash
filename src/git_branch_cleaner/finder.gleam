@@ -9,14 +9,14 @@ import gleam/option
 import gleam/result
 
 pub fn find_branches_to_cleanup(
-  git_runner git_runner: GitRunner,
+  using git_runner: GitRunner,
 ) -> Result(List(Branch), GitError) {
   use local_branches <- result.try(git.get_local_only_branches(
     using: git_runner,
   ))
   use local_to_ref_branch_diffs <- result.map(diff_branches_against_ref(
     local_branches,
-    git_runner,
+    using: git_runner,
   ))
 
   local_to_ref_branch_diffs
@@ -26,7 +26,7 @@ pub fn find_branches_to_cleanup(
 
 fn diff_branches_against_ref(
   local_branches: List(Branch),
-  git_runner: GitRunner,
+  using git_runner: GitRunner,
 ) {
   let ref_branch = get_reference_branch()
   let max_depth = get_lookup_max_depth()
