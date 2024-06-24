@@ -1,4 +1,5 @@
-import git_branch_cleaner/finder
+import git_branch_cleaner as cleaner
+import git_branch_cleaner/branch_finder
 import git_branch_cleaner/types.{
   type BranchCleanerConfig, Branch, BranchCleanerConfig,
 }
@@ -8,7 +9,7 @@ import gleeunit/should
 
 pub fn passes_branch_max_depth_to_git_commands_test() {
   test_branch_cleaner_config(
-    of: BranchCleanerConfig(..finder.get_default_config(), branch_max_depth: 7),
+    of: BranchCleanerConfig(..cleaner.get_default_config(), branch_max_depth: 7),
     using: fn(args_str) {
       case args_str {
         "branch" -> ["  master", "  feature"]
@@ -35,7 +36,7 @@ pub fn passes_branch_max_depth_to_git_commands_test() {
 pub fn passes_ref_branch_name_to_git_commands_test() {
   test_branch_cleaner_config(
     of: BranchCleanerConfig(
-      ..finder.get_default_config(),
+      ..cleaner.get_default_config(),
       ref_branch_name: "main",
     ),
     using: fn(args_str) {
@@ -71,7 +72,7 @@ fn test_branch_cleaner_config(
     Ok(answer(args_str) |> string.join("\n"))
   }
 
-  finder.find_branches_to_cleanup(matching: config, using: git_runner)
+  branch_finder.find_branches_to_cleanup(for: config, using: git_runner)
   |> should.be_ok()
   |> should.equal(branches |> list.map(Branch))
 }
