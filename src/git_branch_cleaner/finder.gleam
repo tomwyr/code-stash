@@ -1,7 +1,8 @@
 import git_branch_cleaner/git/git
 import git_branch_cleaner/types.{
-  type Branch, type BranchDiff, type Commit, type GitError, type GitRunner,
-  Branch, BranchDiff,
+  type Branch, type BranchCleanerConfig, type BranchDiff, type Commit,
+  type GitError, type GitRunner, Branch, BranchCleanerConfig, BranchDiff, Local,
+  SquashAndMerge,
 }
 import git_branch_cleaner/utils/listx
 import gleam/list
@@ -9,6 +10,7 @@ import gleam/option
 import gleam/result
 
 pub fn find_branches_to_cleanup(
+  matching config: BranchCleanerConfig,
   using git_runner: GitRunner,
 ) -> Result(List(Branch), GitError) {
   use local_branches <- result.try(git.get_local_only_branches(
@@ -16,6 +18,7 @@ pub fn find_branches_to_cleanup(
   ))
   use local_to_ref_branch_diffs <- result.map(diff_branches_against_ref(
     local_branches,
+    matching: config,
     using: git_runner,
   ))
 
@@ -26,10 +29,11 @@ pub fn find_branches_to_cleanup(
 
 fn diff_branches_against_ref(
   local_branches: List(Branch),
+  matching config: BranchCleanerConfig,
   using git_runner: GitRunner,
 ) {
-  let ref_branch = get_reference_branch()
-  let max_depth = get_lookup_max_depth()
+  let max_depth = config.branch_max_depth
+  let ref_branch = Branch(config.ref_branch_name)
 
   use ref_sub_branches <- result.try(
     local_branches
@@ -84,10 +88,11 @@ fn has_many_commits_merged_in_target(
   |> list.contains(base_merge_commit_description)
 }
 
-fn get_lookup_max_depth() {
-  25
-}
-
-fn get_reference_branch() {
-  Branch(name: "master")
+pub fn get_default_config() -> BranchCleanerConfig {
+  BranchCleanerConfig(
+    branch_max_depth: 25,
+    ref_branch_name: "master",
+    ref_branch_type: Local,
+    merge_strategy: SquashAndMerge,
+  )
 }

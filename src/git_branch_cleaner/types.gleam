@@ -36,3 +36,18 @@ pub type GitParseType {
 
 pub type ShellError =
   #(Int, String)
+
+pub type BranchCleanerConfig {
+  BranchCleanerConfig(
+    branch_max_depth: Int,
+    ref_branch_name: String,
+    ref_branch_type: BranchType,
+    merge_strategy: MergeStrategy,
+  )
+}
+
+pub type MergeStrategy {
+  CreateMergeCommit
+  SquashAndMerge
+  RebaseAndMerge
+}
