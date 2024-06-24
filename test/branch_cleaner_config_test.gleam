@@ -42,17 +42,17 @@ pub fn passes_ref_branch_name_to_git_commands_test() {
       case args_str {
         "branch" -> ["  main", "  feature"]
         "branch -r" -> []
-        "log --format=\"%h %s%n%w(0,2,2)%b\" main -n 7" -> [
-          "ba25f3ac2 Commit 2", "fdd67acf1 Commit 1",
+        "log --format=\"%h %s%n%w(0,2,2)%b\" main -n 25" -> [
+          "e04e3415a Commit 2", "daf5b8fad Commit 1",
         ]
-        "log --format=\"%h %s%n%w(0,2,2)%b\" feature -n 7" -> [
-          "2f987f22f Commit 2", "fdd67acf1 Commit 1",
+        "log --format=\"%h %s%n%w(0,2,2)%b\" feature -n 25" -> [
+          "0058f8acc Commit 2", "daf5b8fad Commit 1",
         ]
         "log --format=\"%h %s%n%w(0,2,2)%b\" main..feature" -> [
-          "ba25f3ac2 Commit 2",
+          "e04e3415a Commit 2",
         ]
         "log --format=\"%h %s%n%w(0,2,2)%b\" feature..main" -> [
-          "2f987f22f Commit 2",
+          "0058f8acc Commit 2",
         ]
         _ -> panic
       }
