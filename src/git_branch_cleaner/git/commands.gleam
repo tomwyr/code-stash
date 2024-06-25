@@ -33,6 +33,13 @@ pub fn remote_branches(
   run_git_with(["branch", "-r"])
 }
 
+pub fn delete_branch(
+  branch: String,
+  using run_git_with: GitRunner,
+) -> Result(String, ShellError) {
+  run_git_with(["branch", "-D", branch])
+}
+
 pub fn run_git_in_shell(arguments: List(String)) {
   shellout.command(run: "git", with: arguments, in: ".", opt: [])
 }

@@ -66,6 +66,15 @@ pub fn has_common_ancestor(
   !set.is_disjoint(branch_commits, other_commits)
 }
 
+pub fn delete_branch(
+  branch: Branch,
+  using git_runner: GitRunner,
+) -> Result(Nil, GitError) {
+  commands.delete_branch(branch.name, using: git_runner)
+  |> result.replace(Nil)
+  |> result.map_error(GitCommandError)
+}
+
 fn get_branch_slice(
   of branch: Branch,
   not_deeper_than max_depth: Int,

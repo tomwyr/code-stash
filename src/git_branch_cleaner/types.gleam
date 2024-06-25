@@ -51,3 +51,9 @@ pub type MergeStrategy {
   SquashAndMerge
   RebaseAndMerge
 }
+
+pub type CleanupBranchesError {
+  BranchesNotFound(branches: List(Branch))
+  BranchesNotRemoved(branches: List(Branch))
+  RemoveGitError(error: GitError)
+}
