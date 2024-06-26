@@ -1,3 +1,5 @@
+import git_branch_cleaner/logger
+import git_branch_cleaner/utils/objectx
 import gleam/int
 import gleam/result
 import gleam/string
@@ -43,6 +45,8 @@ pub fn delete_branch(
 }
 
 pub fn run_git_in_shell(arguments: List(String)) {
+  logger.git_command_input(arguments)
+
   let raw_output =
     shellout.command(
       run: "git",
@@ -51,5 +55,7 @@ pub fn run_git_in_shell(arguments: List(String)) {
       opt: [],
     )
 
-  raw_output |> result.map(string.replace(_, "\"", ""))
+  raw_output
+  |> result.map(string.replace(_, "\"", ""))
+  |> objectx.relay(logger.git_command_output)
 }
