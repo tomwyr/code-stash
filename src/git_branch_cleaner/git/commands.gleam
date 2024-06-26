@@ -1,4 +1,4 @@
-import git_branch_cleaner/logger
+import git_branch_cleaner/common/logger
 import git_branch_cleaner/utils/objectx
 import gleam/int
 import gleam/result

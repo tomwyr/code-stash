@@ -1,4 +1,4 @@
-import git_branch_cleaner/input_args
+import git_branch_cleaner/common/input_args
 import git_branch_cleaner/types.{type ShellError}
 import gleam/int
 import gleam/io

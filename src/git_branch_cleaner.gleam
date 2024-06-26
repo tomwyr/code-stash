@@ -1,4 +1,4 @@
-import git_branch_cleaner/branch_finder
+import git_branch_cleaner/core/branch_finder
 import git_branch_cleaner/git/commands.{run_git_in_shell}
 import git_branch_cleaner/types.{
   type BranchCleanerConfig, BranchCleanerConfig, Local, SquashAndMerge,

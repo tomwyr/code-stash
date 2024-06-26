@@ -1,5 +1,5 @@
 import git_branch_cleaner as cleaner
-import git_branch_cleaner/branch_finder
+import git_branch_cleaner/core/branch_finder
 import git_branch_cleaner/types.{
   type BranchCleanerConfig, Branch, BranchCleanerConfig,
 }

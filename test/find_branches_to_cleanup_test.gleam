@@ -1,5 +1,5 @@
-import git_branch_cleaner as cleaner
-import git_branch_cleaner/branch_finder
+import git_branch_cleaner.{get_default_config}
+import git_branch_cleaner/core/branch_finder
 import git_branch_cleaner/types.{type Branch, type GitRunner, Branch}
 import git_runner.{run_test_git}
 import gleam/list
@@ -336,7 +336,7 @@ fn test_find_branches_to_cleanup(
   expect branches: List(String),
 ) {
   branch_finder.find_branches_to_cleanup(
-    for: cleaner.get_default_config(),
+    for: get_default_config(),
     using: git_runner,
   )
   |> should.be_ok()
