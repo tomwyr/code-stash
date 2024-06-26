@@ -1,5 +1,5 @@
 import git_branch_cleaner as cleaner
-import git_branch_cleaner/core/branch_finder
+import git_branch_cleaner/core/finder
 import git_branch_cleaner/types.{
   type BranchCleanerConfig, Branch, BranchCleanerConfig,
 }
@@ -72,7 +72,7 @@ fn test_branch_cleaner_config(
     Ok(answer(args_str) |> string.join("\n"))
   }
 
-  branch_finder.find_branches_to_cleanup(for: config, using: git_runner)
+  finder.find_branches_to_cleanup(for: config, using: git_runner)
   |> should.be_ok()
   |> should.equal(branches |> list.map(Branch))
 }
