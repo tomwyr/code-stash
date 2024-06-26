@@ -105,7 +105,7 @@ fn get_commits_diff(
   to target: Branch,
   using git_runner: GitRunner,
 ) {
-  commands.log_diff(from: target.name, to: base.name, using: git_runner)
+  commands.log_diff(from: base.name, to: target.name, using: git_runner)
   |> result.map_error(GitCommandError)
   |> result.try(parsers.parse_commits_log)
 }

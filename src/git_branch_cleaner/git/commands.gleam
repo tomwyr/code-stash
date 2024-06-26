@@ -1,4 +1,6 @@
 import gleam/int
+import gleam/result
+import gleam/string
 import shellout
 
 import git_branch_cleaner/types.{type GitRunner, type ShellError}
@@ -41,5 +43,13 @@ pub fn delete_branch(
 }
 
 pub fn run_git_in_shell(arguments: List(String)) {
-  shellout.command(run: "git", with: arguments, in: ".", opt: [])
+  let raw_output =
+    shellout.command(
+      run: "git",
+      with: ["--no-pager", ..arguments],
+      in: ".",
+      opt: [],
+    )
+
+  raw_output |> result.map(string.replace(_, "\"", ""))
 }

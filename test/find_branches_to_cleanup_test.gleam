@@ -51,8 +51,8 @@ pub fn finds_branch_merged_into_ref_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "master", "feature" -> ["d40d5be9a Commit 2"]
-          "feature", "master" -> ["1d88768b9 Commit 2"]
+          "feature", "master" -> ["d40d5be9a Commit 2"]
+          "master", "feature" -> ["1d88768b9 Commit 2"]
           _, _ -> panic
         }
       },
@@ -78,11 +78,11 @@ pub fn finds_no_branches_for_branch_deeper_than_max_depth_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "master", "feature" -> [
+          "feature", "master" -> [
             "a41c271a8 Branch 6", "65f548de8 Commit 5", "dbf317d96 Commit 4",
             "0df5deb72 Commit 3", "bda3be7ec Commit 2",
           ]
-          "feature", "master" -> ["3755b6927 Commit 2"]
+          "master", "feature" -> ["3755b6927 Commit 2"]
           _, _ -> panic
         }
       },
@@ -108,11 +108,11 @@ pub fn finds_branch_for_branch_with_depth_equal_to_max_depth_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "master", "feature" -> [
+          "feature", "master" -> [
             "4c3357a0b Commit 5", "59bd688d0 Commit 4", "c4e7b5162 Commit 3",
             "ef3403930 Commit 2",
           ]
-          "feature", "master" -> ["bda3be7ec Commit 2"]
+          "master", "feature" -> ["bda3be7ec Commit 2"]
           _, _ -> panic
         }
       },
@@ -140,10 +140,10 @@ pub fn finds_branch_with_multiple_commits_merged_into_ref_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "master", "feature" -> [
+          "feature", "master" -> [
             "6708db115 Commit 4\n  * Commit 3\n\n  * Commit 2",
           ]
-          "feature", "master" -> ["41d41abf0 Commit 3", "be424315f Commit 2"]
+          "master", "feature" -> ["41d41abf0 Commit 3", "be424315f Commit 2"]
           _, _ -> panic
         }
       },
@@ -171,10 +171,10 @@ pub fn finds_no_branches_for_branch_merged_but_not_deleted_from_remote_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "master", "feature" -> [
+          "feature", "master" -> [
             "dc7c13e21 Commit 4\n  * Commit 3\n\n  * Commit 2",
           ]
-          "feature", "master" -> ["0d51efa2a Commit 3", "5c7700098 Commit 2"]
+          "master", "feature" -> ["0d51efa2a Commit 3", "5c7700098 Commit 2"]
           _, _ -> panic
         }
       },
@@ -206,15 +206,15 @@ pub fn finds_multiple_branches_with_multiple_commits_merged_into_ref_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "master", "feature-a" -> [
+          "feature-a", "master" -> [
             "3fe43fbf7 Commit 4\n  * Commit 3\n\n  * Commit 2",
           ]
-          "feature-a", "master" -> ["01ae1f5cf Commit 3", "e1d50ee17 Commit 2"]
-          "master", "feature-b" -> [
+          "master", "feature-a" -> ["01ae1f5cf Commit 3", "e1d50ee17 Commit 2"]
+          "feature-b", "master" -> [
             "3fe43fbf7 Commit 4\n  * Commit 3\n\n  * Commit 2",
             "86d6dac4f Commit 7\n  * Commit 6\n\n  * Commit 5",
           ]
-          "feature-b", "master" -> ["3951ac595 Commit 6", "88c8a31b9 Commit 5"]
+          "master", "feature-b" -> ["3951ac595 Commit 6", "88c8a31b9 Commit 5"]
           _, _ -> panic
         }
       },
@@ -240,10 +240,10 @@ pub fn finds_multiple_branches_with_single_commits_merged_into_ref_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "master", "feature-a" -> ["910ca29d7 Commit 3", "ca7d64d26 Commit 2"]
-          "feature-a", "master" -> ["066c13611 Commit 2"]
-          "master", "feature-b" -> ["910ca29d7 Commit 3", "ca7d64d26 Commit 2"]
-          "feature-b", "master" -> ["ece47178d Commit 3"]
+          "feature-a", "master" -> ["910ca29d7 Commit 3", "ca7d64d26 Commit 2"]
+          "master", "feature-a" -> ["066c13611 Commit 2"]
+          "feature-b", "master" -> ["910ca29d7 Commit 3", "ca7d64d26 Commit 2"]
+          "master", "feature-b" -> ["ece47178d Commit 3"]
           _, _ -> panic
         }
       },
@@ -275,16 +275,16 @@ pub fn finds_multiple_branches_with_common_history_above_ref_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "master", "feature-a" -> [
+          "feature-a", "master" -> [
             "160d15aa3 Commit 6\n  * Commit 4\n\n  * Commit 2",
             "7fd4542bb Commit 5\n  * Commit 3\n\n  * Commit 2",
           ]
-          "feature-a", "master" -> ["04746a6c1 Commit 3", "d5a476811 Commit 2"]
-          "master", "feature-b" -> [
+          "master", "feature-a" -> ["04746a6c1 Commit 3", "d5a476811 Commit 2"]
+          "feature-b", "master" -> [
             "160d15aa3 Commit 6\n  * Commit 4\n\n  * Commit 2",
             "7fd4542bb Commit 5\n  * Commit 3\n\n  * Commit 2",
           ]
-          "feature-b", "master" -> ["024d30b45 Commit 4", "d5a476811 Commit 2"]
+          "master", "feature-b" -> ["024d30b45 Commit 4", "d5a476811 Commit 2"]
           _, _ -> panic
         }
       },
@@ -313,16 +313,16 @@ pub fn finds_multiple_branches_stacked_on_top_of_each_other_test() {
       },
       log_diff: fn(base, target) {
         case base, target {
-          "master", "feature-a" -> [
+          "feature-a", "master" -> [
             "081513206 Commit 4\n  * Commit 3\n\n  * Commit 2",
             "371fc576a Commit 2",
           ]
-          "feature-a", "master" -> ["a6afff21a Commit 2"]
-          "master", "feature-b" -> [
+          "master", "feature-a" -> ["a6afff21a Commit 2"]
+          "feature-b", "master" -> [
             "081513206 Commit 4\n  * Commit 3\n\n  * Commit 2",
             "371fc576a Commit 2",
           ]
-          "feature-b", "master" -> ["530d7b15c Commit 3", "a6afff21a Commit 2"]
+          "master", "feature-b" -> ["530d7b15c Commit 3", "a6afff21a Commit 2"]
           _, _ -> panic
         }
       },
