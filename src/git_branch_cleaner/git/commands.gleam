@@ -5,7 +5,7 @@ import gleam/result
 import gleam/string
 import shellout
 
-import git_branch_cleaner/types.{type GitRunner, type ShellError}
+import git_branch_cleaner/common/types.{type GitRunner, type ShellError}
 
 const format_arg = "--format=\"%h %s%n%w(0,2,2)%b\""
 

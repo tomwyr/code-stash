@@ -1,4 +1,4 @@
-import git_branch_cleaner/types.{type ShellError}
+import git_branch_cleaner/common/types.{type ShellError}
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/regex.{Match}

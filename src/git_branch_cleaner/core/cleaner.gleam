@@ -1,12 +1,22 @@
-import git_branch_cleaner/git/git
-import git_branch_cleaner/types.{
-  type Branch, type CleanupBranchesError, type GitRunner, BranchesNotFound,
-  BranchesNotRemoved, RemoveGitError,
+import git_branch_cleaner/common/types.{
+  type Branch, type BranchCleanerConfig, type CleanupBranchesError,
+  type GitRunner, BranchCleanerConfig, BranchesNotFound, BranchesNotRemoved,
+  Local, RemoveGitError, SquashAndMerge,
 }
+import git_branch_cleaner/git/git
 import git_branch_cleaner/utils/resultx
 import gleam/list
 import gleam/result
 import gleam/set
+
+pub fn get_default_config() -> BranchCleanerConfig {
+  BranchCleanerConfig(
+    branch_max_depth: 25,
+    ref_branch_name: "master",
+    ref_branch_type: Local,
+    merge_strategy: SquashAndMerge,
+  )
+}
 
 pub fn cleanup_branches(
   branches: List(Branch),

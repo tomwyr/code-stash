@@ -1,4 +1,4 @@
-import git_branch_cleaner/types.{
+import git_branch_cleaner/common/types.{
   type Branch, type BranchType, type Commit, type GitError, Branch, BranchLog,
   Commit, CommitLog, GitParsingError, Local, Remote,
 }

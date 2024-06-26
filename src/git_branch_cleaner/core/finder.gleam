@@ -1,8 +1,8 @@
-import git_branch_cleaner/git/git
-import git_branch_cleaner/types.{
+import git_branch_cleaner/common/types.{
   type Branch, type BranchCleanerConfig, type BranchDiff, type Commit,
   type GitError, type GitRunner, Branch, BranchCleanerConfig,
 }
+import git_branch_cleaner/git/git
 import git_branch_cleaner/utils/listx
 import gleam/list
 import gleam/option

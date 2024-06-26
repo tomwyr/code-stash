@@ -1,8 +1,8 @@
-import git_branch_cleaner as cleaner
-import git_branch_cleaner/core/finder
-import git_branch_cleaner/types.{
+import git_branch_cleaner/common/types.{
   type BranchCleanerConfig, Branch, BranchCleanerConfig,
 }
+import git_branch_cleaner/core/cleaner
+import git_branch_cleaner/core/finder
 import gleam/list
 import gleam/string
 import gleeunit/should

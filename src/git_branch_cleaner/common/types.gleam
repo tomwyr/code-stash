@@ -46,10 +46,19 @@ pub type BranchCleanerConfig {
   )
 }
 
+pub type InputArgs {
+  InputArgs(verbose: Bool)
+}
+
 pub type MergeStrategy {
   CreateMergeCommit
   SquashAndMerge
   RebaseAndMerge
+}
+
+pub type CommandError {
+  FindError(GitError)
+  RemoveError(CleanupBranchesError)
 }
 
 pub type CleanupBranchesError {

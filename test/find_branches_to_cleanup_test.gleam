@@ -1,6 +1,6 @@
-import git_branch_cleaner.{get_default_config}
+import git_branch_cleaner/common/types.{type Branch, type GitRunner, Branch}
+import git_branch_cleaner/core/cleaner
 import git_branch_cleaner/core/finder
-import git_branch_cleaner/types.{type Branch, type GitRunner, Branch}
 import git_runner.{run_test_git}
 import gleam/list
 import gleeunit/should
@@ -335,7 +335,10 @@ fn test_find_branches_to_cleanup(
   using git_runner: GitRunner,
   expect branches: List(String),
 ) {
-  finder.find_branches_to_cleanup(for: get_default_config(), using: git_runner)
+  finder.find_branches_to_cleanup(
+    for: cleaner.get_default_config(),
+    using: git_runner,
+  )
   |> should.be_ok()
   |> should.equal(branches |> list.map(Branch))
 }

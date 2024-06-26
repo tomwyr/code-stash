@@ -4,7 +4,7 @@ import gleam/set
 
 import gleam/result
 
-import git_branch_cleaner/types.{
+import git_branch_cleaner/common/types.{
   type Branch, type BranchDiff, type GitError, type GitRunner, BranchDiff,
   BranchSlice, GitCommandError, Local, Remote,
 }
