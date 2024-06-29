@@ -65,5 +65,23 @@ pub fn remove() {
 }
 
 pub fn help() {
-  io.println("Usage: gbc find, gbc remove")
+  let message =
+    "
+A command-line utility for cleaning up git branches.
+
+Usage: gbc <command> <options>
+
+Available commands:
+  find      Scan cwd for local git branches that have been merged into ref branch and can be safely removed. This command will NOT delete any branches.
+  remove    Remove cwd local git branches that have been merged into ref branch. This command WILL delete found branches.
+  help      Show this guide information.
+
+Available global options:
+  -v        Show additional output for command.
+"
+
+  let trimme_message =
+    message |> string.slice(at_index: 1, length: string.length(message) - 2)
+
+  io.println(trimme_message)
 }

@@ -16,22 +16,21 @@ pub fn git_command_input(arguments: List(String)) {
 
 pub fn git_command_output(output: Result(String, ShellError)) {
   log(fn() {
-    let formatted_output = case output {
-      Ok(value) -> value
+    case output {
+      Ok(_) -> Nil
       Error(value) -> {
         let #(code, message) = value
-        "Git error code " <> int.to_string(code) <> ": " <> message
+        let message =
+          "Git error occured: " <> message <> "(" <> int.to_string(code) <> ")"
+        io.println(message)
       }
     }
-
-    io.println("Which outputted:")
-    io.println(formatted_output)
+    Nil
   })
 }
 
 fn log(log_message: fn() -> Nil) {
-  let args = input_args.load()
-  case args.verbose {
+  case input_args.verbose() {
     True -> log_message()
     False -> Nil
   }

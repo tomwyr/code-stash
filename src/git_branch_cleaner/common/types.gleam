@@ -46,10 +46,6 @@ pub type BranchCleanerConfig {
   )
 }
 
-pub type InputArgs {
-  InputArgs(verbose: Bool)
-}
-
 pub type MergeStrategy {
   CreateMergeCommit
   SquashAndMerge
@@ -65,4 +61,15 @@ pub type CleanupBranchesError {
   BranchesNotFound(branches: List(Branch))
   BranchesNotRemoved(branches: List(Branch))
   RemoveGitError(error: GitError)
+}
+
+pub type CliCommand {
+  Find
+  Remove
+  Help
+}
+
+pub type CliCommandError {
+  UnknownCommand(String)
+  UnknownOption(String)
 }
