@@ -358,7 +358,7 @@ pub fn finds_branches_merged_with_branch_name_in_commit_message_test() {
   )
 }
 
-pub fn finds_branch_with_prefix_when_matcher_is_in_config_test() {
+pub fn finds_branch_used_as_prefix_when_prefix_matcher_is_in_config_test() {
   test_find_branches_to_cleanup_with_config(
     config: BranchCleanerConfig(
       ..config.default(),
@@ -388,7 +388,35 @@ pub fn finds_branch_with_prefix_when_matcher_is_in_config_test() {
   )
 }
 
-pub fn finds_no_branch_with_prefix_when_matcher_is_in_config_test() {
+pub fn finds_branch_when_only_last_path_segment_matches_prefix_test() {
+  test_find_branches_to_cleanup_with_config(
+    config: BranchCleanerConfig(
+      ..config.default(),
+      branch_merge_matchers: [BranchNamePrefix],
+    ),
+    using: run_test_git(
+      local_branches: ["master", "feature/id-123"],
+      remote_branches: [],
+      log_limited: fn(branch) {
+        case branch {
+          "master" -> ["b1b9a43ea id-123 Merge Commit 2", "57c52f497 Commit 1"]
+          "feature/id-123" -> ["e97b65545 Commit 2", "57c52f497 Commit 1"]
+          _ -> panic
+        }
+      },
+      log_diff: fn(base, target) {
+        case base, target {
+          "feature/id-123", "master" -> ["b1b9a43ea id-123 Merge Commit 2"]
+          "master", "feature/id-123" -> ["e97b65545 Commit 2"]
+          _, _ -> panic
+        }
+      },
+    ),
+    expect: ["feature/id-123"],
+  )
+}
+
+pub fn finds_no_branch_used_as_prefix_when_prefix_matcher_is_not_in_config_test() {
   test_find_branches_to_cleanup_with_config(
     config: BranchCleanerConfig(
       ..config.default(),

@@ -4,7 +4,8 @@ import git_branch_cleaner/common/types.{
 }
 import git_branch_cleaner/common/utils
 import gleam/list
-import gleam/option
+import gleam/option.{Some}
+import gleam/regex.{Match}
 import gleam/result
 import gleam/string
 
@@ -32,10 +33,21 @@ fn has_default_merge_message(branch_diff: BranchDiff) -> Bool {
 }
 
 fn has_branch_name_prefix(branch_diff: BranchDiff) -> Bool {
-  let prefix = string.lowercase(branch_diff.base.branch.name)
+  let prefix =
+    branch_diff.base.branch.name
+    |> extract_prefix()
+    |> string.lowercase()
+
   branch_diff.target.commits
   |> list.map(fn(commit) { string.lowercase(commit.summary) })
   |> list.any(string.starts_with(_, prefix))
+}
+
+fn extract_prefix(branch_name: String) {
+  let assert Ok(prefix_regex) = regex.from_string("(?:.*\\/)?(.+)")
+  let matches = regex.scan(with: prefix_regex, content: branch_name)
+  let assert [Match(_, [Some(prefix)])] = matches
+  prefix
 }
 
 fn has_squashed_commits_message(branch_diff: BranchDiff) -> Bool {
