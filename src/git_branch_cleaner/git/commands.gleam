@@ -1,5 +1,5 @@
 import git_branch_cleaner/common/logger
-import git_branch_cleaner/utils/objectx
+import git_branch_cleaner/common/utils
 import gleam/int
 import gleam/result
 import gleam/string
@@ -14,7 +14,7 @@ pub fn log_limited(
   limit number: Int,
   using run_git_with: GitRunner,
 ) -> Result(String, ShellError) {
-  run_git_with(["log", format_arg, branch, "-n", int.to_string(number)])
+  run_git_with(["log", format_arg, branch, "-n", int.to_string(number), "--"])
 }
 
 pub fn log_diff(
@@ -57,5 +57,5 @@ pub fn run_git_in_shell(arguments: List(String)) {
 
   raw_output
   |> result.map(string.replace(_, "\"", ""))
-  |> objectx.relay(logger.git_command_output)
+  |> utils.relay(logger.git_command_output)
 }

@@ -25,3 +25,21 @@ pub fn try_filter(
 
   list.try_map(list, apply_fitler) |> result.map(option.values)
 }
+
+/// Returns second result if the first is `Ok`, otherwise returns the first `Error`.
+pub fn and(first: Result(a, b), second: Result(a, b)) -> Result(a, b) {
+  first |> result.try(fn(_) { second })
+}
+
+/// Invokes callback function with the provided object and returns the original
+/// object unmodified.
+pub fn relay(object: a, run callback: fn(a) -> Nil) -> a {
+  callback(object)
+  object
+}
+
+/// Invokes function with the provided object and return the result of the
+/// function.
+pub fn call(function: fn(a) -> b, with object: a) -> b {
+  function(object)
+}

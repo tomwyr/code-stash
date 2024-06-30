@@ -331,6 +331,30 @@ pub fn finds_multiple_branches_stacked_on_top_of_each_other_test() {
   )
 }
 
+pub fn finds_branches_merged_with_branch_name_in_commit_message_test() {
+  test_find_branches_to_cleanup(
+    using: run_test_git(
+      local_branches: ["master", "feature"],
+      remote_branches: [],
+      log_limited: fn(branch) {
+        case branch {
+          "master" -> ["8fed06b5f Merge branch 'feature'", "329d837a4 Commit 1"]
+          "feature" -> ["03975432e Commit 2", "329d837a4 Commit 1"]
+          _ -> panic
+        }
+      },
+      log_diff: fn(base, target) {
+        case base, target {
+          "feature", "master" -> ["8fed06b5f Merge branch 'feature'"]
+          "master", "feature" -> ["03975432e Commit 2"]
+          _, _ -> panic
+        }
+      },
+    ),
+    expect: ["feature"],
+  )
+}
+
 fn test_find_branches_to_cleanup(
   using git_runner: GitRunner,
   expect branches: List(String),

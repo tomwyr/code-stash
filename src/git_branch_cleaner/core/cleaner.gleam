@@ -3,8 +3,8 @@ import git_branch_cleaner/common/types.{
   type GitRunner, BranchCleanerConfig, BranchesNotFound, BranchesNotRemoved,
   Local, RemoveGitError, SquashAndMerge,
 }
+import git_branch_cleaner/common/utils
 import git_branch_cleaner/git/git
-import git_branch_cleaner/utils/resultx
 import gleam/list
 import gleam/result
 import gleam/set
@@ -23,8 +23,8 @@ pub fn cleanup_branches(
   using git_runner: GitRunner,
 ) -> Result(Nil, CleanupBranchesError) {
   validate_branches_exist(branches, using: git_runner)
-  |> resultx.and(remove_branches(branches, using: git_runner))
-  |> resultx.and(validate_branches_removed(branches, using: git_runner))
+  |> utils.and(remove_branches(branches, using: git_runner))
+  |> utils.and(validate_branches_removed(branches, using: git_runner))
   |> result.replace(Nil)
 }
 

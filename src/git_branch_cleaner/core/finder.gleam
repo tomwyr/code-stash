@@ -2,8 +2,8 @@ import git_branch_cleaner/common/types.{
   type Branch, type BranchCleanerConfig, type BranchDiff, type Commit,
   type GitError, type GitRunner, Branch, BranchCleanerConfig,
 }
+import git_branch_cleaner/common/utils
 import git_branch_cleaner/git/git
-import git_branch_cleaner/utils/listx
 import gleam/list
 import gleam/option
 import gleam/result
@@ -37,7 +37,7 @@ fn diff_branches_against_ref(
   use ref_sub_branches <- result.try(
     local_branches
     |> list.filter(fn(branch) { branch != ref_branch })
-    |> listx.try_filter(git.has_common_ancestor(
+    |> utils.try_filter(git.has_common_ancestor(
       branch: _,
       with: ref_branch,
       not_deeper_than: max_depth,
@@ -55,6 +55,17 @@ fn diff_branches_against_ref(
 }
 
 fn is_base_merged_in_target(branch_diff: BranchDiff) -> Bool {
+  [has_branch_merge_message, has_commits_merge_message]
+  |> list.any(utils.call(_, with: branch_diff))
+}
+
+fn has_branch_merge_message(branch_diff: BranchDiff) -> Bool {
+  let merge_message = "Merge branch '" <> branch_diff.base.branch.name <> "'"
+  branch_diff.target.commits
+  |> list.any(fn(commit) { commit.summary == merge_message })
+}
+
+fn has_commits_merge_message(branch_diff: BranchDiff) -> Bool {
   case branch_diff.base.commits {
     [] -> False
     [single] -> has_single_commit_merged_in_target(single, branch_diff)
