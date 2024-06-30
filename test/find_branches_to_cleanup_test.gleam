@@ -1,5 +1,8 @@
-import git_branch_cleaner/common/types.{type Branch, type GitRunner, Branch}
-import git_branch_cleaner/core/cleaner
+import git_branch_cleaner/common/types.{
+  type Branch, type BranchCleanerConfig, type GitRunner, Branch,
+  BranchCleanerConfig, BranchNamePrefix, DefaultMergeMessage,
+}
+import git_branch_cleaner/core/config
 import git_branch_cleaner/core/finder
 import git_runner.{run_test_git}
 import gleam/list
@@ -355,14 +358,83 @@ pub fn finds_branches_merged_with_branch_name_in_commit_message_test() {
   )
 }
 
+pub fn finds_branch_with_prefix_when_matcher_is_in_config_test() {
+  test_find_branches_to_cleanup_with_config(
+    config: BranchCleanerConfig(
+      ..config.default(),
+      branch_merge_matchers: [BranchNamePrefix],
+    ),
+    using: run_test_git(
+      local_branches: ["master", "feature-1"],
+      remote_branches: [],
+      log_limited: fn(branch) {
+        case branch {
+          "master" -> [
+            "571bd3f44 feature-1 Merge Commit 2", "93baf4f74 Commit 1",
+          ]
+          "feature-1" -> ["e51a0c5de Commit 2", "93baf4f74 Commit 1"]
+          _ -> panic
+        }
+      },
+      log_diff: fn(base, target) {
+        case base, target {
+          "feature-1", "master" -> ["571bd3f44 feature-1 Merge Commit 2"]
+          "master", "feature-1" -> ["e51a0c5de Commit 2"]
+          _, _ -> panic
+        }
+      },
+    ),
+    expect: ["feature-1"],
+  )
+}
+
+pub fn finds_no_branch_with_prefix_when_matcher_is_in_config_test() {
+  test_find_branches_to_cleanup_with_config(
+    config: BranchCleanerConfig(
+      ..config.default(),
+      branch_merge_matchers: [DefaultMergeMessage],
+    ),
+    using: run_test_git(
+      local_branches: ["master", "feature-1"],
+      remote_branches: [],
+      log_limited: fn(branch) {
+        case branch {
+          "master" -> [
+            "90ff9de1f feature-1 Merge Commit 2", "e9c51f22b Commit 1",
+          ]
+          "feature-1" -> ["3b19f169a Commit 2", "e9c51f22b Commit 1"]
+          _ -> panic
+        }
+      },
+      log_diff: fn(base, target) {
+        case base, target {
+          "feature-1", "master" -> ["90ff9de1f feature-1 Merge Commit 2"]
+          "master", "feature-1" -> ["3b19f169a Commit 2"]
+          _, _ -> panic
+        }
+      },
+    ),
+    expect: [],
+  )
+}
+
 fn test_find_branches_to_cleanup(
   using git_runner: GitRunner,
   expect branches: List(String),
 ) {
-  finder.find_branches_to_cleanup(
-    for: cleaner.get_default_config(),
+  test_find_branches_to_cleanup_with_config(
+    config: config.default(),
     using: git_runner,
+    expect: branches,
   )
+}
+
+fn test_find_branches_to_cleanup_with_config(
+  config config: BranchCleanerConfig,
+  using git_runner: GitRunner,
+  expect branches: List(String),
+) {
+  finder.find_branches_to_cleanup(for: config, using: git_runner)
   |> should.be_ok()
   |> should.equal(branches |> list.map(Branch))
 }

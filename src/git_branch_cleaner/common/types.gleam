@@ -43,6 +43,7 @@ pub type BranchCleanerConfig {
     ref_branch_name: String,
     ref_branch_type: BranchType,
     merge_strategy: MergeStrategy,
+    branch_merge_matchers: List(BranchMergeMatcher),
   )
 }
 
@@ -50,6 +51,12 @@ pub type MergeStrategy {
   CreateMergeCommit
   SquashAndMerge
   RebaseAndMerge
+}
+
+pub type BranchMergeMatcher {
+  DefaultMergeMessage
+  BranchNamePrefix
+  SquashedCommitsMessage
 }
 
 pub type CommandError {

@@ -1,7 +1,7 @@
 import git_branch_cleaner/common/types.{
   type BranchCleanerConfig, Branch, BranchCleanerConfig,
 }
-import git_branch_cleaner/core/cleaner
+import git_branch_cleaner/core/config
 import git_branch_cleaner/core/finder
 import gleam/list
 import gleam/string
@@ -9,7 +9,7 @@ import gleeunit/should
 
 pub fn passes_branch_max_depth_to_git_commands_test() {
   test_branch_cleaner_config(
-    of: BranchCleanerConfig(..cleaner.get_default_config(), branch_max_depth: 7),
+    of: BranchCleanerConfig(..config.default(), branch_max_depth: 7),
     using: fn(args_str) {
       case args_str {
         "branch" -> ["  master", "  feature"]
@@ -35,10 +35,7 @@ pub fn passes_branch_max_depth_to_git_commands_test() {
 
 pub fn passes_ref_branch_name_to_git_commands_test() {
   test_branch_cleaner_config(
-    of: BranchCleanerConfig(
-      ..cleaner.get_default_config(),
-      ref_branch_name: "main",
-    ),
+    of: BranchCleanerConfig(..config.default(), ref_branch_name: "main"),
     using: fn(args_str) {
       case args_str {
         "branch" -> ["  main", "  feature"]

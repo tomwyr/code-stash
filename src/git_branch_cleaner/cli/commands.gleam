@@ -1,5 +1,6 @@
 import git_branch_cleaner/common/types.{FindError, RemoveError}
 import git_branch_cleaner/core/cleaner
+import git_branch_cleaner/core/config
 import git_branch_cleaner/core/finder
 import git_branch_cleaner/git/commands
 import gleam/io
@@ -10,7 +11,7 @@ import gleam/string
 pub fn find() {
   let result =
     finder.find_branches_to_cleanup(
-      for: cleaner.get_default_config(),
+      for: config.default(),
       using: commands.run_git_in_shell,
     )
 
@@ -36,7 +37,7 @@ pub fn remove() {
   let result = {
     use branches <- result.try(
       finder.find_branches_to_cleanup(
-        for: cleaner.get_default_config(),
+        for: config.default(),
         using: commands.run_git_in_shell,
       )
       |> result.map_error(FindError),
