@@ -21,10 +21,10 @@ pub fn passes_branch_max_depth_to_git_commands_test() {
           "2f987f22f Commit 2", "fdd67acf1 Commit 1",
         ]
         "log --format=\"%h %s%n%w(0,2,2)%b\" master..feature" -> [
-          "ba25f3ac2 Commit 2",
+          "2f987f22f Commit 2",
         ]
         "log --format=\"%h %s%n%w(0,2,2)%b\" feature..master" -> [
-          "2f987f22f Commit 2",
+          "ba25f3ac2 Commit 2",
         ]
         _ -> panic
       }
@@ -47,10 +47,10 @@ pub fn passes_ref_branch_name_to_git_commands_test() {
           "0058f8acc Commit 2", "daf5b8fad Commit 1",
         ]
         "log --format=\"%h %s%n%w(0,2,2)%b\" main..feature" -> [
-          "e04e3415a Commit 2",
+          "0058f8acc Commit 2",
         ]
         "log --format=\"%h %s%n%w(0,2,2)%b\" feature..main" -> [
-          "0058f8acc Commit 2",
+          "e04e3415a Commit 2",
         ]
         _ -> panic
       }
