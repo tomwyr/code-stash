@@ -1,6 +1,7 @@
 import git_branch_cleaner/common/types.{
-  type BranchCleanerConfig, type BranchDiff, type BranchMergeMatcher,
-  type Commit, BranchNamePrefix, DefaultMergeMessage, SquashedCommitsMessage,
+  type BranchDiff, type BranchMergeMatcher, type Commit,
+  type GitBranchCleanerConfig, BranchNamePrefix, DefaultMergeMessage,
+  SquashedCommitsMessage,
 }
 import git_branch_cleaner/common/utils
 import gleam/list
@@ -11,7 +12,7 @@ import gleam/string
 
 pub fn is_base_merged_in_target(
   of branch_diff: BranchDiff,
-  matching config: BranchCleanerConfig,
+  matching config: GitBranchCleanerConfig,
 ) -> Bool {
   config.branch_merge_matchers
   |> list.map(get_matcher_function)

@@ -1,6 +1,6 @@
 import git_branch_cleaner/common/types.{
-  type Branch, type BranchCleanerConfig, type GitRunner, Branch,
-  BranchCleanerConfig, BranchNamePrefix, DefaultMergeMessage,
+  type Branch, type GitBranchCleanerConfig, type GitRunner, Branch,
+  BranchNamePrefix, DefaultMergeMessage, GitBranchCleanerConfig,
 }
 import git_branch_cleaner/core/config
 import git_branch_cleaner/core/finder
@@ -360,7 +360,7 @@ pub fn finds_branches_merged_with_branch_name_in_commit_message_test() {
 
 pub fn finds_branch_used_as_prefix_when_prefix_matcher_is_in_config_test() {
   test_find_branches_to_cleanup_with_config(
-    config: BranchCleanerConfig(
+    config: GitBranchCleanerConfig(
       ..config.default(),
       branch_merge_matchers: [BranchNamePrefix],
     ),
@@ -390,7 +390,7 @@ pub fn finds_branch_used_as_prefix_when_prefix_matcher_is_in_config_test() {
 
 pub fn finds_branch_when_only_last_path_segment_matches_prefix_test() {
   test_find_branches_to_cleanup_with_config(
-    config: BranchCleanerConfig(
+    config: GitBranchCleanerConfig(
       ..config.default(),
       branch_merge_matchers: [BranchNamePrefix],
     ),
@@ -418,7 +418,7 @@ pub fn finds_branch_when_only_last_path_segment_matches_prefix_test() {
 
 pub fn finds_no_branch_used_as_prefix_when_prefix_matcher_is_not_in_config_test() {
   test_find_branches_to_cleanup_with_config(
-    config: BranchCleanerConfig(
+    config: GitBranchCleanerConfig(
       ..config.default(),
       branch_merge_matchers: [DefaultMergeMessage],
     ),
@@ -458,7 +458,7 @@ fn test_find_branches_to_cleanup(
 }
 
 fn test_find_branches_to_cleanup_with_config(
-  config config: BranchCleanerConfig,
+  config config: GitBranchCleanerConfig,
   using git_runner: GitRunner,
   expect branches: List(String),
 ) {

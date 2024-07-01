@@ -29,7 +29,9 @@ pub fn find() {
     }
 
     Error(_) ->
-      io.println_error("An error occured while finding branches to clean up.")
+      print_command_error(
+        "An error occured while finding branches to clean up.",
+      )
   }
 }
 
@@ -61,8 +63,21 @@ pub fn remove() {
       io.println("Cleanup successful. Removed the following branches:")
       io.println(formatted_branches)
     }
-    _ -> io.print_error("An error occured while removing branches.")
+    _ -> print_command_error("An error occured while removing branches.")
   }
+}
+
+fn print_command_error(error: String) {
+  let footer =
+    "
+This is most likely an error that needs to be fixed.
+Please visit https://github.com/tomwyr/git_branch_cleaner/issues and open an issue or search for existing similar issues.
+"
+    |> string.trim
+
+  let message = error <> "\n\n" <> footer
+
+  io.println_error(message)
 }
 
 pub fn help() {
@@ -79,10 +94,11 @@ Available commands:
 
 Available global options:
   -v        Show additional output for command.
+
+If you're not sure how to use this tool, or if you'd like to suggest a change or improvement, your feedback is appreciated.
+Please visit https://github.com/tomwyr/git_branch_cleaner/issues and open an issue or search for existing similar issues.
 "
+    |> string.trim
 
-  let trimme_message =
-    message |> string.slice(at_index: 1, length: string.length(message) - 2)
-
-  io.println(trimme_message)
+  io.println(message)
 }

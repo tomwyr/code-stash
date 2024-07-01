@@ -37,8 +37,8 @@ pub type GitParseType {
 pub type ShellError =
   #(Int, String)
 
-pub type BranchCleanerConfig {
-  BranchCleanerConfig(
+pub type GitBranchCleanerConfig {
+  GitBranchCleanerConfig(
     branch_max_depth: Int,
     ref_branch_name: String,
     ref_branch_type: BranchType,

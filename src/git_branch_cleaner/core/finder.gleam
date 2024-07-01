@@ -1,6 +1,6 @@
 import git_branch_cleaner/common/types.{
-  type Branch, type BranchCleanerConfig, type GitError, type GitRunner, Branch,
-  BranchCleanerConfig,
+  type Branch, type GitBranchCleanerConfig, type GitError, type GitRunner,
+  Branch, GitBranchCleanerConfig,
 }
 import git_branch_cleaner/common/utils
 import git_branch_cleaner/core/matcher
@@ -9,7 +9,7 @@ import gleam/list
 import gleam/result
 
 pub fn find_branches_to_cleanup(
-  for config: BranchCleanerConfig,
+  for config: GitBranchCleanerConfig,
   using git_runner: GitRunner,
 ) -> Result(List(Branch), GitError) {
   use local_branches <- result.try(git.get_local_only_branches(
@@ -31,7 +31,7 @@ pub fn find_branches_to_cleanup(
 
 fn diff_branches_against_ref(
   local_branches: List(Branch),
-  for config: BranchCleanerConfig,
+  for config: GitBranchCleanerConfig,
   using git_runner: GitRunner,
 ) {
   let max_depth = config.branch_max_depth
