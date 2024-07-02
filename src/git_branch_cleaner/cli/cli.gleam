@@ -1,49 +1,72 @@
+import git_branch_cleaner/cli/command_parser
 import git_branch_cleaner/cli/commands
-import git_branch_cleaner/common/input_args
 import git_branch_cleaner/common/types.{
-  type CliCommand, type CliCommandError, Find, Help, Remove, UnknownCommand,
-  UnknownOption,
+  type CliCommandError, Find, GitBranchCleanerConfig, Help, IncorrectOptionValue,
+  MissingOptionValue, Remove, UnknownCommand, UnknownOption,
 }
+import git_branch_cleaner/core/config
 import gleam/io
+import gleam/option
 
 pub fn run() {
-  case get_command_from_input() {
+  let config = config.default()
+
+  case command_parser.from_input() {
     Ok(command) ->
       case command {
-        Find -> commands.find()
-        Remove -> commands.remove()
+        Find(max_depth, ref_branch, _) -> {
+          let branch_max_depth =
+            option.unwrap(max_depth, config.branch_max_depth)
+          let ref_branch_name =
+            option.unwrap(ref_branch, config.ref_branch_name)
+
+          commands.find(
+            for: GitBranchCleanerConfig(
+              ..config,
+              branch_max_depth: branch_max_depth,
+              ref_branch_name: ref_branch_name,
+            ),
+          )
+        }
+
+        Remove(max_depth, ref_branch, _) -> {
+          let branch_max_depth =
+            option.unwrap(max_depth, config.branch_max_depth)
+          let ref_branch_name =
+            option.unwrap(ref_branch, config.ref_branch_name)
+
+          commands.remove(
+            for: GitBranchCleanerConfig(
+              ..config,
+              branch_max_depth: branch_max_depth,
+              ref_branch_name: ref_branch_name,
+            ),
+          )
+        }
+
         Help -> commands.help()
       }
     Error(error) -> {
-      case error {
-        UnknownCommand(value) ->
-          io.println("Could not find a command called \"" <> value <> "\"")
-        UnknownOption(value) ->
-          io.println("Could not find an option called \"" <> value <> "\"")
-      }
+      io.println_error(get_error_message(error))
       io.println("")
       commands.help()
     }
   }
 }
 
-fn get_command_from_input() -> Result(CliCommand, CliCommandError) {
-  case input_args.all() {
-    ["find", ..optional_args] -> Find |> validate_optional_args(optional_args)
-    ["remove", ..optional_args] ->
-      Remove |> validate_optional_args(optional_args)
-    ["help", ..optional_args] -> Help |> validate_optional_args(optional_args)
-    [] -> Ok(Help)
-    [other, ..] -> Error(UnknownCommand(other))
-  }
-}
-
-fn validate_optional_args(
-  command: CliCommand,
-  args: List(String),
-) -> Result(CliCommand, CliCommandError) {
-  case args {
-    ["-v"] | [] -> Ok(command)
-    [other, ..] -> Error(UnknownOption(other))
+fn get_error_message(error: CliCommandError) {
+  case error {
+    UnknownCommand(command) ->
+      "Could not find a command called \"" <> command <> "\""
+    UnknownOption(option) ->
+      "Could not find an option called \"" <> option <> "\""
+    MissingOptionValue(option) ->
+      "Could not find a value for the option \"" <> option <> "\""
+    IncorrectOptionValue(option, value) ->
+      "Found an incorrect value \""
+      <> value
+      <> "\" for the option \""
+      <> option
+      <> "\""
   }
 }

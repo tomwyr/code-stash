@@ -71,12 +71,18 @@ pub type CleanupBranchesError {
 }
 
 pub type CliCommand {
-  Find
-  Remove
+  Find(max_depth: Option(Int), ref_branch: Option(String), verbose: Option(Nil))
+  Remove(
+    max_depth: Option(Int),
+    ref_branch: Option(String),
+    verbose: Option(Nil),
+  )
   Help
 }
 
 pub type CliCommandError {
-  UnknownCommand(String)
-  UnknownOption(String)
+  UnknownCommand(command: String)
+  UnknownOption(option: String)
+  MissingOptionValue(option: String)
+  IncorrectOptionValue(option: String, value: String)
 }
