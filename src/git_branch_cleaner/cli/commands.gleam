@@ -96,6 +96,12 @@ Available commands:
   remove      Remove cwd local git branches that have been merged into ref branch. This command WILL delete found branches.
   help        Show this guide information.
 
+Available command options:
+  --max-depth <number>    Number of commits of the ref branch history to check for common history between cleaned up branches and the ref branch. Defaults to 25.
+                          Applies in: find, remove.
+  --ref-branch <branch>   Name of the branch that cleaned up branches are merged into. Defaults to \"master\".
+                          Applies in: find, remove.
+
 Available global options:
   --verbose   Show additional output for command.
 
