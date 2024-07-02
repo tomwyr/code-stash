@@ -71,12 +71,8 @@ pub type CleanupBranchesError {
 }
 
 pub type CliCommand {
-  Find(max_depth: Option(Int), ref_branch: Option(String), verbose: Option(Nil))
-  Remove(
-    max_depth: Option(Int),
-    ref_branch: Option(String),
-    verbose: Option(Nil),
-  )
+  Find(max_depth: Option(Int), ref_branch: Option(String))
+  Remove(max_depth: Option(Int), ref_branch: Option(String))
   Help
 }
 

@@ -1,3 +1,4 @@
+import git_branch_cleaner/common/logger
 import git_branch_cleaner/common/types.{
   type GitBranchCleanerConfig, FindError, RemoveError,
 }
@@ -6,10 +7,13 @@ import git_branch_cleaner/core/finder
 import git_branch_cleaner/git/commands
 import gleam/io
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 
 pub fn find(for config: GitBranchCleanerConfig) {
+  logger.run_command("find", config: Some(config))
+
   let result =
     finder.find_branches_to_cleanup(
       for: config,
@@ -37,6 +41,8 @@ pub fn find(for config: GitBranchCleanerConfig) {
 }
 
 pub fn remove(for config: GitBranchCleanerConfig) {
+  logger.run_command("remove", config: Some(config))
+
   let result = {
     use branches <- result.try(
       finder.find_branches_to_cleanup(
@@ -68,20 +74,9 @@ pub fn remove(for config: GitBranchCleanerConfig) {
   }
 }
 
-fn print_command_error(error: String) {
-  let footer =
-    "
-This is most likely an error that needs to be fixed.
-Please visit https://github.com/tomwyr/git_branch_cleaner/issues and open an issue or search for existing similar issues.
-"
-    |> string.trim
-
-  let message = error <> "\n\n" <> footer
-
-  io.println_error(message)
-}
-
 pub fn help() {
+  logger.run_command("remove", config: None)
+
   let message =
     "
 A command-line utility for cleaning up git branches.
@@ -102,4 +97,17 @@ Please visit https://github.com/tomwyr/git_branch_cleaner/issues and open an iss
     |> string.trim
 
   io.println(message)
+}
+
+fn print_command_error(error: String) {
+  let footer =
+    "
+This is most likely an error that needs to be fixed.
+Please visit https://github.com/tomwyr/git_branch_cleaner/issues and open an issue or search for existing similar issues.
+"
+    |> string.trim
+
+  let message = error <> "\n\n" <> footer
+
+  io.println_error(message)
 }

@@ -6,5 +6,5 @@ pub fn all() -> List(String) {
 }
 
 pub fn verbose() -> Bool {
-  argv.load().arguments |> list.contains("-v")
+  argv.load().arguments |> list.contains("--verbose")
 }

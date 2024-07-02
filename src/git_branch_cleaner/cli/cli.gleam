@@ -14,7 +14,7 @@ pub fn run() {
   case command_parser.from_input() {
     Ok(command) ->
       case command {
-        Find(max_depth, ref_branch, _) -> {
+        Find(max_depth, ref_branch) -> {
           let branch_max_depth =
             option.unwrap(max_depth, config.branch_max_depth)
           let ref_branch_name =
@@ -29,7 +29,7 @@ pub fn run() {
           )
         }
 
-        Remove(max_depth, ref_branch, _) -> {
+        Remove(max_depth, ref_branch) -> {
           let branch_max_depth =
             option.unwrap(max_depth, config.branch_max_depth)
           let ref_branch_name =
