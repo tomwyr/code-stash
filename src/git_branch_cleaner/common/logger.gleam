@@ -1,5 +1,7 @@
 import git_branch_cleaner/common/input_args
-import git_branch_cleaner/common/types.{type GitBranchCleanerConfig}
+import git_branch_cleaner/common/types.{
+  type CommandError, type GitBranchCleanerConfig,
+}
 import gleam/io
 import gleam/option.{type Option, None, Some}
 import gleam/string
@@ -10,15 +12,27 @@ pub fn run_command(
 ) {
   log(fn() {
     case config {
-      Some(config) ->
-        io.println(
+      Some(config) -> {
+        let message =
           "Running command \""
           <> command
           <> "\" with config: "
-          <> string.inspect(config),
-        )
+          <> string.inspect(config)
+        io.println(message)
+      }
       None -> io.println("Running command \"" <> command <> "\"")
     }
+  })
+}
+
+pub fn command_error(command: String, error: CommandError) {
+  log(fn() {
+    let message =
+      "An error occured while running \""
+      <> command
+      <> "\" command: "
+      <> string.inspect(error)
+    io.println(message)
   })
 }
 

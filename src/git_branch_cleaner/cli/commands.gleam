@@ -1,6 +1,6 @@
 import git_branch_cleaner/common/logger
 import git_branch_cleaner/common/types.{
-  type GitBranchCleanerConfig, FindError, RemoveError,
+  type CommandError, type GitBranchCleanerConfig, FindError, RemoveError,
 }
 import git_branch_cleaner/core/cleaner
 import git_branch_cleaner/core/finder
@@ -19,6 +19,7 @@ pub fn find(for config: GitBranchCleanerConfig) {
       for: config,
       using: commands.run_git_in_shell,
     )
+    |> result.map_error(FindError)
 
   case result {
     Ok([]) -> io.println("No branches that can be cleaned up could be found.")
@@ -33,9 +34,11 @@ pub fn find(for config: GitBranchCleanerConfig) {
       io.println(formatted_branches)
     }
 
-    Error(_) ->
+    Error(error) ->
       print_command_error(
-        "An error occured while finding branches to clean up.",
+        command: "find",
+        cause: error,
+        message: "An error occured while finding branches to clean up.",
       )
   }
 }
@@ -70,7 +73,12 @@ pub fn remove(for config: GitBranchCleanerConfig) {
       io.println("Cleanup successful. Removed the following branches:")
       io.println(formatted_branches)
     }
-    _ -> print_command_error("An error occured while removing branches.")
+    Error(error) ->
+      print_command_error(
+        command: "remove",
+        cause: error,
+        message: "An error occured while removing branches.",
+      )
   }
 }
 
@@ -99,7 +107,13 @@ Please visit https://github.com/tomwyr/git_branch_cleaner/issues and open an iss
   io.println(message)
 }
 
-fn print_command_error(error: String) {
+fn print_command_error(
+  command command: String,
+  cause error: CommandError,
+  message error_message: String,
+) {
+  logger.command_error(command, error)
+
   let footer =
     "
 This is most likely an error that needs to be fixed.
@@ -107,7 +121,7 @@ Please visit https://github.com/tomwyr/git_branch_cleaner/issues and open an iss
 "
     |> string.trim
 
-  let message = error <> "\n\n" <> footer
+  let message = error_message <> "\n\n" <> footer
 
   io.println_error(message)
 }
