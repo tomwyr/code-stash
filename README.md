@@ -1,6 +1,6 @@
-# git_branch_cleaner
+# Git Branch Cleaner
 
-`git_branch_cleaner` is a command-line utility designed to help manage and clean up git branches in your repositories. It identifies and removes branches that are no longer needed based on custom configurations.
+Git Branch Cleaner is a command-line utility designed to help clean up branches in git repositories. It identifies and removes branches that are no longer needed based on their commit history. If a branch hasn't been merged directly into another (reference) branch, the tool flags it for cleanup, if the commit messages suggest it's been merged with a merge commit.
 
 ## Features
 
@@ -59,5 +59,3 @@ Contributions are welcome. Please fork the repository and create a pull request 
 ## License
 
 This project is licensed under the MIT License.
-
----
