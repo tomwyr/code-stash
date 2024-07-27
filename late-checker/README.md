@@ -1,9 +1,5 @@
 # Late Checker
 
-The latest version of the app is available and can be accessed [here](https://late-checker.onrender.com/).
-
-Due to the current hosting setup, the initial load can take up to one minute.
-
 ![ss](https://github.com/tomwyr/playground/assets/9600796/dd37135b-0109-4a30-8de2-26972f551237)
 
 ## Configuration
