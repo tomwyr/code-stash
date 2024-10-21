@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:git-branch-cleaner}",
+      "name": "Debug GitBranchCleaner",
+      "program": "${workspaceFolder:git-branch-cleaner}/.build/debug/GitBranchCleaner",
+      "preLaunchTask": "swift: Build Debug GitBranchCleaner"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:git-branch-cleaner}",
+      "name": "Release GitBranchCleaner",
+      "program": "${workspaceFolder:git-branch-cleaner}/.build/release/GitBranchCleaner",
+      "preLaunchTask": "swift: Build Release GitBranchCleaner"
+    }
+  ]
+}
