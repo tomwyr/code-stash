@@ -1,6 +1,15 @@
 {
-  "originHash" : "86ef36ac05f7d26efd9bda35d6c1b7a794d3b13a81b2b1c77fd698b907dec717",
+  "originHash" : "0bb3a3c0158853d0367a7ea5802cc3b28ac1da55008aede9ee5c3c9afbd9f00e",
   "pins" : [
+    {
+      "identity" : "shellout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JohnSundell/ShellOut.git",
+      "state" : {
+        "revision" : "e1577acf2b6e90086d01a6d5e2b8efdaae033568",
+        "version" : "2.3.0"
+      }
+    },
     {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
