@@ -48,7 +48,7 @@ class GitClient {
     } catch let error as GitError {
       throw error
     } catch {
-      throw .unknown(cause: error)
+      throw .other(error)
     }
   }
 }

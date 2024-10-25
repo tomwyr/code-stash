@@ -24,7 +24,7 @@ class GitParser {
       }
     let matches = data.matches(of: regex)
 
-    if matches.count == 1, let match = matches.first {
+    if let match = matches.single {
       return Branch(name: String(match.output.1))
     } else {
       throw .parser(content: data, parse_type: .branchLog)
