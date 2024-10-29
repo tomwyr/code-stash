@@ -9,7 +9,7 @@ extension Logger {
     }
   }
 
-  func commandError(command: String, error: CommandError) {
+  func commandError(command: String, error: BranchCleanerError) {
     log(.debug) {
       """
       An error occured while running \"\(command)\" command: \(error)

@@ -10,7 +10,7 @@ class GitParser {
       return []
     }
 
-    let regex = /#(\\w+) (.+)((?:\n+  .+)+)?#/
+    let regex = /(\w+) (.+)((?:\n+  .+)+)?/
     return data.matches(of: regex).map(\.output).map(parseCommitMatch)
   }
 
@@ -18,14 +18,15 @@ class GitParser {
     let regex =
       switch branchType {
       case .local:
-        /#^(?:\\*| ) (.+)$#/
+        /^(?:\*| ) (.+)$/
       case .remote:
-        /#^  (?:.+?\/)(.+)$#/
+        /^  (?:.+?\/)(.+)$/
       }
     let matches = data.matches(of: regex)
 
     if let match = matches.single {
-      return Branch(name: String(match.output.1))
+      let (_, name) = match.output
+      return Branch(name: String(name))
     } else {
       throw .parser(content: data, parse_type: .branchLog)
     }
@@ -43,6 +44,10 @@ class GitParser {
 
     return Commit(hash: String(hash), summary: String(summary), description: description)
   }
+}
+
+enum GitParseType {
+  case commitLog, branchLog
 }
 
 typealias CommitMatch = (Substring, Substring, Substring, Substring?)

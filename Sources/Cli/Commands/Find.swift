@@ -2,7 +2,7 @@
 
 extension Find {
   func run() {
-    let actions = GitBranchActions()
+    let actions = BranchCleanerActions()
     let logger = Logger(verbose: verbose)
     let config = GitBranchCleanerConfig(
       branchMaxDepth: maxDepth,
@@ -77,7 +77,7 @@ extension Logger {
     }
   }
 
-  func findError(error: CommandError) {
+  func findError(error: BranchCleanerError) {
     commandError(command: "find", error: error)
   }
 }

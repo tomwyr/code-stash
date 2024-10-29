@@ -2,7 +2,7 @@
 
 extension Remove {
   func run() {
-    let actions = GitBranchActions()
+    let actions = BranchCleanerActions()
     let logger = Logger(verbose: verbose)
     let config = GitBranchCleanerConfig(
       branchMaxDepth: maxDepth,
@@ -67,7 +67,7 @@ extension Logger {
     }
   }
 
-  func removeError(error: CommandError) {
+  func removeError(error: BranchCleanerError) {
     commandError(command: "find", error: error)
   }
 }

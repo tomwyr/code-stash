@@ -32,7 +32,7 @@ extension BranchMergeMatcher {
   }
 
   private func extractPrefix(branchName: String) -> String {
-    let prefixRegex = /#(?:.*\/)?(.+)#/
+    let prefixRegex = /(?:.*\/)?(.+)/
     let matches = branchName.matches(of: prefixRegex)
 
     guard let match = matches.first else {
