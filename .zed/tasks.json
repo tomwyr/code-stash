@@ -1,0 +1,14 @@
+[
+  {
+    "label": "Build",
+    "command": "swift build"
+  },
+  {
+    "label": "Test",
+    "command": "swift test --enable-experimental-swift-testing"
+  },
+  {
+    "label": "Build and test",
+    "command": "swift build && swift test --enable-experimental-swift-testing"
+  }
+]
