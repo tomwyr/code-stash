@@ -1,37 +1,37 @@
 struct Commit: Hashable {
-    let hash: String
-    let summary: String
-    let description: String?
+  let hash: String
+  let summary: String
+  let description: String?
 
-    init(hash: String, summary: String, description: String? = nil) {
-        self.hash = hash
-        self.summary = summary
-        self.description = description
-    }
+  init(hash: String, summary: String, description: String? = nil) {
+    self.hash = hash
+    self.summary = summary
+    self.description = description
+  }
 }
 
 struct Branch: Hashable {
-    let name: String
+  let name: String
 }
 
 enum BranchType {
-    case local, remote
+  case local, remote
 }
 
 struct BranchDiff: Hashable {
-    let base: BranchSlice
-    let target: BranchSlice
+  let base: BranchSlice
+  let target: BranchSlice
 }
 
 struct BranchSlice: Hashable {
-    let branch: Branch
-    let commits: [Commit]
+  let branch: Branch
+  let commits: [Commit]
 }
 
 enum BranchMergeMatcher {
-    case defaultMergeMessage, branchNamePrefix, squashedCommitsMessage
+  case defaultMergeMessage, branchNamePrefix, squashedCommitsMessage
 }
 
 enum BranchMergeStrategy {
-    case createMergeCommit, squashAndMerge, rebaseAndMerge
+  case createMergeCommit, squashAndMerge, rebaseAndMerge
 }

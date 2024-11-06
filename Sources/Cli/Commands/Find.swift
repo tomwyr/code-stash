@@ -53,7 +53,7 @@ struct Find: ParsableCommand {
       valueName: "branch-name"
     )
   )
-  var refBranch: String = "master"
+  var refBranch: String = "main"
 }
 
 extension Logger {

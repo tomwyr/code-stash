@@ -7,7 +7,7 @@ struct GitBranchCleanerConfig {
 
   init(
     branchMaxDepth: Int = 25,
-    refBranchName: String = "master",
+    refBranchName: String = "main",
     refBranchType: BranchType = .local,
     mergeStrategy: BranchMergeStrategy = .squashAndMerge,
     branchMergeMatchers: [BranchMergeMatcher] = [
