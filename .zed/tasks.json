@@ -8,7 +8,7 @@
     "command": "swift test --enable-experimental-swift-testing"
   },
   {
-    "label": "Build and test",
-    "command": "swift build && swift test --enable-experimental-swift-testing"
+    "label": "Format",
+    "command": "swift format . --recursive --in-place"
   }
 ]

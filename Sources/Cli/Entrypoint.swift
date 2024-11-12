@@ -1,7 +1,7 @@
 @preconcurrency import ArgumentParser
 
 @main
-struct GitBranchCleaner: ParsableCommand {
+struct GitBranchCleanerCli: ParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "gbc",
     abstract: "A command-line utility for cleaning up git branches.",

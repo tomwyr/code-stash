@@ -1,4 +1,4 @@
-class BranchCleanerActions {
+class GitBranchCleaner {
   private let git: GitClient
 
   init(gitClient: GitClient = GitClient()) {
@@ -6,7 +6,7 @@ class BranchCleanerActions {
   }
 }
 
-extension BranchCleanerActions {
+extension GitBranchCleaner {
   func findBranchesToCleanup(
     for config: GitBranchCleanerConfig
   ) throws(BranchCleanerError) -> [Branch] {
@@ -53,7 +53,7 @@ extension BranchCleanerActions {
   }
 }
 
-extension BranchCleanerActions {
+extension GitBranchCleaner {
   func cleanupBranches(branches: [Branch]) throws(BranchCleanerError) {
     try validateBranchesExist(branches: branches)
     for branch in branches {

@@ -51,7 +51,7 @@ final class GitClientTests {
         "branch -r": """
           origin/feature-b
           origin/feature-c
-          origin/main
+          origin/master
           origin/refactor-b
           origin/refactor-c
         """,
@@ -79,7 +79,7 @@ final class GitClientTests {
         "branch -r": """
           origin/feature-a
           origin/feature-b
-          origin/main
+          origin/master
           origin/refactor-b
           origin/refactor-c
         """,

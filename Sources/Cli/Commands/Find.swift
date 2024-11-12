@@ -1,8 +1,8 @@
 @preconcurrency import ArgumentParser
 
-extension Find {
+struct Find: ParsableCommand {
   func run() {
-    let actions = BranchCleanerActions()
+    let cleaner = GitBranchCleaner()
     let logger = Logger(verbose: verbose)
     let config = GitBranchCleanerConfig(
       branchMaxDepth: maxDepth,
@@ -12,7 +12,7 @@ extension Find {
     logger.runFind(config: config)
 
     do {
-      let branches = try actions.findBranchesToCleanup(for: config)
+      let branches = try cleaner.findBranchesToCleanup(for: config)
       if branches.isEmpty {
         logger.noBranchesToCleanup()
       } else {
@@ -22,9 +22,7 @@ extension Find {
       logger.findError(error: error)
     }
   }
-}
 
-struct Find: ParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "find",
     abstract:

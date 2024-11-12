@@ -1,8 +1,8 @@
 @preconcurrency import ArgumentParser
 
-extension Remove {
+struct Remove: ParsableCommand {
   func run() {
-    let actions = BranchCleanerActions()
+    let cleaner = GitBranchCleaner()
     let logger = Logger(verbose: verbose)
     let config = GitBranchCleanerConfig(
       branchMaxDepth: maxDepth,
@@ -12,16 +12,14 @@ extension Remove {
     logger.runRemove(config: config)
 
     do {
-      let branches = try actions.findBranchesToCleanup(for: config)
-      _ = try actions.cleanupBranches(branches: branches)
+      let branches = try cleaner.findBranchesToCleanup(for: config)
+      _ = try cleaner.cleanupBranches(branches: branches)
       logger.branchesRemoved(branches: branches)
     } catch {
       logger.removeError(error: error)
     }
   }
-}
 
-struct Remove: ParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "remove",
     abstract:
