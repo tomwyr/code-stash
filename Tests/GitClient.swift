@@ -102,13 +102,13 @@ final class GitClientTests {
       runner.defaultAnswer = ""
 
       _ = try client.hasCommonAncestor(
-        branch: Branch(name: "feature-a"),
+        branch: Branch(name: "feature"),
         with: Branch(name: "main"),
         notDeeperThan: 5
       )
 
       let expectedArgs = [
-        "log \(formatArg) feature-a -n 5 --",
+        "log \(formatArg) feature -n 5 --",
         "log \(formatArg) main -n 5 --",
       ]
 
@@ -118,7 +118,7 @@ final class GitClientTests {
     @Test("finds common ancestor when commit histories are identical")
     func identicalHistory() async throws {
       runner.answers = [
-        "log \(formatArg) feature-a -n 5 --": """
+        "log \(formatArg) feature -n 5 --": """
         cf6709acf Commit 5
 
         c8960b278 Commit 4
@@ -145,7 +145,7 @@ final class GitClientTests {
       ]
 
       let hasCommentAncestor = try client.hasCommonAncestor(
-        branch: Branch(name: "feature-a"),
+        branch: Branch(name: "feature"),
         with: Branch(name: "main"),
         notDeeperThan: 5
       )
@@ -156,7 +156,7 @@ final class GitClientTests {
     @Test("finds common ancestor when commit histories are partially common")
     func commonHistory() async throws {
       runner.answers = [
-        "log \(formatArg) feature-a -n 5 --": """
+        "log \(formatArg) feature -n 5 --": """
         cf6709acf Commit 5
 
         c8960b278 Commit 4
@@ -183,7 +183,7 @@ final class GitClientTests {
       ]
 
       let hasCommentAncestor = try client.hasCommonAncestor(
-        branch: Branch(name: "feature-a"),
+        branch: Branch(name: "feature"),
         with: Branch(name: "main"),
         notDeeperThan: 5
       )
@@ -194,7 +194,7 @@ final class GitClientTests {
     @Test("finds common ancestor when common commits have also descriptions")
     func commitsWithDescriptions() async throws {
       runner.answers = [
-        "log \(formatArg) feature-a -n 5 --": """
+        "log \(formatArg) feature -n 5 --": """
         cf6709acf Commit 5
 
         c8960b278 Commit 4
@@ -229,7 +229,7 @@ final class GitClientTests {
       ]
 
       let hasCommentAncestor = try client.hasCommonAncestor(
-        branch: Branch(name: "feature-a"),
+        branch: Branch(name: "feature"),
         with: Branch(name: "main"),
         notDeeperThan: 5
       )
@@ -240,7 +240,7 @@ final class GitClientTests {
     @Test("doesn't find common ancestor when commit histories are different")
     func differentHistory() async throws {
       runner.answers = [
-        "log \(formatArg) feature-a -n 5 --": """
+        "log \(formatArg) feature -n 5 --": """
         2863c301e Commit 5
 
         5750b6a58 Commit 4
@@ -267,7 +267,7 @@ final class GitClientTests {
       ]
 
       let hasCommentAncestor = try client.hasCommonAncestor(
-        branch: Branch(name: "feature-a"),
+        branch: Branch(name: "feature"),
         with: Branch(name: "main"),
         notDeeperThan: 5
       )
@@ -278,7 +278,7 @@ final class GitClientTests {
     @Test("doesn't find common ancestor when only commits hashes are different")
     func differentCommitHashes() async throws {
       runner.answers = [
-        "log \(formatArg) feature-a -n 5 --": """
+        "log \(formatArg) feature -n 5 --": """
         eb77d6f7e Commit 5
 
         c98d71ce8 Commit 4
@@ -305,7 +305,7 @@ final class GitClientTests {
       ]
 
       let hasCommentAncestor = try client.hasCommonAncestor(
-        branch: Branch(name: "feature-a"),
+        branch: Branch(name: "feature"),
         with: Branch(name: "main"),
         notDeeperThan: 5
       )
@@ -320,13 +320,13 @@ final class GitClientTests {
       runner.defaultAnswer = ""
 
       _ = try client.diffBranches(
-        startingFrom: Branch(name: "feature-a"),
+        startingFrom: Branch(name: "feature"),
         presentIn: Branch(name: "main")
       )
 
       let expectedArgs = [
-        "log \(formatArg) main..feature-a",
-        "log \(formatArg) feature-a..main",
+        "log \(formatArg) main..feature",
+        "log \(formatArg) feature..main",
       ]
 
       #expect(runner.commandArgs == expectedArgs)
@@ -335,17 +335,17 @@ final class GitClientTests {
     @Test("returns empty diff when commit histories are identical")
     func identicalHistory() async throws {
       runner.answers = [
-        "log \(formatArg) main..feature-a": "",
-        "log \(formatArg) feature-a..main": "",
+        "log \(formatArg) main..feature": "",
+        "log \(formatArg) feature..main": "",
       ]
 
       let branchDiff = try client.diffBranches(
-        startingFrom: Branch(name: "feature-a"),
+        startingFrom: Branch(name: "feature"),
         presentIn: Branch(name: "main")
       )
 
       let expectedDiff = BranchDiff(
-        base: BranchSlice(branch: Branch(name: "feature-a"), commits: []),
+        base: BranchSlice(branch: Branch(name: "feature"), commits: []),
         target: BranchSlice(branch: Branch(name: "main"), commits: [])
       )
 
@@ -355,7 +355,7 @@ final class GitClientTests {
     @Test("returns diff with commits only in base branch when base is ahead of target history")
     func commitsOnlyInBase() async throws {
       runner.answers = [
-        "log \(formatArg) main..feature-a": """
+        "log \(formatArg) main..feature": """
         b126c6ea1 Commit 5
 
         1720a95ad Commit 4
@@ -367,17 +367,17 @@ final class GitClientTests {
         a3117be73 Commit 1
 
         """,
-        "log \(formatArg) feature-a..main": "",
+        "log \(formatArg) feature..main": "",
       ]
 
       let branchDiff = try client.diffBranches(
-        startingFrom: Branch(name: "feature-a"),
+        startingFrom: Branch(name: "feature"),
         presentIn: Branch(name: "main")
       )
 
       let expectedDiff = BranchDiff(
         base: BranchSlice(
-          branch: Branch(name: "feature-a"),
+          branch: Branch(name: "feature"),
           commits: [
             Commit(hash: "b126c6ea1", summary: "Commit 5"),
             Commit(hash: "1720a95ad", summary: "Commit 4"),
@@ -396,8 +396,8 @@ final class GitClientTests {
       "returns diff with commits only in target branch when target is ahead of base history")
     func commitsOnlyInTarget() async throws {
       runner.answers = [
-        "log \(formatArg) main..feature-a": "",
-        "log \(formatArg) feature-a..main": """
+        "log \(formatArg) main..feature": "",
+        "log \(formatArg) feature..main": """
         b126c6ea1 Commit 5
 
         1720a95ad Commit 4
@@ -412,12 +412,12 @@ final class GitClientTests {
       ]
 
       let branchDiff = try client.diffBranches(
-        startingFrom: Branch(name: "feature-a"),
+        startingFrom: Branch(name: "feature"),
         presentIn: Branch(name: "main")
       )
 
       let expectedDiff = BranchDiff(
-        base: BranchSlice(branch: Branch(name: "feature-a"), commits: []),
+        base: BranchSlice(branch: Branch(name: "feature"), commits: []),
         target: BranchSlice(
           branch: Branch(name: "main"),
           commits: [
@@ -438,7 +438,7 @@ final class GitClientTests {
     )
     func commitsInBaseAndTarget() async throws {
       runner.answers = [
-        "log \(formatArg) main..feature-a": """
+        "log \(formatArg) main..feature": """
         ebe89c627 Commit 10
 
         d24b77cf6 Commit 9
@@ -450,7 +450,7 @@ final class GitClientTests {
         8b5cceb0b Commit 6
 
         """,
-        "log \(formatArg) feature-a..main": """
+        "log \(formatArg) feature..main": """
         b126c6ea1 Commit 5
 
         1720a95ad Commit 4
@@ -465,13 +465,13 @@ final class GitClientTests {
       ]
 
       let branchDiff = try client.diffBranches(
-        startingFrom: Branch(name: "feature-a"),
+        startingFrom: Branch(name: "feature"),
         presentIn: Branch(name: "main")
       )
 
       let expectedDiff = BranchDiff(
         base: BranchSlice(
-          branch: Branch(name: "feature-a"),
+          branch: Branch(name: "feature"),
           commits: [
             Commit(hash: "ebe89c627", summary: "Commit 10"),
             Commit(hash: "d24b77cf6", summary: "Commit 9"),
@@ -498,7 +498,7 @@ final class GitClientTests {
     @Test("returns commits with descriptions when descriptions are present in histories")
     func commitsWithDescriptions() async throws {
       runner.answers = [
-        "log \(formatArg) main..feature-a": """
+        "log \(formatArg) main..feature": """
         ebe89c627 Commit 6
           * Change G
 
@@ -510,7 +510,7 @@ final class GitClientTests {
           * Change E
 
         """,
-        "log \(formatArg) feature-a..main": """
+        "log \(formatArg) feature..main": """
         b126c6ea1 Commit 3
 
         1720a95ad Commit 2
@@ -527,13 +527,13 @@ final class GitClientTests {
       ]
 
       let branchDiff = try client.diffBranches(
-        startingFrom: Branch(name: "feature-a"),
+        startingFrom: Branch(name: "feature"),
         presentIn: Branch(name: "main")
       )
 
       let expectedDiff = BranchDiff(
         base: BranchSlice(
-          branch: Branch(name: "feature-a"),
+          branch: Branch(name: "feature"),
           commits: [
             Commit(
               hash: "ebe89c627",
@@ -581,9 +581,9 @@ final class GitClientTests {
     func expectedArgs() async throws {
       runner.defaultAnswer = ""
 
-      _ = try client.deleteBranch(branch: Branch(name: "feature-a"))
+      _ = try client.deleteBranch(branch: Branch(name: "feature"))
 
-      #expect(runner.commandArgs == ["branch -D feature-a"])
+      #expect(runner.commandArgs == ["branch -D feature"])
     }
   }
 }
