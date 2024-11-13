@@ -5,7 +5,7 @@ import Testing
 final class GitClientTests {
   final class GetLocalOnlyBranches: GitClientSuite {
     @Test("runs expected git commands")
-    func gitCommands() async throws {
+    func gitCommands() throws {
       runner.defaultAnswer = ""
 
       _ = try client.getLocalOnlyBranches()
@@ -19,7 +19,7 @@ final class GitClientTests {
     }
 
     @Test("returns empty list when all local branches are in origin")
-    func allBranchesInOrigin() async throws {
+    func allBranchesInOrigin() throws {
       runner.answers = [
         "branch": """
           feature-a
@@ -41,7 +41,7 @@ final class GitClientTests {
     }
 
     @Test("returns all branches when none is in origin")
-    func noBranchInOrigin() async throws {
+    func noBranchInOrigin() throws {
       runner.answers = [
         "branch": """
           feature-a
@@ -69,7 +69,7 @@ final class GitClientTests {
     }
 
     @Test("returns only branches that are not in origin")
-    func someBranchesInOrigin() async throws {
+    func someBranchesInOrigin() throws {
       runner.answers = [
         "branch": """
           feature-a
@@ -98,7 +98,7 @@ final class GitClientTests {
 
   final class HasCommonAncestor: GitClientSuite {
     @Test("runs expected git commands")
-    func expectedArgs() async throws {
+    func expectedArgs() throws {
       runner.defaultAnswer = ""
 
       _ = try client.hasCommonAncestor(
@@ -116,7 +116,7 @@ final class GitClientTests {
     }
 
     @Test("finds common ancestor when commit histories are identical")
-    func identicalHistory() async throws {
+    func identicalHistory() throws {
       runner.answers = [
         "log \(formatArg) feature -n 5 --": """
         cf6709acf Commit 5
@@ -154,7 +154,7 @@ final class GitClientTests {
     }
 
     @Test("finds common ancestor when commit histories are partially common")
-    func commonHistory() async throws {
+    func commonHistory() throws {
       runner.answers = [
         "log \(formatArg) feature -n 5 --": """
         cf6709acf Commit 5
@@ -192,7 +192,7 @@ final class GitClientTests {
     }
 
     @Test("finds common ancestor when common commits have also descriptions")
-    func commitsWithDescriptions() async throws {
+    func commitsWithDescriptions() throws {
       runner.answers = [
         "log \(formatArg) feature -n 5 --": """
         cf6709acf Commit 5
@@ -238,7 +238,7 @@ final class GitClientTests {
     }
 
     @Test("doesn't find common ancestor when commit histories are different")
-    func differentHistory() async throws {
+    func differentHistory() throws {
       runner.answers = [
         "log \(formatArg) feature -n 5 --": """
         2863c301e Commit 5
@@ -276,7 +276,7 @@ final class GitClientTests {
     }
 
     @Test("doesn't find common ancestor when only commits hashes are different")
-    func differentCommitHashes() async throws {
+    func differentCommitHashes() throws {
       runner.answers = [
         "log \(formatArg) feature -n 5 --": """
         eb77d6f7e Commit 5
@@ -316,7 +316,7 @@ final class GitClientTests {
 
   final class DiffBranches: GitClientSuite {
     @Test("runs expected git commands")
-    func expectedArgs() async throws {
+    func expectedArgs() throws {
       runner.defaultAnswer = ""
 
       _ = try client.diffBranches(
@@ -333,7 +333,7 @@ final class GitClientTests {
     }
 
     @Test("returns empty diff when commit histories are identical")
-    func identicalHistory() async throws {
+    func identicalHistory() throws {
       runner.answers = [
         "log \(formatArg) main..feature": "",
         "log \(formatArg) feature..main": "",
@@ -353,7 +353,7 @@ final class GitClientTests {
     }
 
     @Test("returns diff with commits only in base branch when base is ahead of target history")
-    func commitsOnlyInBase() async throws {
+    func commitsOnlyInBase() throws {
       runner.answers = [
         "log \(formatArg) main..feature": """
         b126c6ea1 Commit 5
@@ -394,7 +394,7 @@ final class GitClientTests {
 
     @Test(
       "returns diff with commits only in target branch when target is ahead of base history")
-    func commitsOnlyInTarget() async throws {
+    func commitsOnlyInTarget() throws {
       runner.answers = [
         "log \(formatArg) main..feature": "",
         "log \(formatArg) feature..main": """
@@ -436,7 +436,7 @@ final class GitClientTests {
     @Test(
       "returns diff with commits in base and target when recent histories of the branches differ"
     )
-    func commitsInBaseAndTarget() async throws {
+    func commitsInBaseAndTarget() throws {
       runner.answers = [
         "log \(formatArg) main..feature": """
         ebe89c627 Commit 10
@@ -496,7 +496,7 @@ final class GitClientTests {
     }
 
     @Test("returns commits with descriptions when descriptions are present in histories")
-    func commitsWithDescriptions() async throws {
+    func commitsWithDescriptions() throws {
       runner.answers = [
         "log \(formatArg) main..feature": """
         ebe89c627 Commit 6
@@ -578,7 +578,7 @@ final class GitClientTests {
 
   final class DeleteBranch: GitClientSuite {
     @Test("runs expected git commands")
-    func expectedArgs() async throws {
+    func expectedArgs() throws {
       runner.defaultAnswer = ""
 
       _ = try client.deleteBranch(branch: Branch(name: "feature"))

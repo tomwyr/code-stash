@@ -5,7 +5,7 @@ import Testing
 final class GitBranchCleanerTests {
   final class FindBranchesToCleanup: GitBranchCleanerSuite {
     @Test("passes config values as expected arguments to git commands")
-    func passingConfig() async throws {
+    func passingConfig() throws {
       runner.answers = [
         "branch": """
           ref
@@ -33,7 +33,7 @@ final class GitBranchCleanerTests {
     }
 
     @Test("finds no branches when there's only ref branch in the repository")
-    func onlyRefInRepo() async throws {
+    func onlyRefInRepo() throws {
       runner.answers = [
         "branch": """
         * main
@@ -41,14 +41,13 @@ final class GitBranchCleanerTests {
         "branch -r": "",
       ]
 
-      let config = GitBranchCleanerConfig(refBranchName: "main")
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [])
+      try testFindBranchesToCleanup(
+        expect: []
+      )
     }
 
     @Test("finds no branches when local branch is not merged into ref branch")
-    func noBranchesInRef() async throws {
+    func noBranchesInRef() throws {
       runner.answers = [
         "branch": """
           feature
@@ -77,14 +76,13 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(refBranchName: "main")
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [])
+      try testFindBranchesToCleanup(
+        expect: []
+      )
     }
 
     @Test("finds single branch when it's merged into ref branch")
-    func branchInRef() async throws {
+    func branchInRef() throws {
       runner.answers = [
         "branch": """
           feature
@@ -113,14 +111,13 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(refBranchName: "main")
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature")])
+      try testFindBranchesToCleanup(
+        expect: ["feature"]
+      )
     }
 
     @Test("finds no branches when merged branches are deeper than the max allowed depth")
-    func branchExceedingMaxDepth() async throws {
+    func branchExceedingMaxDepth() throws {
       runner.answers = [
         "branch": """
           feature
@@ -163,18 +160,14 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(
-        branchMaxDepth: 5,
-        refBranchName: "main"
+      try testFindBranchesToCleanup(
+        config: .init(branchMaxDepth: 5),
+        expect: []
       )
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [])
-
     }
 
     @Test("finds branch when its depth is equal to the max allowed depth")
-    func branchMatchingMaxDepth() async throws {
+    func branchMatchingMaxDepth() throws {
       runner.answers = [
         "branch": """
           feature
@@ -215,17 +208,14 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(
-        branchMaxDepth: 5,
-        refBranchName: "main"
+      try testFindBranchesToCleanup(
+        config: .init(branchMaxDepth: 5),
+        expect: ["feature"]
       )
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature")])
     }
 
     @Test("finds single branch with multiple commits merged into ref")
-    func branchWithMultipleCommits() async throws {
+    func branchWithMultipleCommits() throws {
       runner.answers = [
         "branch": """
           feature
@@ -264,14 +254,13 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(refBranchName: "main")
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature")])
+      try testFindBranchesToCleanup(
+        expect: ["feature"]
+      )
     }
 
     @Test("finds no branches when branch is merged into ref but not deleted from remote")
-    func branchNotRemovedFromRemote() async throws {
+    func branchNotRemovedFromRemote() throws {
       runner.answers = [
         "branch": """
           feature
@@ -312,14 +301,13 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(refBranchName: "main")
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [])
+      try testFindBranchesToCleanup(
+        expect: []
+      )
     }
 
     @Test("finds multiple branches with multiple commits merged into ref")
-    func branchesWithMultipleCommits() async throws {
+    func branchesWithMultipleCommits() throws {
       runner.answers = [
         "branch": """
           feature
@@ -395,14 +383,13 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(refBranchName: "main")
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature"), Branch(name: "refactor")])
+      try testFindBranchesToCleanup(
+        expect: ["feature", "refactor"]
+      )
     }
 
     @Test("finds multiple branches with single commits merged into ref")
-    func branchesWithSingleCommit() async throws {
+    func branchesWithSingleCommit() throws {
       runner.answers = [
         "branch": """
           feature
@@ -452,14 +439,13 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(refBranchName: "main")
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature"), Branch(name: "refactor")])
+      try testFindBranchesToCleanup(
+        expect: ["feature", "refactor"]
+      )
     }
 
     @Test("finds multiple branches with common commit history and merged into ref")
-    func branchesWithCommonHistory() async throws {
+    func branchesWithCommonHistory() throws {
       runner.answers = [
         "branch": """
           feature
@@ -535,14 +521,13 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(refBranchName: "main")
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature"), Branch(name: "refactor")])
+      try testFindBranchesToCleanup(
+        expect: ["feature", "refactor"]
+      )
     }
 
     @Test("finds multiple branches that are stacked on top of each other and merged into ref")
-    func branchesStackedOnEachOther() async throws {
+    func branchesStackedOnEachOther() throws {
       runner.answers = [
         "branch": """
           feature
@@ -605,14 +590,13 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(refBranchName: "main")
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature"), Branch(name: "refactor")])
+      try testFindBranchesToCleanup(
+        expect: ["feature", "refactor"]
+      )
     }
 
     @Test("finds branch merged into ref when branch was merged with default message")
-    func branchWithDefaultMergeMessage() async throws {
+    func branchWithDefaultMergeMessage() throws {
       runner.answers = [
         "branch": """
           feature
@@ -641,17 +625,14 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(
-        refBranchName: "main",
-        branchMergeMatchers: [.defaultMergeMessage]
+      try testFindBranchesToCleanup(
+        config: .init(branchMergeMatchers: [.defaultMergeMessage]),
+        expect: ["feature"]
       )
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature")])
     }
 
     @Test("finds branch merged into ref when merge message was prefixed with branch name")
-    func branchWithPrefixMergeMessage() async throws {
+    func branchWithPrefixMergeMessage() throws {
       runner.answers = [
         "branch": """
           feature
@@ -680,19 +661,16 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(
-        refBranchName: "main",
-        branchMergeMatchers: [.branchNamePrefix]
+      try testFindBranchesToCleanup(
+        config: .init(branchMergeMatchers: [.branchNamePrefix]),
+        expect: ["feature"]
       )
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature")])
     }
 
     @Test(
       "finds branch merged into ref when merge message was prefixed with last path of the branch name"
     )
-    func branchWithPrefixMergeMessageAndSubpath() async throws {
+    func branchWithPrefixMergeMessageAndSubpath() throws {
       runner.answers = [
         "branch": """
           feature/id-123
@@ -721,19 +699,16 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(
-        refBranchName: "main",
-        branchMergeMatchers: [.branchNamePrefix]
+      try testFindBranchesToCleanup(
+        config: .init(branchMergeMatchers: [.branchNamePrefix]),
+        expect: ["feature/id-123"]
       )
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [Branch(name: "feature/id-123")])
     }
 
     @Test(
       "finds no branches when merge message was prefixed with branch name but prefix matcher isn't used"
     )
-    func branchWithPrefixMergeMessageAndDifferent() async throws {
+    func branchWithPrefixMergeMessageAndDifferent() throws {
       runner.answers = [
         "branch": """
           feature
@@ -762,13 +737,10 @@ final class GitBranchCleanerTests {
         """,
       ]
 
-      let config = GitBranchCleanerConfig(
-        refBranchName: "main",
-        branchMergeMatchers: [.defaultMergeMessage]
+      try testFindBranchesToCleanup(
+        config: .init(branchMergeMatchers: [.defaultMergeMessage]),
+        expect: []
       )
-      let branches = try cleaner.findBranchesToCleanup(for: config)
-
-      #expect(branches == [])
     }
   }
 }
@@ -781,5 +753,13 @@ class GitBranchCleanerSuite {
 
   init() {
     cleaner = GitBranchCleaner(gitClient: GitClient(commands: GitCommands(runner: runner)))
+  }
+
+  func testFindBranchesToCleanup(
+    config: GitBranchCleanerConfig = .init(),
+    expect branches: [String]
+  ) throws {
+    let result = try cleaner.findBranchesToCleanup(for: config)
+    #expect(result.map(\.name) == branches)
   }
 }
