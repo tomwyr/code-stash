@@ -8,7 +8,7 @@ class GitBranchCleaner {
 
 extension GitBranchCleaner {
   func findBranchesToCleanup(
-    for config: GitBranchCleanerConfig
+    config: GitBranchCleanerConfig
   ) throws(BranchCleanerError) -> [Branch] {
     let matchers = config.mergeMatchers
 
@@ -17,7 +17,7 @@ extension GitBranchCleaner {
     }
     let localToRefBranchDiffs = try diffBranchesAgainstRef(
       localBranches: localBranches,
-      for: config
+      config: config
     )
 
     let localBranchesInRef = localToRefBranchDiffs.filter { branchDiff in
@@ -31,7 +31,7 @@ extension GitBranchCleaner {
 
   private func diffBranchesAgainstRef(
     localBranches: [Branch],
-    for config: GitBranchCleanerConfig
+    config: GitBranchCleanerConfig
   ) throws(BranchCleanerError) -> [BranchDiff] {
     let maxDepth = config.branchMaxDepth
     let refBranch = Branch(name: config.refBranchName)

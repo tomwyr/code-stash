@@ -12,7 +12,7 @@ struct Remove: ParsableCommand {
     logger.runRemove(config: config)
 
     do {
-      let branches = try cleaner.findBranchesToCleanup(for: config)
+      let branches = try cleaner.findBranchesToCleanup(config: config)
       _ = try cleaner.cleanupBranches(branches: branches)
       logger.branchesRemoved(branches: branches)
     } catch {

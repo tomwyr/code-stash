@@ -12,7 +12,7 @@ struct Find: ParsableCommand {
     logger.runFind(config: config)
 
     do {
-      let branches = try cleaner.findBranchesToCleanup(for: config)
+      let branches = try cleaner.findBranchesToCleanup(config: config)
       if branches.isEmpty {
         logger.noBranchesToCleanup()
       } else {

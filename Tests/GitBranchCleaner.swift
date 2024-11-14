@@ -741,6 +741,83 @@ final class GitBranchCleanerTests {
       )
     }
   }
+
+  final class CleanupBranches: GitBranchCleanerSuite {
+    @Test("removes requested branches")
+    func removingBranches() throws {
+      try testCleanupBranches(
+        localBranchesBefore: """
+            feature
+          * main
+          """,
+        localBranchesAfter: "",
+        branchesToDelete: ["main", "feature"],
+        expectDeletions: ["main", "feature"]
+      )
+    }
+
+    @Test("throws when any of the branches doesn't exist")
+    func nonExistentBranch() throws {
+      try testCleanupBranches(
+        localBranchesBefore: """
+          * main
+          """,
+        localBranchesAfter: """
+          * main
+          """,
+        branchesToDelete: ["main", "feature"],
+        expectError: { error in
+          switch error {
+          case let BranchCleanerError.branchesNotFound(branches):
+            branches == [Branch(name: "feature")]
+          default: false
+          }
+        }
+      )
+    }
+
+    @Test("throws when any of the branches exists in remote")
+    func removingOnlyLocalBranches() throws {
+      try testCleanupBranches(
+        localBranchesBefore: """
+            feature
+          * main
+          """,
+        remoteBranches: """
+            origin/feature
+          """,
+        branchesToDelete: ["main", "feature"],
+        expectError: { error in
+          switch error {
+          case let BranchCleanerError.branchesNotFound(branches):
+            branches == [Branch(name: "feature")]
+          default: false
+          }
+        }
+      )
+    }
+
+    @Test("throws when any of the branches isn't deleted")
+    func nonDeletedBranch() throws {
+      try testCleanupBranches(
+        localBranchesBefore: """
+            feature
+          * main
+          """,
+        localBranchesAfter: """
+          * main
+          """,
+        branchesToDelete: ["main", "feature"],
+        expectError: { error in
+          switch error {
+          case let BranchCleanerError.branchesNotRemoved(branches):
+            branches == [Branch(name: "main")]
+          default: false
+          }
+        }
+      )
+    }
+  }
 }
 
 class GitBranchCleanerSuite {
@@ -762,8 +839,6 @@ class GitBranchCleanerSuite {
     expectCommands commands: [String]? = nil,
     expect branches: [String]? = nil
   ) throws {
-    //runner.defaultAnswer = ""
-
     if let localBranches {
       runner.answers["branch"] = localBranches
     }
@@ -789,13 +864,60 @@ class GitBranchCleanerSuite {
       }
     }
 
-    let result = try cleaner.findBranchesToCleanup(for: config)
+    let result = try cleaner.findBranchesToCleanup(config: config)
 
     if let branches {
       #expect(result.map(\.name) == branches)
     }
     if let commands {
       #expect(runner.commandArgs == commands)
+    }
+  }
+
+  func testCleanupBranches(
+    localBranchesBefore: String? = "",
+    localBranchesAfter: String? = "",
+    remoteBranches: String? = "",
+    branchesToDelete: [String],
+    expectDeletions expectedBranches: [String]? = nil,
+    expectError errorMatcher: ((Error) -> Bool)? = nil
+  ) throws {
+    var localBranchesCalls = 0
+    runner.answerWith { args in
+      guard args == "branch" else {
+        return nil
+      }
+      localBranchesCalls += 1
+      return if localBranchesCalls == 1 {
+        localBranchesBefore
+      } else {
+        localBranchesAfter
+      }
+    }
+
+    if let remoteBranches {
+      runner.answers["branch -r"] = remoteBranches
+    }
+
+    for branch in branchesToDelete {
+      runner.answers["branch -D \(branch)"] = ""
+    }
+
+    let runCleanupBranches = {
+      try self.cleaner.cleanupBranches(
+        branches: branchesToDelete.map(Branch.init(name:))
+      )
+    }
+
+    if let errorMatcher {
+      #expect(performing: runCleanupBranches, throws: errorMatcher)
+    } else {
+      try runCleanupBranches()
+    }
+
+    if let expectedBranches {
+      let deletedBranches = runner.commandArgs.compactMap(parseAsDelete)
+      #expect(deletedBranches == expectedBranches)
     }
   }
 
@@ -815,5 +937,14 @@ class GitBranchCleanerSuite {
     }
     let (_, base, target) = match.output
     return (String(base), String(target))
+  }
+
+  private func parseAsDelete(args: String) -> String? {
+    let regex = /branch -D ([^\s]+)/
+    guard let match = args.wholeMatch(of: regex) else {
+      return nil
+    }
+    let (_, branch) = match.output
+    return String(branch)
   }
 }
