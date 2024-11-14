@@ -38,4 +38,25 @@ class GitClient {
       target: BranchSlice(branch: target, commits: targetOnlyCommits)
     )
   }
+
+  func filterLocalBranches(from branches: [Branch]) throws(GitError) -> [Branch] {
+    let localBranches = try commands.localBranches()
+    let inputLocalBranches = branches.toSet().intersection(localBranches.toSet())
+    // Filter the original array to preserve order of the elements.
+    return branches.filter(inputLocalBranches.contains)
+  }
+
+  func filterNonLocalBranches(from branches: [Branch]) throws(GitError) -> [Branch] {
+    let localBranches = try commands.localBranches()
+    let inputNonLocalBranches = branches.toSet().subtracting(localBranches.toSet())
+    // Filter the original array to preserve order of the elements.
+    return branches.filter(inputNonLocalBranches.contains)
+  }
+
+  func filterRemoteBranches(from branches: [Branch]) throws(GitError) -> [Branch] {
+    let remoteBranches = try commands.remoteBranches()
+    let inputRemoteBranches = branches.toSet().intersection(remoteBranches.toSet())
+    // Filter the original array to preserve order of the elements.
+    return branches.filter(inputRemoteBranches.contains)
+  }
 }

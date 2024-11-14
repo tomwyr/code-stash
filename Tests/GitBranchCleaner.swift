@@ -768,7 +768,7 @@ final class GitBranchCleanerTests {
         branchesToDelete: ["main", "feature"],
         expectError: { error in
           switch error {
-          case let BranchCleanerError.branchesNotFound(branches):
+          case let .branchesNotFound(branches):
             branches == [Branch(name: "feature")]
           default: false
           }
@@ -789,7 +789,7 @@ final class GitBranchCleanerTests {
         branchesToDelete: ["main", "feature"],
         expectError: { error in
           switch error {
-          case let BranchCleanerError.branchesNotFound(branches):
+          case let .branchesInRemote(branches):
             branches == [Branch(name: "feature")]
           default: false
           }
@@ -810,7 +810,7 @@ final class GitBranchCleanerTests {
         branchesToDelete: ["main", "feature"],
         expectError: { error in
           switch error {
-          case let BranchCleanerError.branchesNotRemoved(branches):
+          case let .branchesNotRemoved(branches):
             branches == [Branch(name: "main")]
           default: false
           }
@@ -880,7 +880,7 @@ class GitBranchCleanerSuite {
     remoteBranches: String? = "",
     branchesToDelete: [String],
     expectDeletions expectedBranches: [String]? = nil,
-    expectError errorMatcher: ((Error) -> Bool)? = nil
+    expectError errorMatcher: ((GitBranchCleanerError) -> Bool)? = nil
   ) throws {
     var localBranchesCalls = 0
     runner.answerWith { args in
@@ -910,7 +910,12 @@ class GitBranchCleanerSuite {
     }
 
     if let errorMatcher {
-      #expect(performing: runCleanupBranches, throws: errorMatcher)
+      #expect { try runCleanupBranches() } throws: { error in
+        guard case let error as GitBranchCleanerError = error else {
+          return false
+        }
+        return errorMatcher(error)
+      }
     } else {
       try runCleanupBranches()
     }

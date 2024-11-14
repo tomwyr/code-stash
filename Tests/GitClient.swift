@@ -586,6 +586,113 @@ final class GitClientTests {
       #expect(runner.commandArgs == ["branch -D feature"])
     }
   }
+
+  final class FilterLocalBranches: GitClientSuite {
+    @Test("runs expected git commands")
+    func expectedArgs() throws {
+      runner.defaultAnswer = ""
+
+      _ = try client.filterLocalBranches(from: [])
+
+      #expect(runner.commandArgs == ["branch"])
+    }
+
+    @Test("returns branches from input that are local branches")
+    func localAndNonLocalBranches() throws {
+      runner.answers["branch"] = """
+          feature-1
+        * main
+          refactor-1
+        """
+
+      let localBranches = try client.filterLocalBranches(from: [
+        Branch(name: "main"),
+        Branch(name: "feature-1"),
+        Branch(name: "feature-2"),
+        Branch(name: "refactor-1"),
+        Branch(name: "refactor-2"),
+      ])
+
+      let expectedBranches = [
+        Branch(name: "main"),
+        Branch(name: "feature-1"),
+        Branch(name: "refactor-1"),
+      ]
+
+      #expect(localBranches == expectedBranches)
+    }
+  }
+
+  final class FilterNonLocalBranches: GitClientSuite {
+    @Test("runs expected git commands")
+    func expectedArgs() throws {
+      runner.defaultAnswer = ""
+
+      _ = try client.filterNonLocalBranches(from: [])
+
+      #expect(runner.commandArgs == ["branch"])
+    }
+
+    @Test("returns branches from input that aren't local branches")
+    func localAndNonLocalBranches() throws {
+      runner.answers["branch"] = """
+          feature-1
+        * main
+          refactor-1
+        """
+
+      let nonLocalBranches = try client.filterNonLocalBranches(from: [
+        Branch(name: "main"),
+        Branch(name: "feature-1"),
+        Branch(name: "feature-2"),
+        Branch(name: "refactor-1"),
+        Branch(name: "refactor-2"),
+      ])
+
+      let expectedBranches = [
+        Branch(name: "feature-2"),
+        Branch(name: "refactor-2"),
+      ]
+
+      #expect(nonLocalBranches == expectedBranches)
+    }
+  }
+
+  final class FilterRemoteBranches: GitClientSuite {
+    @Test("runs expected git commands")
+    func expectedArgs() throws {
+      runner.defaultAnswer = ""
+
+      _ = try client.filterRemoteBranches(from: [])
+
+      #expect(runner.commandArgs == ["branch -r"])
+    }
+
+    @Test("returns branches from input that are remote branches")
+    func localAndNonLocalBranches() throws {
+      runner.answers["branch -r"] = """
+          origin/feature-1
+          origin/main
+          origin/refactor-1
+        """
+
+      let remoteBranches = try client.filterRemoteBranches(from: [
+        Branch(name: "main"),
+        Branch(name: "feature-1"),
+        Branch(name: "feature-2"),
+        Branch(name: "refactor-1"),
+        Branch(name: "refactor-2"),
+      ])
+
+      let expectedBranches = [
+        Branch(name: "main"),
+        Branch(name: "feature-1"),
+        Branch(name: "refactor-1"),
+      ]
+
+      #expect(remoteBranches == expectedBranches)
+    }
+  }
 }
 
 class GitClientSuite {

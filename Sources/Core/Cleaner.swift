@@ -9,7 +9,7 @@ class GitBranchCleaner {
 extension GitBranchCleaner {
   func findBranchesToCleanup(
     config: GitBranchCleanerConfig
-  ) throws(BranchCleanerError) -> [Branch] {
+  ) throws(GitBranchCleanerError) -> [Branch] {
     let matchers = config.mergeMatchers
 
     let localBranches = try runCatching {
@@ -32,20 +32,20 @@ extension GitBranchCleaner {
   private func diffBranchesAgainstRef(
     localBranches: [Branch],
     config: GitBranchCleanerConfig
-  ) throws(BranchCleanerError) -> [BranchDiff] {
+  ) throws(GitBranchCleanerError) -> [BranchDiff] {
     let maxDepth = config.branchMaxDepth
     let refBranch = Branch(name: config.refBranchName)
 
     let refSubBranches =
       try localBranches
       .filter { branch in branch != refBranch }
-      .filterThrowing { branch throws(BranchCleanerError) in
+      .filterThrowing { branch throws(GitBranchCleanerError) in
         try runCatching {
           try git.hasCommonAncestor(branch: branch, with: refBranch, notDeeperThan: maxDepth)
         }
       }
 
-    return try refSubBranches.map { branch throws(BranchCleanerError) in
+    return try refSubBranches.map { branch throws(GitBranchCleanerError) in
       try runCatching {
         try git.diffBranches(startingFrom: branch, presentIn: refBranch)
       }
@@ -54,37 +54,41 @@ extension GitBranchCleaner {
 }
 
 extension GitBranchCleaner {
-  func cleanupBranches(branches: [Branch]) throws(BranchCleanerError) {
-    try validateBranchesExist(branches: branches)
+  func cleanupBranches(branches: [Branch]) throws(GitBranchCleanerError) {
+    try validateBranchesBeforeCleanup(branches: branches)
     for branch in branches {
       try runCatching {
         try git.deleteBranch(branch: branch)
       }
     }
-    try validateBranchesRemoved(branches: branches)
+    try validateBranchesAfterCleanup(branches: branches)
   }
 
-  private func validateBranchesExist(branches: [Branch]) throws(BranchCleanerError) {
-    let localBranches = try runCatching {
-      try git.getLocalOnlyBranches()
+  private func validateBranchesBeforeCleanup(branches: [Branch]) throws(GitBranchCleanerError) {
+    let (unknownBranches, remoteBranches) = try runCatching {
+      (
+        try git.filterNonLocalBranches(from: branches),
+        try git.filterRemoteBranches(from: branches)
+      )
     }
-    let unknownBranches = branches.toSet().subtracting(localBranches.toSet()).toArray()
     guard unknownBranches.isEmpty else {
       throw .branchesNotFound(unknownBranches)
     }
+    guard remoteBranches.isEmpty else {
+      throw .branchesInRemote(remoteBranches)
+    }
   }
 
-  private func validateBranchesRemoved(branches: [Branch]) throws(BranchCleanerError) {
-    let localBranches = try runCatching {
-      try git.getLocalOnlyBranches()
+  private func validateBranchesAfterCleanup(branches: [Branch]) throws(GitBranchCleanerError) {
+    let notRemovedBranches = try runCatching {
+      try git.filterLocalBranches(from: branches)
     }
-    let notRemovedBranches = branches.toSet().intersection(localBranches.toSet()).toArray()
     guard notRemovedBranches.isEmpty else {
       throw .branchesNotRemoved(notRemovedBranches)
     }
   }
 
-  private func runCatching<T>(block: () throws -> T) throws(BranchCleanerError) -> T {
+  private func runCatching<T>(block: () throws -> T) throws(GitBranchCleanerError) -> T {
     do {
       return try block()
     } catch let error as GitError {
@@ -95,8 +99,9 @@ extension GitBranchCleaner {
   }
 }
 
-enum BranchCleanerError: Error {
+enum GitBranchCleanerError: Error {
   case branchesNotFound([Branch])
+  case branchesInRemote([Branch])
   case branchesNotRemoved([Branch])
   case git(GitError)
   case other(Error)

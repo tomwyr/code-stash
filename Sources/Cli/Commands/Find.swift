@@ -75,7 +75,7 @@ extension Logger {
     }
   }
 
-  func findError(error: BranchCleanerError) {
+  func findError(error: GitBranchCleanerError) {
     commandError(command: "find", error: error)
   }
 }
