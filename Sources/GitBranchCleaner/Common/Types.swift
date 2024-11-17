@@ -10,12 +10,12 @@ struct Commit: Hashable {
   }
 }
 
-struct Branch: Hashable {
-  let name: String
-}
+public struct Branch: Hashable, Sendable, Codable {
+  public init(name: String) {
+    self.name = name
+  }
 
-enum BranchType {
-  case local, remote
+  public let name: String
 }
 
 struct BranchDiff: Hashable {
@@ -28,10 +28,14 @@ struct BranchSlice: Hashable {
   let commits: [Commit]
 }
 
-enum BranchMergeMatcher {
+public enum BranchType {
+  case local, remote
+}
+
+public enum BranchMergeMatcher {
   case defaultMergeMessage, branchNamePrefix, squashedCommitsMessage
 }
 
-enum BranchMergeStrategy {
+public enum BranchMergeStrategy {
   case createMergeCommit, squashAndMerge, rebaseAndMerge
 }

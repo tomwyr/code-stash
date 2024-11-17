@@ -57,7 +57,7 @@ class GitCommands {
   }
 }
 
-enum GitError: Error {
+public enum GitError: Error {
   case command(ShellOutError)
   case parser(content: String, parse_type: GitParseType)
   case other(Error)

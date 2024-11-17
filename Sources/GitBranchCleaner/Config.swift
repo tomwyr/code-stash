@@ -1,11 +1,11 @@
-struct GitBranchCleanerConfig {
+public struct GitBranchCleanerConfig {
   let branchMaxDepth: Int
   let refBranchName: String
   let refBranchType: BranchType
   let mergeStrategy: BranchMergeStrategy
   let mergeMatchers: [BranchMergeMatcher]
 
-  init(
+  public init(
     branchMaxDepth: Int = 25,
     refBranchName: String = "main",
     refBranchType: BranchType = .local,

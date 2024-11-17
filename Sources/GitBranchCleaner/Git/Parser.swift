@@ -46,7 +46,7 @@ class GitParser {
   }
 }
 
-enum GitParseType {
+public enum GitParseType: Sendable {
   case commitLog, branchLog
 }
 

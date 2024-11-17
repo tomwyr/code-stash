@@ -1,3 +1,5 @@
+import GitBranchCleaner
+
 extension Logger {
   func runCommand(command: String, config: GitBranchCleanerConfig?) {
     log(.debug) {

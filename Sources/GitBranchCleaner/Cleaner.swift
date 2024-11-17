@@ -1,5 +1,9 @@
-class GitBranchCleaner {
+public class GitBranchCleaner {
   private let git: GitClient
+
+  public init() {
+    self.git = GitClient()
+  }
 
   public init(projectRoot: String) {
     self.git = GitClient(commands: GitCommands(runner: ShellGitRunner(path: projectRoot)))
@@ -11,7 +15,7 @@ class GitBranchCleaner {
 }
 
 extension GitBranchCleaner {
-  func findBranchesToCleanup(
+  public func findBranchesToCleanup(
     config: GitBranchCleanerConfig
   ) throws(GitBranchCleanerError) -> [Branch] {
     let matchers = config.mergeMatchers
@@ -58,7 +62,7 @@ extension GitBranchCleaner {
 }
 
 extension GitBranchCleaner {
-  func cleanupBranches(branches: [Branch]) throws(GitBranchCleanerError) {
+  public func cleanupBranches(branches: [Branch]) throws(GitBranchCleanerError) {
     try validateBranchesBeforeCleanup(branches: branches)
     for branch in branches {
       try runCatching {
@@ -103,7 +107,7 @@ extension GitBranchCleaner {
   }
 }
 
-enum GitBranchCleanerError: Error {
+public enum GitBranchCleanerError: Error {
   case branchesNotFound([Branch])
   case branchesInRemote([Branch])
   case branchesNotRemoved([Branch])

@@ -1,4 +1,5 @@
 @preconcurrency import ArgumentParser
+import GitBranchCleaner
 
 @main
 struct GitBranchCleanerCli: ParsableCommand {

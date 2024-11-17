@@ -11,11 +11,17 @@ let package = Package(
     .package(url: "https://github.com/JohnSundell/ShellOut.git", from: "2.0.0"),
   ],
   targets: [
-    .executableTarget(
+    .target(
       name: "GitBranchCleaner",
       dependencies: [
+        .product(name: "ShellOut", package: "ShellOut")
+      ]
+    ),
+    .executableTarget(
+      name: "GitBranchCleanerCli",
+      dependencies: [
+        "GitBranchCleaner",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
-        .product(name: "ShellOut", package: "ShellOut"),
       ]
     ),
     .testTarget(
