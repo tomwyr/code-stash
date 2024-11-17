@@ -1,6 +1,10 @@
 class GitBranchCleaner {
   private let git: GitClient
 
+  public init(projectRoot: String) {
+    self.git = GitClient(commands: GitCommands(runner: ShellGitRunner(path: projectRoot)))
+  }
+
   init(gitClient: GitClient = GitClient()) {
     self.git = gitClient
   }

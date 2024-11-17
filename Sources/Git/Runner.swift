@@ -5,7 +5,13 @@ protocol GitRunner {
 }
 
 class ShellGitRunner: GitRunner {
+  let path: String
+
+  init(path: String = ".") {
+    self.path = path
+  }
+
   func run(with arguments: String...) throws -> String {
-    try shellOut(to: "git", arguments: arguments)
+    try shellOut(to: "git", arguments: arguments, at: path)
   }
 }
