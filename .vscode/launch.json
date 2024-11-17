@@ -17,6 +17,24 @@
       "name": "Release GitBranchCleaner",
       "program": "${workspaceFolder:git-branch-cleaner}/.build/release/GitBranchCleaner",
       "preLaunchTask": "swift: Build Release GitBranchCleaner"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:git-branch-cleaner}",
+      "name": "Debug GitBranchCleanerCli",
+      "program": "${workspaceFolder:git-branch-cleaner}/.build/debug/GitBranchCleanerCli",
+      "preLaunchTask": "swift: Build Debug GitBranchCleanerCli"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:git-branch-cleaner}",
+      "name": "Release GitBranchCleanerCli",
+      "program": "${workspaceFolder:git-branch-cleaner}/.build/release/GitBranchCleanerCli",
+      "preLaunchTask": "swift: Build Release GitBranchCleanerCli"
     }
   ]
 }
