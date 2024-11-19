@@ -52,7 +52,7 @@ jobs:
         id: rename-binary
         shell: bash
         run: |
-          SOURCE=".build/release/GitBranchCleaner${{ matrix.binary-suffix }}"
+          SOURCE=".build/release/GitBranchCleanerCli${{ matrix.binary-suffix }}"
           TARGET=".build/gbc-${{ github.ref_name }}-${{ matrix.platform }}${{ matrix.binary-suffix }}"
           cp "$SOURCE" "$TARGET"
           if [[ "${{ matrix.platform }}" != "windows" ]]; then
