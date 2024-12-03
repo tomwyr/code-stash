@@ -17,7 +17,7 @@ extension Logger {
       An error occured while running \"\(command)\" command: \(error)
 
       This is most likely an error that needs to be fixed.
-      Please visit https://github.com/tomwyr/git_branch_cleaner/issues and open an issue or search for existing similar issues.
+      Please visit https://github.com/tomwyr/git-branch-cleaner/issues and open an issue or search for existing similar issues.
       """
     }
   }

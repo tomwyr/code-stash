@@ -2,7 +2,7 @@ import Foundation
 
 func runCatching<T: Encodable>(_ block: () throws -> T) -> UnsafeMutablePointer<CChar>? {
   do {
-    return strdup(encodeData(try block()))
+    return strdup(encodeSuccess(try block()))
   } catch {
     return strdup(encodeError(error))
   }

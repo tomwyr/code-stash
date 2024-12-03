@@ -1,9 +1,9 @@
 import Foundation
 
-func encodeData(_ value: Encodable) -> String {
+func encodeSuccess(_ value: Encodable) -> String {
   do {
-    let dataValue = try encode(from: value)
-    return #"{"data": \#(dataValue)}"#
+    let data = try encode(from: value)
+    return #"{"success": \#(data)}"#
   } catch {
     return ResultEncodingError(value).encoded()
   }
@@ -11,13 +11,13 @@ func encodeData(_ value: Encodable) -> String {
 
 func encodeError(_ value: Error) -> String {
   do {
-    let errorValue =
+    let data =
       if case let value as Encodable = value {
         try encode(from: value)
       } else {
         String(describing: value)
       }
-    return #"{"error": \#(errorValue)}"#
+    return #"{"error": \#(data)}"#
   } catch {
     return ResultEncodingError(value).encoded()
   }
