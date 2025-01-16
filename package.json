@@ -1,7 +1,11 @@
 {
-  "name": "git-branch-cleaner",
-  "displayName": "Git Branch Cleaner",
-  "description": "",
+  "name": "git-branch-cleaner-vscode",
+  "displayName": "Git Branch Cleaner for VS Code",
+  "description": "A VS Code utility extension for cleaning up git branches.",
+  "publisher": "tomwyr",
+  "repository": {
+    "url": "https://github.com/tomwyr/git-branch-cleaner-vscode"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.95.0"
