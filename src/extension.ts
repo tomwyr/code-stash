@@ -3,7 +3,7 @@ import * as commands from "./commands/commands";
 import * as ffi from "./ffi/ffi";
 
 export function activate(context: vscode.ExtensionContext) {
-  ffi.initialize();
+  ffi.initialize(context);
   registerCommands(context);
 }
 

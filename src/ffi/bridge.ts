@@ -1,11 +1,13 @@
-import { open, define, DataType, close } from "ffi-rs";
-import { parseResult, Result } from "./result";
+import { close, DataType, define, open } from "ffi-rs";
+import * as vscode from "vscode";
+import { getLibraryPath } from "../common/extension";
 import { Branch } from "../common/types";
+import { parseResult, Result } from "./result";
 
-export function initialize() {
+export function initialize(context: vscode.ExtensionContext) {
   open({
     library: "gbc",
-    path: `${__dirname}/gbc.dylib`,
+    path: getLibraryPath(context),
   });
 }
 
