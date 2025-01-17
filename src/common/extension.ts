@@ -3,19 +3,18 @@ import * as vscode from "vscode";
 
 export function getLibraryPath(context: vscode.ExtensionContext): string {
   const root = context.extensionPath;
-  console.log(root);
-  const fileName = "gbc." + getFileExtension();
-  return path.join(root, "out", fileName);
+  const fileName = getFileName();
+  return path.join(root, "out", "cli", fileName);
 }
 
-function getFileExtension(): string {
+function getFileName(): string {
   switch (process.platform) {
     case "win32":
-      return "dll";
+      return "gbc-windows.exe";
     case "linux":
-      return "so";
+      return "gbc-linux";
     case "darwin":
-      return "dylib";
+      return "gbc-macos";
     default:
       throw unsupportedOsError;
   }
