@@ -20,11 +20,20 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
 
-      - name: Setup tools
-        run: npm install -g @vscode/vsce
+      - name: Install dependencies
+        run: npm install && npm install -g @vscode/vsce
 
-      - name: Build and publish extension
-        run: vsce package && vsce publish -p ${{ secrets.VSCE_AUTH_TOKEN }}
+      - name: Build extension
+        run: vsce package
+
+      - name: Download CLI binaries
+        run: scripts/download-cli.sh
+        env:
+          REPOSITORY: ${{ github.repository }}
+          VERSION: ${{ github.ref_name }}
+
+      - name: Publish extension
+        run: vsce publish -p ${{ secrets.VSCE_AUTH_TOKEN }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
