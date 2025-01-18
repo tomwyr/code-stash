@@ -30,16 +30,20 @@ jobs:
         include:
           - os: ubuntu-22.04
             platform: linux
-            library-file-name: libGitBranchCleanerFfi.so
+            lib-file-name: libGitBranchCleanerFfi
+            lib-extension: .so
             cli-file-name: GitBranchCleanerCli
           - os: macos-14
             platform: macos
-            library-file-name: libGitBranchCleanerFfi.dylib
+            lib-file-name: libGitBranchCleanerFfi
+            lib-extension: .dylib
             cli-file-name: GitBranchCleanerCli
           - os: windows-latest
             platform: windows
-            library-file-name: GitBranchCleanerFfi.dll
-            cli-file-name: GitBranchCleanerCli.exe
+            lib-file-name: GitBranchCleanerFfi
+            lib-extension: .dll
+            cli-file-name: GitBranchCleanerCli
+            cli-extension: .exe
 
     runs-on: ${{ matrix.os }}
 
@@ -60,8 +64,10 @@ jobs:
         env:
           VERSION: ${{ github.ref_name }}
           PLATFORM: ${{ matrix.platform }}
-          LIBRARY_FILE_NAME: ${{ matrix.library-file-name }}
+          LIB_FILE_NAME: ${{ matrix.lib-file-name }}
+          LIB_EXTENSION: ${{ matrix.lib-extension }}
           CLI_FILE_NAME: ${{ matrix.cli-file-name }}
+          CLI_EXTENSION: ${{ matrix.cli-extension }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
