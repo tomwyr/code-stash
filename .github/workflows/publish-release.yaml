@@ -55,9 +55,7 @@ jobs:
           SOURCE=".build/release/GitBranchCleanerCli${{ matrix.binary-suffix }}"
           TARGET=".build/gbc-${{ github.ref_name }}-${{ matrix.platform }}${{ matrix.binary-suffix }}"
           cp "$SOURCE" "$TARGET"
-          if [[ "${{ matrix.platform }}" != "windows" ]]; then
-            chmod +x "$TARGET"
-          fi
+          chmod +x "$TARGET"
           echo "target=$TARGET" >> $GITHUB_OUTPUT
 
       - name: Upload artifact
