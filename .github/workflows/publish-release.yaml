@@ -29,8 +29,8 @@ jobs:
       - name: Publish extension
         run: vsce publish -p ${{ secrets.VSCE_AUTH_TOKEN }}
 
-      - name: Download CLI binaries
-        run: scripts/download-cli.sh
+      - name: Download gbc library
+        run: scripts/download-gbc-lib.sh
         env:
           REPOSITORY: ${{ github.repository }}
           VERSION: ${{ github.ref_name }}
