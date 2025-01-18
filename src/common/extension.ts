@@ -10,11 +10,11 @@ export function getLibraryPath(context: vscode.ExtensionContext): string {
 function getFileName(): string {
   switch (process.platform) {
     case "win32":
-      return "gbc-windows.exe";
+      return "gbc-windows.dll";
     case "linux":
-      return "gbc-linux";
+      return "gbc-linux.so";
     case "darwin":
-      return "gbc-macos";
+      return "gbc-macos.dylib";
     default:
       throw unsupportedOsError;
   }
