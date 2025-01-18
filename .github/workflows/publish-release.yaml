@@ -28,13 +28,13 @@ jobs:
       - name: Build extension
         run: vsce package
 
-      - name: Publish extension
-        run: vsce publish -p ${{ secrets.VSCE_AUTH_TOKEN }}
-
       - name: Download gbc library
         run: scripts/download-gbc-lib.sh
         env:
           REPOSITORY: ${{ github.repository }}
+
+      - name: Publish extension
+        run: vsce publish -p ${{ secrets.VSCE_AUTH_TOKEN }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
