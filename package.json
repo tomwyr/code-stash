@@ -13,17 +13,19 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "git-branch-cleaner.find",
+        "command": "git-branch-cleaner-vscode.find",
         "category": "Git Branch Cleaner",
         "title": "Find"
       },
       {
-        "command": "git-branch-cleaner.remove",
+        "command": "git-branch-cleaner-vscode.remove",
         "category": "Git Branch Cleaner",
         "title": "Remove"
       }
