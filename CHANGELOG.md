@@ -1,3 +1,7 @@
+## [0.0.4]
+
+- Add resolving gbc version during publishing
+
 ## [0.0.3]
 
 - Bundle extension with the correct gbc binary

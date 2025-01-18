@@ -20,8 +20,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
 
-      - name: Install dependencies
-        run: npm install && npm install -g @vscode/vsce
+      - name: Install dependencies and tools
+        run: |
+          npm install && npm install -g @vscode/vsce
+          sudo apt-get update && sudo apt-get install -y jq
 
       - name: Build extension
         run: vsce package
@@ -33,7 +35,6 @@ jobs:
         run: scripts/download-gbc-lib.sh
         env:
           REPOSITORY: ${{ github.repository }}
-          VERSION: ${{ github.ref_name }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
