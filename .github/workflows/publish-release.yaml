@@ -30,11 +30,16 @@ jobs:
         include:
           - os: ubuntu-22.04
             platform: linux
+            library-file-name: libGitBranchCleanerFfi.so
+            cli-file-name: GitBranchCleanerCli
           - os: macos-14
             platform: macos
+            library-file-name: libGitBranchCleanerFfi.dylib
+            cli-file-name: GitBranchCleanerCli
           - os: windows-latest
             platform: windows
-            binary-suffix: .exe
+            library-file-name: GitBranchCleanerFfi.dll
+            cli-file-name: GitBranchCleanerCli.exe
 
     runs-on: ${{ matrix.os }}
 
@@ -48,21 +53,23 @@ jobs:
       - name: Build release binary
         run: swift build -c release
 
-      - name: Rename binary
-        id: rename-binary
+      - name: Rename binaries
+        id: rename-binaries
         shell: bash
-        run: |
-          SOURCE=".build/release/GitBranchCleanerCli${{ matrix.binary-suffix }}"
-          TARGET=".build/gbc-${{ github.ref_name }}-${{ matrix.platform }}${{ matrix.binary-suffix }}"
-          cp "$SOURCE" "$TARGET"
-          chmod +x "$TARGET"
-          echo "target=$TARGET" >> $GITHUB_OUTPUT
+        run: scripts/rename-binaries.sh
+        env:
+          VERSION: ${{ github.ref_name }}
+          PLATFORM: ${{ matrix.platform }}
+          LIBRARY_FILE_NAME: ${{ matrix.library-file-name }}
+          CLI_FILE_NAME: ${{ matrix.cli-file-name }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}
-          path: ${{ steps.rename-binary.outputs.target }}
+          path: |
+            ${{ steps.rename-binaries.outputs.cli_path }}
+            ${{ steps.rename-binaries.outputs.lib_path }}
           if-no-files-found: error
 
   create-release:
