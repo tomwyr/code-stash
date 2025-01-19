@@ -13,6 +13,10 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
 
+    env:
+      GBC_REPOSITORY: tomwyr/git-branch-cleaner
+      VSCE_AUTH_TOKEN: ${{ secrets.VSCE_AUTH_TOKEN }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,19 +29,43 @@ jobs:
           npm install && npm install -g @vscode/vsce
           sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Download gbc library
-        run: scripts/download-gbc-lib.sh
+      - name: Resolve dependencies versions
+        id: resolve-versions
+        run: scripts/resolve-dependencies-versions.sh
         env:
-          REPOSITORY: tomwyr/git-branch-cleaner
+          GBC_REPOSITORY: tomwyr/git-branch-cleaner
 
-      - name: Build and publish extension
-        run: vsce package && vsce publish -p ${{ secrets.VSCE_AUTH_TOKEN }}
+      - name: Build and publish Linux extension
+        run: scripts/publish-extension.sh
+        env:
+          GBC_VERSION: ${{ steps.resolve-versions.outputs.gbc_version }}
+          FFI_VERSION: ${{ steps.resolve-versions.outputs.ffi_version }}
+          VSCE_TARGET: linux-x64
+          GBC_PLATFORM_SUFFIX: linux.so
+          FFI_PACKAGES: "@yuuang/ffi-rs-linux-x64-gnu @yuuang/ffi-rs-linux-x64-musl"
 
-      - name: Upload artifact
+      - name: Build and publish Windows extension
+        run: scripts/publish-extension.sh
+        env:
+          GBC_VERSION: ${{ steps.resolve-versions.outputs.gbc_version }}
+          FFI_VERSION: ${{ steps.resolve-versions.outputs.ffi_version }}
+          VSCE_TARGET: win32-x64
+          GBC_PLATFORM_SUFFIX: windows.dll
+          FFI_PACKAGES: "@yuuang/ffi-rs-win32-x64-msvc"
+
+      - name: Build and publish MacOS extension
+        run: scripts/publish-extension.sh
+        env:
+          GBC_VERSION: ${{ steps.resolve-versions.outputs.gbc_version }}
+          FFI_VERSION: ${{ steps.resolve-versions.outputs.ffi_version }}
+          VSCE_TARGET: darwin-arm64
+          GBC_PLATFORM_SUFFIX: macos.dylib
+          FFI_PACKAGES: "@yuuang/ffi-rs-darwin-arm64"
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: git-branch-cleaner-vscode-${{ github.ref_name }}.vsix
-          path: git-branch-cleaner-vscode-${{ github.ref_name }}.vsix
+          path: git-branch-cleaner-vscode-*${{ github.ref_name }}.vsix
           if-no-files-found: error
 
   create-github-relase:
