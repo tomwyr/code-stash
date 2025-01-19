@@ -1,3 +1,7 @@
+## [0.0.7]
+
+- Fix resolving gbc library path
+
 ## [0.0.6]
 
 - Fix bundling gbc with the extension
