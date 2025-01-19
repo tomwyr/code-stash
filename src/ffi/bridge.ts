@@ -1,6 +1,6 @@
 import { close, DataType, define, open } from "ffi-rs";
 import * as vscode from "vscode";
-import { getLibraryPath } from "../common/extension";
+import { getLibraryPath } from "../common/library";
 import { Branch } from "../common/types";
 import { parseResult, Result } from "./result";
 
