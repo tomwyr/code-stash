@@ -16,14 +16,14 @@ else
 fi
 
 # Download each platform's library for the latest version
-mkdir -p out/cli
+mkdir -p out/libs
 
 for platform_suffix in "linux.so" "macos.dylib" "windows.dll"; do
   file_name="gbc-$platform_suffix"
   gbc_lib_url="https://github.com/$REPOSITORY/releases/latest/download/gbc-lib-$version-$platform_suffix"
 
   echo "Downloading $file_name"
-  file_path="out/cli/$file_name"
+  file_path="out/libs/$file_name"
   curl -s -L -o "$file_path" "$gbc_lib_url"
 
   if [ ! -e "$file_path" ]; then

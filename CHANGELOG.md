@@ -1,3 +1,7 @@
+## [0.0.6]
+
+- Fix bundling gbc with the extension
+
 ## [0.0.5]
 
 - Fix publishing bugs

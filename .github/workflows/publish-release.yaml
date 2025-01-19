@@ -25,16 +25,13 @@ jobs:
           npm install && npm install -g @vscode/vsce
           sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Build extension
-        run: vsce package
-
       - name: Download gbc library
         run: scripts/download-gbc-lib.sh
         env:
           REPOSITORY: tomwyr/git-branch-cleaner
 
-      - name: Publish extension
-        run: vsce publish -p ${{ secrets.VSCE_AUTH_TOKEN }}
+      - name: Build and publish extension
+        run: vsce package && vsce publish -p ${{ secrets.VSCE_AUTH_TOKEN }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
