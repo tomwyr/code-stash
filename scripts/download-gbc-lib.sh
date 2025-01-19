@@ -3,7 +3,9 @@
 set -e
 
 # Retrieve gbc latest version
-gbc_release_url="https://api.github.com/repos/tomwyr/git-branch-cleaner/releases/latest"
+gbc_release_url="https://api.github.com/repos/$REPOSITORY/releases/latest"
+
+echo "Fetching gbc latest release information"
 version=$(curl -s $gbc_release_url | jq -r '.name')
 
 if [ -n "$version" ]; then
@@ -16,16 +18,16 @@ fi
 # Download each platform's library for the latest version
 mkdir -p out/cli
 
-file_names=("gbc-linux.so" "gbc-macos.dylib" "gbc-windows.dll")
-for file_name in $file_names; do
-  download_url="https://github.com/$REPOSITORY/releases/latest/download/gbc-lib-$version-$file_name"
+for platform_suffix in "linux.so" "macos.dylib" "windows.dll"; do
+  file_name="gbc-$platform_suffix"
+  gbc_lib_url="https://github.com/$REPOSITORY/releases/latest/download/gbc-lib-$version-$platform_suffix"
 
   echo "Downloading $file_name"
   file_path="out/cli/$file_name"
-  curl -s -o "$file_path" "$download_url"
+  curl -s -L -o "$file_path" "$gbc_lib_url"
 
   if [ ! -e "$file_path" ]; then
-    echo "Failed to download $file_name gbc library." >&2
+    echo "Failed to download $file_name library." >&2
     exit 1
   fi
 done

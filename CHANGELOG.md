@@ -1,3 +1,7 @@
+## [0.0.5]
+
+- Fix publishing bugs
+
 ## [0.0.4]
 
 - Add resolving gbc version during publishing

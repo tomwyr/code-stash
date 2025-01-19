@@ -31,7 +31,7 @@ jobs:
       - name: Download gbc library
         run: scripts/download-gbc-lib.sh
         env:
-          REPOSITORY: ${{ github.repository }}
+          REPOSITORY: tomwyr/git-branch-cleaner
 
       - name: Publish extension
         run: vsce publish -p ${{ secrets.VSCE_AUTH_TOKEN }}
