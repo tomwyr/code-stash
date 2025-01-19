@@ -35,7 +35,7 @@ export type FindBranchesToCleanupInput = {
 };
 
 export function cleanupBranches(branches: [Branch]) {
-  const branchesData = JSON.stringify(branches);
+  const branchesData = branches.map((branch) => branch.name);
   gbc.cleanupBranches(branchesData);
 }
 
