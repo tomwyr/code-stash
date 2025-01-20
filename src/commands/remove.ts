@@ -1,7 +1,7 @@
-import * as vscode from "vscode";
-import * as ffi from "../ffi/ffi";
 import { getProjectRoot } from "../common/project";
 import { Branch } from "../common/types";
+import * as ffi from "../ffi/ffi";
+import { handleDefault, showInfo, showPicker } from "./common";
 
 export function run() {
   const result = ffi.findBranchesToCleanup({
@@ -10,16 +10,10 @@ export function run() {
     refBranchName: "main",
   });
 
-  switch (result.type) {
-    case "success":
-      onSuccess(result.value);
-      break;
-    case "error":
-      onError(result.value);
-      break;
-    case "unknown":
-      onUnknown(result.value);
-      break;
+  if (result.type === "success") {
+    onSuccess(result.value);
+  } else {
+    handleDefault(result, { errorTitle: "Removing branches failed" });
   }
 }
 
@@ -51,27 +45,3 @@ async function onSuccess(branches: Branch[]) {
   ffi.cleanupBranches(branchesToRemove);
   showInfo("Successfully removed selected branches.");
 }
-
-async function onError(error: object) {
-  const title = "Finding branches failed";
-  const moreItem = "More info";
-
-  const item = await showError(title, moreItem);
-  switch (item) {
-    case moreItem:
-      showError(title, {
-        modal: true,
-        detail: JSON.stringify(error),
-      });
-      break;
-  }
-}
-
-function onUnknown(result: any) {
-  showWarning(`Unexpected result received: ${result}`);
-}
-
-const showInfo = vscode.window.showInformationMessage;
-const showWarning = vscode.window.showWarningMessage;
-const showError = vscode.window.showErrorMessage;
-const showPicker = vscode.window.showQuickPick;
