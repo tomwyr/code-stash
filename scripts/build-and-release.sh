@@ -16,7 +16,7 @@ done
 
 # Package and publish the extension.
 vsce package -t "$VSCE_TARGET"
-# vsce publish -t "$VSCE_TARGET" -p $VSCE_AUTH_TOKEN
+vsce publish -t "$VSCE_TARGET" -p $VSCE_AUTH_TOKEN
 
 # Restore ffi packages to the initial state.
 for package in "${packages_array[@]}"; do

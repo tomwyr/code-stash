@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 export function getLibraryPath(context: vscode.ExtensionContext): string {
   const root = context.extensionPath;
   const fileName = getFileName();
-  return path.join(root, "out", "libs", fileName);
+  return path.join(root, "out", fileName);
 }
 
 function getFileName(): string {
