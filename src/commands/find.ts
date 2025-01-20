@@ -4,7 +4,7 @@ import { getProjectRoot } from "../common/project";
 import { Branch } from "../common/types";
 
 export function run() {
-  let result = ffi.findBranchesToCleanup({
+  const result = ffi.findBranchesToCleanup({
     projectRoot: getProjectRoot(),
     branchMaxDepth: 10,
     refBranchName: "main",
@@ -23,18 +23,33 @@ export function run() {
   }
 }
 
-function onSuccess(branches: Branch[]) {
-  let formattedBranches = branches.map((branch) => branch.name).join(", ");
-  showInfo(`Branches: ${formattedBranches}`);
+async function onSuccess(branches: Branch[]) {
+  if (branches.length === 0) {
+    showInfo("No branches that can be cleaned up found.");
+    return;
+  }
+
+  const removeItem = "Remove All";
+  const formattedBranches = branches.map((branch) => branch.name).join(", ");
+  const item = await showInfo(
+    `Branches that can be cleaned up: ${formattedBranches}`,
+    removeItem
+  );
+
+  switch (item) {
+    case removeItem:
+      ffi.cleanupBranches(branches);
+      break;
+  }
 }
 
 async function onError(error: object) {
-  let title = "Finding branches failed";
-  let moreInfo = "More info";
+  const title = "Finding branches failed";
+  const moreItem = "More info";
 
-  let item = await showError(title, moreInfo);
+  const item = await showError(title, moreItem);
   switch (item) {
-    case moreInfo:
+    case moreItem:
       showError(title, {
         modal: true,
         detail: JSON.stringify(error),
