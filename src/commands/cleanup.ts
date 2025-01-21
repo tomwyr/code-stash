@@ -10,19 +10,25 @@ import {
 export function run() {
   const result = scanBranches();
 
-  if (result.type === "success") {
-    onSuccess(result.value);
+  if (result.type !== "success") {
+    pickAndCleanUpBranches(result.value);
   } else {
-    handleDefault(result, { errorTitle: "Removing branches failed" });
+    handleDefault(result, { errorTitle: "Scanning branches failed" });
   }
 }
 
-async function onSuccess(branches: Branch[]) {
+async function pickAndCleanUpBranches(branches: Branch[]) {
   if (branches.length === 0) {
     showInfo("No branches that can be cleaned up were found.");
     return;
   }
+  const selection = await pickBranchesToCleanUp(branches);
+  if (selection.length > 0) {
+    await cleanUpBranches(selection);
+  }
+}
 
+async function pickBranchesToCleanUp(branches: Branch[]): Promise<Branch[]> {
   const branchNames = branches.map((branch) => branch.name);
   const selection = await showPicker(branchNames, {
     canPickMany: true,
@@ -30,15 +36,24 @@ async function onSuccess(branches: Branch[]) {
   });
 
   if (!selection) {
-    return;
-  } else if (selection.length === 0) {
-    showInfo("Nothing to clean up.");
-    return;
+    // Canceled by user.
+    return [];
   }
 
-  const selectedBranches = selection.map((name) => {
+  if (selection.length === 0) {
+    showInfo("Nothing to clean up.");
+  }
+
+  return selection?.map((name) => {
     return { name: name };
   });
-  cleanupBranches(selectedBranches);
-  showInfo("Successfully removed selected branches.");
+}
+
+async function cleanUpBranches(branches: Branch[]) {
+  const result = cleanupBranches(branches);
+  if (result.type === "success") {
+    showInfo("Successfully removed selected branches.");
+  } else {
+    handleDefault(result, { errorTitle: "Removing branches failed" });
+  }
 }
