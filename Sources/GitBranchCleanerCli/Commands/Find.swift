@@ -43,7 +43,7 @@ struct Find: ParsableCommand {
       valueName: "commits-number"
     )
   )
-  var maxDepth: Int = 25
+  var maxDepth: Int = 100
 
   @Option(
     name: .shortAndLong,

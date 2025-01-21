@@ -48,7 +48,7 @@ gbc help
 
 ### Command Options
 
-- `--max-depth <number>`: Number of commits of the reference branch history to check for common history between cleaned up branches and the reference branch. Defaults to 25. Applies in: `find`, `remove`.
+- `--max-depth <number>`: Number of commits of the reference branch history to check for common history between cleaned up branches and the reference branch. Defaults to 100. Applies in: `find`, `remove`.
 - `--ref-branch <branch>`: Name of the branch that cleaned up branches are merged into. Defaults to "main". Applies in: `find`, `remove`.
 - `--verbose`: Show additional output for commands.
 

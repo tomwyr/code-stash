@@ -39,7 +39,7 @@ struct Remove: ParsableCommand {
       "Number of commits of the ref branch history to check for common history between cleaned up branches and the ref branch.",
       valueName: "commits-number"
     ))
-  var maxDepth: Int = 25
+  var maxDepth: Int = 100
 
   @Option(
     name: .shortAndLong,
