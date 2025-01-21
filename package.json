@@ -6,7 +6,7 @@
   "repository": {
     "url": "https://github.com/tomwyr/git-branch-cleaner-vscode"
   },
-  "version": "0.0.7",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.95.0"
   },

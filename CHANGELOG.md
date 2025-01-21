@@ -1,3 +1,9 @@
+## [0.1.0]
+
+- Add settings configuration
+- Add Remove command
+- Fix crash occuring when removing branches
+
 ## [0.0.7]
 
 - Fix resolving gbc library path
