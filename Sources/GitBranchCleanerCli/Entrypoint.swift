@@ -7,6 +7,6 @@ struct GitBranchCleanerCli: ParsableCommand {
     commandName: "gbc",
     abstract: "A command-line utility for cleaning up git branches.",
     version: "0.0.3",
-    subcommands: [Find.self, Remove.self]
+    subcommands: [Scan.self, Cleanup.self]
   )
 }

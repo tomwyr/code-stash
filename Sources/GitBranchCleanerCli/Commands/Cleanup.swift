@@ -1,7 +1,7 @@
 @preconcurrency import ArgumentParser
 import GitBranchCleaner
 
-struct Find: ParsableCommand {
+struct Cleanup: ParsableCommand {
   func run() {
     let cleaner = GitBranchCleaner()
     let logger = Logger(verbose: verbose)
@@ -10,24 +10,21 @@ struct Find: ParsableCommand {
       refBranchName: refBranch
     )
 
-    logger.runFind(config: config)
+    logger.runCleanup(config: config)
 
     do {
-      let branches = try cleaner.findBranchesToCleanup(config: config)
-      if branches.isEmpty {
-        logger.noBranchesToCleanup()
-      } else {
-        logger.branchesToCleanup(branches: branches)
-      }
+      let branches = try cleaner.scanBranches(config: config)
+      _ = try cleaner.cleanupBranches(branches: branches)
+      logger.branchesCleanedUp(branches: branches)
     } catch {
-      logger.findError(error: error)
+      logger.cleanupError(error: error)
     }
   }
 
   static let configuration = CommandConfiguration(
-    commandName: "find",
+    commandName: "cleanup",
     abstract:
-      "Scan cwd for local git branches that have been merged into ref branch and can be safely removed. This command will NOT delete any branches."
+      "Remove cwd local git branches that have been merged into ref branch. This command WILL delete found branches."
   )
 
   @Flag(
@@ -41,8 +38,7 @@ struct Find: ParsableCommand {
     help: ArgumentHelp(
       "Number of commits of the ref branch history to check for common history between cleaned up branches and the ref branch.",
       valueName: "commits-number"
-    )
-  )
+    ))
   var maxDepth: Int = 100
 
   @Option(
@@ -56,27 +52,21 @@ struct Find: ParsableCommand {
 }
 
 extension Logger {
-  func runFind(config: GitBranchCleanerConfig) {
-    runCommand(command: "find", config: config)
+  func runCleanup(config: GitBranchCleanerConfig) {
+    runCommand(command: "cleanup", config: config)
   }
 
-  func noBranchesToCleanup() {
-    log(.info) {
-      "No branches that can be cleaned up could be found."
-    }
-  }
-
-  func branchesToCleanup(branches: [Branch]) {
+  func branchesCleanedUp(branches: [Branch]) {
     let formattedBranches = branches.map(\.name).joined(separator: ", ")
     log(.info) {
       """
-      Branches that can be cleaned up:
+      Cleanup successful. Removed the following branches:
       \(formattedBranches)
       """
     }
   }
 
-  func findError(error: GitBranchCleanerError) {
-    commandError(command: "find", error: error)
+  func cleanupError(error: GitBranchCleanerError) {
+    commandError(command: "scan", error: error)
   }
 }

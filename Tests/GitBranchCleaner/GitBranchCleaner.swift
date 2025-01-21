@@ -3,10 +3,10 @@ import Testing
 @testable import GitBranchCleaner
 
 final class GitBranchCleanerTests {
-  final class FindBranchesToCleanup: GitBranchCleanerSuite {
+  final class ScanBranches: GitBranchCleanerSuite {
     @Test("passes config values as expected arguments to git commands")
     func passingConfig() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
           * ref
             feature
@@ -36,7 +36,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds no branches when there's only ref branch in the repository")
     func onlyRefInRepo() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
           * main
           """,
@@ -46,7 +46,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds no branches when local branch is not merged into ref branch")
     func noBranchesInRef() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -81,7 +81,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds single branch when it's merged into ref branch")
     func branchInRef() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -116,7 +116,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds no branches when merged branches are deeper than the max allowed depth")
     func branchExceedingMaxDepth() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -166,7 +166,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds branch when its depth is equal to the max allowed depth")
     func branchMatchingMaxDepth() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -214,7 +214,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds single branch with multiple commits merged into ref")
     func branchWithMultipleCommits() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -259,7 +259,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds no branches when branch is merged into ref but not deleted from remote")
     func branchNotRemovedFromRemote() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -306,7 +306,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds multiple branches with multiple commits merged into ref")
     func branchesWithMultipleCommits() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -388,7 +388,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds multiple branches with single commits merged into ref")
     func branchesWithSingleCommit() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -444,7 +444,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds multiple branches with common commit history and merged into ref")
     func branchesWithCommonHistory() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -526,7 +526,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds multiple branches that are stacked on top of each other and merged into ref")
     func branchesStackedOnEachOther() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -595,7 +595,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds branch merged into ref when branch was merged with default message")
     func branchWithDefaultMergeMessage() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -631,7 +631,7 @@ final class GitBranchCleanerTests {
 
     @Test("finds branch merged into ref when merge message was prefixed with branch name")
     func branchWithPrefixMergeMessage() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -669,7 +669,7 @@ final class GitBranchCleanerTests {
       "finds branch merged into ref when merge message was prefixed with last path of the branch name"
     )
     func branchWithPrefixMergeMessageAndSubpath() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature/id-123
           * main
@@ -707,7 +707,7 @@ final class GitBranchCleanerTests {
       "finds no branches when merge message was prefixed with branch name but prefix matcher isn't used"
     )
     func branchWithPrefixMergeMessageAndDifferent() throws {
-      try testFindBranchesToCleanup(
+      try testScanBranches(
         localBranches: """
             feature
           * main
@@ -830,7 +830,7 @@ class GitBranchCleanerSuite {
     cleaner = GitBranchCleaner(gitClient: GitClient(commands: GitCommands(runner: runner)))
   }
 
-  func testFindBranchesToCleanup(
+  func testScanBranches(
     localBranches: String? = "",
     remoteBranches: String? = "",
     log: [String: String]? = [:],
@@ -864,7 +864,7 @@ class GitBranchCleanerSuite {
       }
     }
 
-    let result = try cleaner.findBranchesToCleanup(config: config)
+    let result = try cleaner.scanBranches(config: config)
 
     if let branches {
       #expect(result.map(\.name) == branches)

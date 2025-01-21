@@ -15,7 +15,7 @@ public class GitBranchCleaner {
 }
 
 extension GitBranchCleaner {
-  public func findBranchesToCleanup(
+  public func scanBranches(
     config: GitBranchCleanerConfig
   ) throws(GitBranchCleanerError) -> [Branch] {
     let matchers = config.mergeMatchers
