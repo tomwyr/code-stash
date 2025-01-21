@@ -1,3 +1,8 @@
+## 0.1.0 - 2025-01-21
+
+- Remove branches with identical commit history
+- Fix sending error result data
+
 ## 0.0.4 - 2025-01-21
 
 - Rename commands to `scan` and `cleanup`
