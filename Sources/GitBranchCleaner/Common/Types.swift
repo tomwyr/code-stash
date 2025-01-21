@@ -33,7 +33,7 @@ public enum BranchType {
 }
 
 public enum BranchMergeMatcher {
-  case defaultMergeMessage, branchNamePrefix, squashedCommitsMessage
+  case defaultMergeMessage, branchNamePrefix, squashedCommitsMessage, identicalHistory
 }
 
 public enum BranchMergeStrategy {

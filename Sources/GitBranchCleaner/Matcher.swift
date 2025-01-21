@@ -7,6 +7,8 @@ extension BranchMergeMatcher {
       hasBranchNamePrefix(branchDiff)
     case .squashedCommitsMessage:
       hasSquashedCommitsMessage(branchDiff)
+    case .identicalHistory:
+      hasIdenticalHistory(branchDiff)
     }
   }
 }
@@ -64,5 +66,11 @@ extension BranchMergeMatcher {
       .joined(separator: "\n\n")
     let targetCommitDescriptions = branchDiff.target.commits.compactMap(\.description)
     return targetCommitDescriptions.contains(baseMergeCommitDescription)
+  }
+}
+
+extension BranchMergeMatcher {
+  private func hasIdenticalHistory(_ branchDiff: BranchDiff) -> Bool {
+    branchDiff.base.commits.isEmpty
   }
 }

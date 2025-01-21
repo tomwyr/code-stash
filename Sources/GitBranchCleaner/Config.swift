@@ -14,6 +14,7 @@ public struct GitBranchCleanerConfig {
       .defaultMergeMessage,
       .branchNamePrefix,
       .squashedCommitsMessage,
+      .identicalHistory,
     ]
   ) {
     self.branchMaxDepth = branchMaxDepth

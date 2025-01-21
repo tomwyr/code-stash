@@ -740,6 +740,64 @@ final class GitBranchCleanerTests {
         expect: []
       )
     }
+
+    @Test("finds branches with identical commit history")
+    func branchesWithIdenticalHistory() throws {
+      try testScanBranches(
+        localBranches: """
+            feature
+          * main
+            refactor
+          """,
+        log: [
+          "main": """
+          93e3fa587 Commit 5
+
+          b84b3f6a1 Commit 4
+
+          cafe21ab5 Commit 3
+
+          f6b3cd8e6 Commit 2
+
+          ad1bb03c2 Commit 1
+
+          """,
+          "feature": """
+          b84b3f6a1 Commit 4
+
+          cafe21ab5 Commit 3
+
+          f6b3cd8e6 Commit 2
+
+          ad1bb03c2 Commit 1
+
+          """,
+          "refactor": """
+          cafe21ab5 Commit 3
+
+          f6b3cd8e6 Commit 2
+
+          ad1bb03c2 Commit 1
+
+          """,
+        ],
+        logDiff: [
+          "feature..main": """
+          93e3fa587 Commit 5
+
+          """,
+          "main..feature": "",
+          "refactor..main": """
+          93e3fa587 Commit 5
+
+          b84b3f6a1 Commit 4
+
+          """,
+          "main..refactor": "",
+        ],
+        expect: ["feature", "refactor"]
+      )
+    }
   }
 
   final class CleanupBranches: GitBranchCleanerSuite {
