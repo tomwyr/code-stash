@@ -67,10 +67,11 @@ extension Logger {
   }
 
   func branchesToCleanup(branches: [Branch]) {
-    let formattedBranches = branches.map(\.name).joined(separator: ", ")
+    let branchCount = if branches.count == 1 { "branch" } else { "\(branches.count) branches" }
+    let formattedBranches = branches.map(\.name).joined(separator: " ")
     log(.info) {
       """
-      Branches that can be cleaned up:
+      The following \(branchCount) can be cleaned up:
       \(formattedBranches)
       """
     }
