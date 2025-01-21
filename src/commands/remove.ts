@@ -1,14 +1,14 @@
-import { getProjectRoot } from "../common/project";
 import { Branch } from "../common/types";
-import * as ffi from "../ffi/ffi";
-import { handleDefault, showInfo, showPicker } from "./common";
+import {
+  cleanupBranches,
+  findBranchesToCleanup,
+  handleDefault,
+  showInfo,
+  showPicker,
+} from "./common";
 
 export function run() {
-  const result = ffi.findBranchesToCleanup({
-    projectRoot: getProjectRoot(),
-    branchMaxDepth: 10,
-    refBranchName: "main",
-  });
+  const result = findBranchesToCleanup();
 
   if (result.type === "success") {
     onSuccess(result.value);
@@ -24,7 +24,6 @@ async function onSuccess(branches: Branch[]) {
   }
 
   const branchNames = branches.map((branch) => branch.name);
-
   const selection = await showPicker(branchNames, {
     canPickMany: true,
     placeHolder: "Selected branches to clean up...",
@@ -40,9 +39,6 @@ async function onSuccess(branches: Branch[]) {
   const selectedBranches = selection.map((name) => {
     return { name: name };
   });
-  ffi.cleanupBranches({
-    projectRoot: getProjectRoot(),
-    branches: selectedBranches,
-  });
+  cleanupBranches(selectedBranches);
   showInfo("Successfully removed selected branches.");
 }
