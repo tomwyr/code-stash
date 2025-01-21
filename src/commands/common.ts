@@ -6,10 +6,11 @@ import * as ffi from "../ffi/ffi";
 import { Result } from "../ffi/result";
 
 export function findBranchesToCleanup(): Result<Branch[]> {
+  const { refBranch, maxDepth } = loadConfiguration();
   return ffi.findBranchesToCleanup({
     projectRoot: getProjectRoot(),
-    refBranchName: "main",
-    branchMaxDepth: 10,
+    refBranchName: refBranch,
+    branchMaxDepth: maxDepth,
   });
 }
 

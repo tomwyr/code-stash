@@ -29,7 +29,23 @@
         "category": "Git Branch Cleaner",
         "title": "Remove"
       }
-    ]
+    ],
+    "configuration": {
+      "properties": {
+        "git-branch-cleaner-vscode.refBranch": {
+          "type": "string",
+          "default": "main",
+          "title": "Reference branch",
+          "description": "Name of the branch that cleaned up branches are merged into."
+        },
+        "git-branch-cleaner-vscode.maxDepth": {
+          "type": "number",
+          "default": 100,
+          "title": "Max depth",
+          "description": "Number of commits of the ref branch history to check for common history between cleaned up branches and the ref branch."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
