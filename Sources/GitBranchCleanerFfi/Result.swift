@@ -15,7 +15,7 @@ func encodeError(_ value: Error) -> String {
       if case let value as Encodable = value {
         try encode(from: value)
       } else {
-        String(describing: value)
+        try encode(from: String(describing: value))
       }
     return #"{"error": \#(data)}"#
   } catch {
