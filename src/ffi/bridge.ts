@@ -15,20 +15,16 @@ export function dispose() {
   close("gbc");
 }
 
-export function findBranchesToCleanup({
+export function scanBranches({
   projectRoot,
   branchMaxDepth,
   refBranchName,
-}: FindBranchesToCleanupInput): Result<Branch[]> {
-  const result = gbc.findBranchesToCleanup([
-    projectRoot,
-    branchMaxDepth,
-    refBranchName,
-  ]);
+}: ScanBranchesInput): Result<Branch[]> {
+  const result = gbc.scanBranches([projectRoot, branchMaxDepth, refBranchName]);
   return parseResult(result);
 }
 
-export type FindBranchesToCleanupInput = {
+export type ScanBranchesInput = {
   projectRoot: string;
   branchMaxDepth: number;
   refBranchName: string;
@@ -49,7 +45,7 @@ export type CleanupBranchesInput = {
 };
 
 const gbc = define({
-  findBranchesToCleanup: {
+  scanBranches: {
     library: "gbc",
     paramsType: [DataType.String, DataType.I32, DataType.String],
     retType: DataType.String,

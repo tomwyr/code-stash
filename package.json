@@ -21,14 +21,14 @@
   "contributes": {
     "commands": [
       {
-        "command": "git-branch-cleaner-vscode.find",
+        "command": "git-branch-cleaner-vscode.scan",
         "category": "Git Branch Cleaner",
-        "title": "Find"
+        "title": "Scan"
       },
       {
-        "command": "git-branch-cleaner-vscode.remove",
+        "command": "git-branch-cleaner-vscode.cleanup",
         "category": "Git Branch Cleaner",
-        "title": "Remove"
+        "title": "Cleanup"
       }
     ],
     "configuration": {

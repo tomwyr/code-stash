@@ -5,9 +5,9 @@ import { Branch } from "../common/types";
 import * as ffi from "../ffi/ffi";
 import { Result } from "../ffi/result";
 
-export function findBranchesToCleanup(): Result<Branch[]> {
+export function scanBranches(): Result<Branch[]> {
   const { refBranch, maxDepth } = loadConfiguration();
-  return ffi.findBranchesToCleanup({
+  return ffi.scanBranches({
     projectRoot: getProjectRoot(),
     refBranchName: refBranch,
     branchMaxDepth: maxDepth,

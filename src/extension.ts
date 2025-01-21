@@ -14,8 +14,8 @@ function registerCommands(context: vscode.ExtensionContext) {
     );
   };
 
-  pushCommand("git-branch-cleaner-vscode.find", commands.find);
-  pushCommand("git-branch-cleaner-vscode.remove", commands.remove);
+  pushCommand("git-branch-cleaner-vscode.scan", commands.scan);
+  pushCommand("git-branch-cleaner-vscode.cleanup", commands.cleanup);
 }
 
 export function deactivate() {

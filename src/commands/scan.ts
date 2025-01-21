@@ -1,18 +1,18 @@
 import { Branch } from "../common/types";
 import {
   cleanupBranches,
-  findBranchesToCleanup,
   handleDefault,
+  scanBranches,
   showInfo,
 } from "./common";
 
 export function run() {
-  const result = findBranchesToCleanup();
+  const result = scanBranches();
 
   if (result.type === "success") {
     onSuccess(result.value);
   } else {
-    handleDefault(result, { errorTitle: "Finding branches failed" });
+    handleDefault(result, { errorTitle: "Scanning branches failed" });
   }
 }
 
