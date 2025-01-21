@@ -19,7 +19,7 @@ export function run() {
 
 async function onSuccess(branches: Branch[]) {
   if (branches.length === 0) {
-    showInfo("No branches that can be cleaned up could be found.");
+    showInfo("No branches that can be cleaned up were found.");
     return;
   }
 
