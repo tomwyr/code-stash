@@ -1,3 +1,8 @@
+## [0.1.1]
+
+- Improve commands behavior
+- Add extension icon
+
 ## [0.1.0]
 
 - Add settings configuration
