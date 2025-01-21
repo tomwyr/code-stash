@@ -37,11 +37,12 @@ async function onSuccess(branches: Branch[]) {
     return;
   }
 
-  const branchesToRemove = selection.map((name) => {
-    return {
-      name: name,
-    } satisfies Branch;
+  const selectedBranches = selection.map((name) => {
+    return { name: name };
   });
-  ffi.cleanupBranches(branchesToRemove);
+  ffi.cleanupBranches({
+    projectRoot: getProjectRoot(),
+    branches: selectedBranches,
+  });
   showInfo("Successfully removed selected branches.");
 }

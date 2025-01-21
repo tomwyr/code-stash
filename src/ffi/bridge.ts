@@ -34,10 +34,19 @@ export type FindBranchesToCleanupInput = {
   refBranchName: string;
 };
 
-export function cleanupBranches(branches: Branch[]) {
-  const branchesData = branches.map((branch) => branch.name);
-  gbc.cleanupBranches(branchesData);
+export function cleanupBranches({
+  projectRoot,
+  branches,
+}: CleanupBranchesInput): Result<void> {
+  const branchesData = JSON.stringify(branches);
+  const result = gbc.cleanupBranches([projectRoot, branchesData]);
+  return parseResult(result, { discardData: true });
 }
+
+export type CleanupBranchesInput = {
+  projectRoot: string;
+  branches: Branch[];
+};
 
 const gbc = define({
   findBranchesToCleanup: {
@@ -48,7 +57,7 @@ const gbc = define({
   },
   cleanupBranches: {
     library: "gbc",
-    paramsType: [DataType.String],
+    paramsType: [DataType.String, DataType.String],
     retType: DataType.String,
     freeResultMemory: true,
   },

@@ -32,7 +32,10 @@ async function onSuccess(branches: Branch[]) {
 
   switch (item) {
     case removeItem:
-      ffi.cleanupBranches(branches);
+      ffi.cleanupBranches({
+        projectRoot: getProjectRoot(),
+        branches: branches,
+      });
       break;
   }
 }
