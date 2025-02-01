@@ -1,3 +1,7 @@
+## [0.1.2]
+
+- Fix branch picker not displayed after scanning
+
 ## [0.1.1]
 
 - Improve commands behavior
