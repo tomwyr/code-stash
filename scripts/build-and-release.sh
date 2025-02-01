@@ -7,7 +7,7 @@ echo "Building and releasing for $VSCE_TARGET"
 packages_array=($FFI_PACKAGES)
 
 # Reinstall core package without platform implementations.
-npm r ffi-rs && npm i "ffi-rs@$ffi_version" --no-optional
+npm r ffi-rs && npm i "ffi-rs@$FFI_VERSION" --no-optional
 
 # Install platform specific packages.
 for package in "${packages_array[@]}"; do
@@ -22,4 +22,4 @@ vsce publish -t "$VSCE_TARGET" -p $VSCE_AUTH_TOKEN
 for package in "${packages_array[@]}"; do
   npm r "$package" 
 done
-npm i ffi-rs
+npm i "ffi-rs@$FFI_VERSION"
