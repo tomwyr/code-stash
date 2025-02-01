@@ -37,7 +37,6 @@ jobs:
 
       - name: Build and publish Linux extension
         run: scripts/publish-extension.sh
-        if: false
         env:
           GBC_VERSION: ${{ steps.resolve-versions.outputs.gbc_version }}
           FFI_VERSION: ${{ steps.resolve-versions.outputs.ffi_version }}
