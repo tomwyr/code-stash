@@ -2,6 +2,8 @@
 
 A VS Code utility extension for cleaning up git branches.
 
+https://github.com/user-attachments/assets/306fb556-59cc-480f-bba1-10437c579384
+
 ## Commands
 
 ### Scan
