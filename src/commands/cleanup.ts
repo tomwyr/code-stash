@@ -10,7 +10,7 @@ import {
 export function run() {
   const result = scanBranches();
 
-  if (result.type !== "success") {
+  if (result.type === "success") {
     pickAndCleanUpBranches(result.value);
   } else {
     handleDefault(result, { errorTitle: "Scanning branches failed" });
