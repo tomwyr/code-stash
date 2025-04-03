@@ -1,0 +1,84 @@
+[gd_scene load_steps=10 format=3 uid="uid://dgvj8b6ccwdk"]
+
+[ext_resource type="PackedScene" uid="uid://c0f3akxqu4vk5" path="res://scenes/cube.tscn" id="1_jd0nb"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_82xsv"]
+size = Vector3(0.7, 1, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cegan"]
+albedo_color = Color(0.45, 0.274725, 0.1935, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cegan"]
+material = SubResource("StandardMaterial3D_cegan")
+size = Vector3(0.7, 1, 0.7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jd0nb"]
+resource_local_to_scene = true
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kl0hw"]
+resource_local_to_scene = true
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v5i0k"]
+resource_local_to_scene = true
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vjl2i"]
+resource_local_to_scene = true
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_67vji"]
+resource_local_to_scene = true
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Table" type="Node3D"]
+
+[node name="TableBody" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="TableCollision" type="CollisionShape3D" parent="TableBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_82xsv")
+
+[node name="TableMesh" type="MeshInstance3D" parent="TableBody/TableCollision"]
+mesh = SubResource("BoxMesh_cegan")
+skeleton = NodePath("../../../../..")
+
+[node name="Cubes" type="Node3D" parent="."]
+
+[node name="Cube1" parent="Cubes" instance=ExtResource("1_jd0nb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00892133, 1.06191, -0.00567901)
+
+[node name="MeshInstance3D" parent="Cubes/Cube1" index="1"]
+mesh = SubResource("BoxMesh_jd0nb")
+
+[node name="Cube2" parent="Cubes" instance=ExtResource("1_jd0nb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0519562, 1.18828, 0.0511885)
+
+[node name="MeshInstance3D" parent="Cubes/Cube2" index="1"]
+mesh = SubResource("BoxMesh_kl0hw")
+
+[node name="Cube3" parent="Cubes" instance=ExtResource("1_jd0nb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0183573, 1.07255, 0.111181)
+
+[node name="MeshInstance3D" parent="Cubes/Cube3" index="1"]
+mesh = SubResource("BoxMesh_v5i0k")
+
+[node name="Cube4" parent="Cubes" instance=ExtResource("1_jd0nb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.128545, 1.07488, 0.0161186)
+
+[node name="MeshInstance3D" parent="Cubes/Cube4" index="1"]
+mesh = SubResource("BoxMesh_vjl2i")
+
+[node name="Cube5" parent="Cubes" instance=ExtResource("1_jd0nb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+
+[node name="MeshInstance3D" parent="Cubes/Cube5" index="1"]
+mesh = SubResource("BoxMesh_67vji")
+
+[editable path="Cubes/Cube1"]
+[editable path="Cubes/Cube2"]
+[editable path="Cubes/Cube3"]
+[editable path="Cubes/Cube4"]
+[editable path="Cubes/Cube5"]
