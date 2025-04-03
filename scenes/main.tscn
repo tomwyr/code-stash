@@ -340,3 +340,9 @@ shape = SubResource("Resource_nej5c")
 
 [node name="Table" parent="World" instance=ExtResource("22_chjal")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+
+[node name="TableLabel" type="SwiftLabel3D" parent="World/Table"]
+initialText = "Cubes"
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.351)
+text = "<Cubes>"
+font_size = 24

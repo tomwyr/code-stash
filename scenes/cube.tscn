@@ -43,6 +43,8 @@ shape = SubResource("BoxShape3D_jbd7x")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." index="1"]
 mesh = SubResource("BoxMesh_wd2d1")
 
+[node name="SwiftCubeColor" type="SwiftCubeColor" parent="MeshInstance3D" index="0"]
+
 [node name="XRToolsHighlightVisible" type="Node3D" parent="." index="2"]
 script = ExtResource("2_wd2d1")
 metadata/_custom_type_script = "uid://cfxh1r6irkxhx"

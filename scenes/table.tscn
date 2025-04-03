@@ -53,11 +53,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00892133, 1.06191, -0.0056
 [node name="MeshInstance3D" parent="Cubes/Cube1" index="1"]
 mesh = SubResource("BoxMesh_jd0nb")
 
+[node name="SwiftCubeColor" parent="Cubes/Cube1/MeshInstance3D" index="0"]
+cubeColor = Color(0.753386, 0.274813, 0.267757, 1)
+
 [node name="Cube2" parent="Cubes" instance=ExtResource("1_jd0nb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0519562, 1.18828, 0.0511885)
 
 [node name="MeshInstance3D" parent="Cubes/Cube2" index="1"]
 mesh = SubResource("BoxMesh_kl0hw")
+
+[node name="SwiftCubeColor" parent="Cubes/Cube2/MeshInstance3D" index="0"]
+cubeColor = Color(0.396818, 0.375276, 0.714662, 1)
 
 [node name="Cube3" parent="Cubes" instance=ExtResource("1_jd0nb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0183573, 1.07255, 0.111181)
@@ -65,17 +71,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0183573, 1.07255, 0.111181)
 [node name="MeshInstance3D" parent="Cubes/Cube3" index="1"]
 mesh = SubResource("BoxMesh_v5i0k")
 
+[node name="SwiftCubeColor" parent="Cubes/Cube3/MeshInstance3D" index="0"]
+cubeColor = Color(0.271362, 0.525889, 0.215385, 1)
+
 [node name="Cube4" parent="Cubes" instance=ExtResource("1_jd0nb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.128545, 1.07488, 0.0161186)
 
 [node name="MeshInstance3D" parent="Cubes/Cube4" index="1"]
 mesh = SubResource("BoxMesh_vjl2i")
 
+[node name="SwiftCubeColor" parent="Cubes/Cube4/MeshInstance3D" index="0"]
+cubeColor = Color(0.0743738, 0.495698, 0.683875, 1)
+
 [node name="Cube5" parent="Cubes" instance=ExtResource("1_jd0nb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 
 [node name="MeshInstance3D" parent="Cubes/Cube5" index="1"]
 mesh = SubResource("BoxMesh_67vji")
+
+[node name="SwiftCubeColor" parent="Cubes/Cube5/MeshInstance3D" index="0"]
+cubeColor = Color(0.753787, 0.421828, 0.0260586, 1)
 
 [editable path="Cubes/Cube1"]
 [editable path="Cubes/Cube2"]
