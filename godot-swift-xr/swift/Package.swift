@@ -3,17 +3,17 @@
 import PackageDescription
 
 let package = Package(
-  name: "GodotVrTest",
+  name: "GodotSwiftXr",
   platforms: [.macOS("14")],
   products: [
-    .library(name: "GodotVrTest", type: .dynamic, targets: ["GodotVrTest"])
+    .library(name: "GodotSwiftXr", type: .dynamic, targets: ["GodotSwiftXr"])
   ],
   dependencies: [
     .package(url: "https://github.com/migueldeicaza/SwiftGodot", branch: "main")
   ],
   targets: [
     .target(
-      name: "GodotVrTest",
+      name: "GodotSwiftXr",
       dependencies: ["SwiftGodot"],
       swiftSettings: [.unsafeFlags(["-suppress-warnings"])]
     )

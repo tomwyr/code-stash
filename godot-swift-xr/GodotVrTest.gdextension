@@ -3,12 +3,13 @@ entry_symbol = "swift_entry_point"
 compatibility_minimum = 4.3
 
 [libraries]
-macos.debug = "res://swift/bin/libGodotVrTest.dylib"
-android.debug.arm64 = "res://swift/bin/libGodotVrTest.so"
+macos.debug = "res://swift/bin/libGodotSwiftXr.dylib"
+android.debug.arm64 = "res://swift/bin/libGodotSwiftXr.so"
 
 [dependencies]
 macos.debug = {"res://swift/bin/libSwiftGodot.dylib" : ""}
 android.debug.arm64 = {
+  "res://swift/bin/libGodotSwiftXr.so": "",
   "res://swift/bin/libSwiftGodot.so" : "",
   "res://swift/bin/libswiftAndroid.so" : "",
   "res://swift/bin/libBlocksRuntime.so": "",
@@ -17,7 +18,6 @@ android.debug.arm64 = {
   "res://swift/bin/libFoundationInternationalization.so": "",
   "res://swift/bin/libFoundationNetworking.so": "",
   "res://swift/bin/libFoundationXML.so": "",
-  "res://swift/bin/libGodotVrTest.so": "",
   "res://swift/bin/libSwiftGodot.so": "",
   "res://swift/bin/libXCTest.so": "",
   "res://swift/bin/lib_FoundationICU.so": "",

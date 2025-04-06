@@ -4,7 +4,7 @@
 		{
 			"type": "shell",
 			"label": "Build and copy libs (Android)",
-			"command": "swift-android build --swift-sdk aarch64-unknown-linux-android24 && cp .build/debug/libGodotVrTest.so bin && cp .build/debug/libSwiftGodot.so bin",
+			"command": "swift-android build --swift-sdk aarch64-unknown-linux-android24 && cp .build/debug/libGodotSwiftXr.so bin && cp .build/debug/libSwiftGodot.so bin",
 			"group": "build",
 			"options": {
 				"cwd": "swift"
@@ -13,7 +13,7 @@
 		{
 			"type": "shell",
 			"label": "Build and copy libs (macOS)",
-			"command": "swift build && cp .build/debug/libGodotVrTest.dylib bin && cp .build/debug/libSwiftGodot.dylib bin",
+			"command": "swift build && cp .build/debug/libGodotSwiftXr.dylib bin && cp .build/debug/libSwiftGodot.dylib bin",
 			"group": "build",
 			"options": {
 				"cwd": "swift"
@@ -22,7 +22,7 @@
 		{
 			"type": "shell",
 			"label": "Build, copy libs and restart editor (macOS)",
-			"command": "swift build && cp .build/debug/libGodotVrTest.dylib bin && cp .build/debug/libSwiftGodot.dylib bin && pkill -x Godot || true && sleep 0.3 && open -a Godot project.godot",
+			"command": "swift build && cp .build/debug/libGodotSwiftXr.dylib bin && cp .build/debug/libSwiftGodot.dylib bin && pkill -x Godot || true && sleep 0.3 && open -a Godot project.godot",
 			"group": "build",
 			"options": {
 				"cwd": "swift"
