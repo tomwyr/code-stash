@@ -9,9 +9,12 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   var rayMaxLength = 5.0
   var rayWidth = 0.005
 
+  var active = false
   var lineNode: MeshInstance3D?
+
   var lastBasis: Basis?
   var lastPosition: Vector3?
+  var lastLength: Double?
 
   @Export
   var expansion: Double = 1.0
@@ -19,43 +22,49 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
 
   override func _ready() {
     setupSignals()
-    addLineNode()
   }
 
   override func _process(delta: Double) {
-    guard checkLineChanged() else { return }
+    guard active, checkLineChanged() else { return }
+
     let (origin, target) = resolveLineEnds()
+    animateLengthIncrease(from: origin, to: target)
     drawLine(from: origin, to: target)
   }
 
   func setupSignals() {
     guard let controller = controller else { return }
+
     controller.buttonPressed.connect { button in
       if button == "trigger_click" {
-        self.addLineNode()
-        self.animateExpansion()
+        self.activateRay()
       }
     }
     controller.buttonReleased.connect { button in
       if button == "trigger_click" {
-        self.removeLineNode()
+        self.deactivateRay()
       }
     }
   }
 
-  func animateExpansion() {
-    expansion = 0.0
-    expansionTween?.kill()
-    expansionTween = createTween()
-    expansionTween?
-      .tweenProperty(object: self, property: "expansion", finalVal: Variant(1), duration: 0.1)?
-      .setEase(.in)?.setTrans(.circ)
-  }
+  func activateRay() {
+    active = true
 
-  func addLineNode() {
     let node = createLineNode()
     lineNode = node
     addChild(node: node)
+
+    animateExpansion(from: 0)
+  }
+
+  func deactivateRay() {
+    self.active = false
+
+    lineNode?.queueFree()
+    lineNode = nil
+    lastBasis = nil
+    lastPosition = nil
+    lastLength = nil
   }
 
   func createLineNode() -> MeshInstance3D {
@@ -75,11 +84,25 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     return node
   }
 
-  func removeLineNode() {
-    lineNode?.queueFree()
-    lineNode = nil
-    lastBasis = nil
-    lastPosition = nil
+  func animateLengthIncrease(from origin: Vector3, to target: Vector3) {
+    let length = (target - origin).length()
+    let lengthDelta = length - (lastLength ?? 0)
+    let tweenActive = expansionTween?.isRunning() ?? false
+    if !tweenActive && lengthDelta > 0.1 {
+      let startExpansion = 1 - lengthDelta / length
+      animateExpansion(from: startExpansion)
+    }
+    lastLength = length
+  }
+
+  func animateExpansion(from startValue: Double) {
+    expansion = startValue
+    expansionTween?.kill()
+    expansionTween = createTween()
+    expansionTween?
+      .tweenProperty(object: self, property: "expansion", finalVal: Variant(1), duration: 0.1)?
+      .from(value: Variant(startValue))?
+      .setEase(.in)?.setTrans(.circ)
   }
 
   func checkLineChanged() -> Bool {
@@ -101,8 +124,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
       from: toGlobal(localPoint: origin),
       to: toGlobal(localPoint: maxTarget)
     )
-    let expandedTarget = hitTarget.flatMap(toLocal) ?? maxTarget
-    let target = origin + (expandedTarget - origin) * expansion
+    let target = hitTarget.flatMap(toLocal) ?? maxTarget
     return (origin, target)
   }
 
