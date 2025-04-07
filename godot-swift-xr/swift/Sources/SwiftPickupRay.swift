@@ -12,9 +12,10 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   var lineNode: MeshInstance3D?
   var lastBasis: Basis?
   var lastPosition: Vector3?
-  var currentTarget: Vector3?
 
-  var active: Bool { lineNode != nil }
+  @Export
+  var expansion: Double = 1.0
+  var expansionTween: Tween?
 
   override func _ready() {
     setupSignals()
@@ -32,6 +33,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     controller.buttonPressed.connect { button in
       if button == "trigger_click" {
         self.addLineNode()
+        self.animateExpansion()
       }
     }
     controller.buttonReleased.connect { button in
@@ -39,6 +41,15 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
         self.removeLineNode()
       }
     }
+  }
+
+  func animateExpansion() {
+    expansion = 0.0
+    expansionTween?.kill()
+    expansionTween = createTween()
+    expansionTween?
+      .tweenProperty(object: self, property: "expansion", finalVal: Variant(1), duration: 0.1)?
+      .setEase(.in)?.setTrans(.circ)
   }
 
   func addLineNode() {
@@ -90,7 +101,8 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
       from: toGlobal(localPoint: origin),
       to: toGlobal(localPoint: maxTarget)
     )
-    let target = hitTarget.flatMap(toLocal) ?? maxTarget
+    let expandedTarget = hitTarget.flatMap(toLocal) ?? maxTarget
+    let target = origin + (expandedTarget - origin) * expansion
     return (origin, target)
   }
 
