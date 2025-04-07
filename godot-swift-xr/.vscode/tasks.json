@@ -22,7 +22,7 @@
 		{
 			"type": "shell",
 			"label": "Build, copy libs and restart editor (macOS)",
-			"command": "swift build && cp .build/debug/libGodotSwiftXr.dylib bin && cp .build/debug/libSwiftGodot.dylib bin && pkill -x Godot || true && sleep 0.3 && open -a Godot project.godot",
+			"command": "swift build && cp .build/debug/libGodotSwiftXr.dylib bin && cp .build/debug/libSwiftGodot.dylib bin && pkill -x Godot || true && sleep 0.3 && open -a Godot ../project.godot",
 			"group": "build",
 			"options": {
 				"cwd": "swift"

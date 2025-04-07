@@ -6,27 +6,29 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     getParent() as? XRController3D
   }
 
-  var length = Float(10.0)
+  var rayMaxLength = 5.0
+  var rayWidth = 0.005
 
   var lineNode: MeshInstance3D?
   var lastBasis: Basis?
   var lastPosition: Vector3?
+  var currentTarget: Vector3?
 
   var active: Bool { lineNode != nil }
 
   override func _ready() {
     setupSignals()
+    addLineNode()
   }
 
   override func _process(delta: Double) {
-    guard active, checkLineChanged() else { return }
+    guard checkLineChanged() else { return }
     let (origin, target) = resolveLineEnds()
     drawLine(from: origin, to: target)
   }
 
   func setupSignals() {
     guard let controller = controller else { return }
-
     controller.buttonPressed.connect { button in
       if button == "trigger_click" {
         self.addLineNode()
@@ -46,10 +48,20 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   }
 
   func createLineNode() -> MeshInstance3D {
-    let mesh = MeshInstance3D()
-    mesh.mesh = ImmediateMesh()
-    mesh.castShadow = .off
-    return mesh
+    let material = StandardMaterial3D()
+    material.albedoColor = .firebrick
+
+    let mesh = CylinderMesh()
+    mesh.material = material
+    mesh.topRadius = rayWidth
+    mesh.bottomRadius = rayWidth
+    mesh.height = 0.0
+
+    let node = MeshInstance3D()
+    node.mesh = mesh
+    node.castShadow = .off
+
+    return node
   }
 
   func removeLineNode() {
@@ -72,8 +84,8 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   }
 
   func resolveLineEnds() -> (Vector3, Vector3) {
-    let origin = Vector3(x: 0, y: 0, z: -0.05)
-    let maxTarget = Vector3(x: 0, y: 0, z: -length)
+    let origin = Vector3.zero
+    let maxTarget = Vector3(z: -Float(rayMaxLength))
     let hitTarget = castLine(
       from: toGlobal(localPoint: origin),
       to: toGlobal(localPoint: maxTarget)
@@ -95,16 +107,11 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   }
 
   func drawLine(from origin: Vector3, to target: Vector3) {
-    guard let immediateMesh = lineNode?.mesh as? ImmediateMesh else { return }
+    guard let node = lineNode, let mesh = node.mesh as? CylinderMesh
+    else { return }
 
-    let material = ORMMaterial3D()
-    material.shadingMode = .unshaded
-    material.albedoColor = .orange
-
-    immediateMesh.clearSurfaces()
-    immediateMesh.surfaceBegin(primitive: .lines, material: material)
-    immediateMesh.surfaceAddVertex(origin)
-    immediateMesh.surfaceAddVertex(target)
-    immediateMesh.surfaceEnd()
+    mesh.height = (target - origin).length()
+    node.position = origin + Vector3(z: -Float(mesh.height) / 2)
+    node.rotation = Vector3(x: .pi / 2)
   }
 }
