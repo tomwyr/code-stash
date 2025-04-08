@@ -10,11 +10,15 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   var rayWidth = 0.005
 
   var active = false
+  var collides = false
   var lineNode: MeshInstance3D?
+  var tipNode: Node3D?
 
   var lastBasis: Basis?
   var lastPosition: Vector3?
   var lastLength: Double?
+
+  var color = Color.tomato
 
   @Export
   var expansion: Double = 1.0
@@ -27,7 +31,8 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   override func _process(delta: Double) {
     guard active, checkLineChanged() else { return }
 
-    let (origin, target) = resolveLineEnds()
+    let (origin, target, collided) = resolveLineData()
+    updateTipNode(collided)
     animateLengthIncrease(from: origin, to: target)
     drawLine(from: origin, to: target)
   }
@@ -47,6 +52,50 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     }
   }
 
+  func updateTipNode(_ collided: Bool) {
+    switch (collided, tipNode) {
+    case (true, .none):
+      let node = createTipNode()
+      tipNode = node
+      addChild(node: node)
+    case (false, .some(var node)):
+      node.queueFree()
+      tipNode = nil
+    default: break
+    }
+  }
+
+  func addTipNode() {
+    let node = createTipNode()
+    tipNode = node
+    addChild(node: node)
+  }
+
+  func createTipNode() -> Node3D {
+    let light = OmniLight3D()
+    light.lightColor = color
+    light.lightEnergy = 0.1
+    light.omniRange = 0.1
+    light.position = Vector3(z: 0.01)
+
+    let material = StandardMaterial3D()
+    material.albedoColor = color
+    material.emissionEnabled = true
+    material.emission = color
+
+    let mesh = SphereMesh()
+    mesh.radius = 0.01
+    mesh.height = 0.02
+    mesh.material = material
+
+    let tip = MeshInstance3D()
+    tip.mesh = mesh
+
+    tip.addChild(node: light)
+
+    return tip
+  }
+
   func activateRay() {
     active = true
 
@@ -58,10 +107,14 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   }
 
   func deactivateRay() {
-    self.active = false
+    active = false
+    collides = false
 
     lineNode?.queueFree()
     lineNode = nil
+    tipNode?.queueFree()
+    tipNode = nil
+
     lastBasis = nil
     lastPosition = nil
     lastLength = nil
@@ -69,7 +122,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
 
   func createLineNode() -> MeshInstance3D {
     let material = StandardMaterial3D()
-    material.albedoColor = .firebrick
+    material.albedoColor = color
 
     let mesh = CylinderMesh()
     mesh.material = material
@@ -117,18 +170,18 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     return changed
   }
 
-  func resolveLineEnds() -> (Vector3, Vector3) {
+  func resolveLineData() -> RayLineData {
     let origin = Vector3.zero
     let maxTarget = Vector3(z: -Float(rayMaxLength))
-    let hitTarget = castLine(
+    let hitTarget = detectCollision(
       from: toGlobal(localPoint: origin),
       to: toGlobal(localPoint: maxTarget)
     )
     let target = hitTarget.flatMap(toLocal) ?? maxTarget
-    return (origin, target)
+    return (origin: origin, target: target, collided: hitTarget != nil)
   }
 
-  func castLine(from origin: Vector3, to target: Vector3) -> Vector3? {
+  func detectCollision(from origin: Vector3, to target: Vector3) -> Vector3? {
     guard let space = getWorld3d()?.directSpaceState,
       let query = PhysicsRayQueryParameters3D.create(from: origin, to: target)
     else { return nil }
@@ -144,8 +197,20 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     guard let node = lineNode, let mesh = node.mesh as? CylinderMesh
     else { return }
 
-    mesh.height = (target - origin).length()
+    let currentTarget = origin + (target - origin) * expansion
+
+    mesh.height = (currentTarget - origin).length()
     node.position = origin + Vector3(z: -Float(mesh.height) / 2)
     node.rotation = Vector3(x: .pi / 2)
+
+    if let tipNode {
+      tipNode.position = origin + Vector3(z: -Float(mesh.height))
+    }
   }
 }
+
+typealias RayLineData = (
+  origin: Vector3,
+  target: Vector3,
+  collided: Bool
+)
