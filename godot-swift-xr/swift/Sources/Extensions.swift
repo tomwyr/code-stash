@@ -8,3 +8,13 @@ extension Vector3 {
     self.z = z
   }
 }
+
+extension Node {
+  func getNodeOrNull<T>(_ path: NodePath) -> T? where T: Node {
+    getNodeOrNull(path: path) as? T
+  }
+
+  func getParent<T>() -> T? where T: Node {
+    getParent() as? T
+  }
+}
