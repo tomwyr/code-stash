@@ -2,23 +2,23 @@ import SwiftGodot
 
 @Godot
 class SwiftPickupRay: Node3D, @unchecked Sendable {
-  var controller: XRController3D { getParent() }
-  var rayLine: MeshInstance3D? { getNodeOrNull("Line") }
-  var rayTip: MeshInstance3D? { getNodeOrNull("Tip") }
-  var colorPicker: SwiftColorPicker { getNode("../ColorPicker") }
+  private var controller: XRController3D { getParent() }
+  private var rayLine: MeshInstance3D? { getNodeOrNull("Line") }
+  private var rayTip: MeshInstance3D? { getNodeOrNull("Tip") }
+  private var colorPicker: SwiftColorPicker { getNode("../ColorPicker") }
 
-  let maxLength = 5.0
-  let width = 0.005
+  private let maxLength = 5.0
+  private let width = 0.005
 
   @Export
   var color: Color = Color.transparent
 
   @Export
   var expansion: Double = 0.0
-  var expansionTween: Tween?
+  private var expansionTween: Tween?
 
-  var active = false
-  var lastExpandedLength = 0.0
+  private var active = false
+  private var lastExpandedLength = 0.0
 
   override func _ready() {
     setupColor()
@@ -36,7 +36,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     lastExpandedLength = data.expandedLength
   }
 
-  func setupColor() {
+  private func setupColor() {
     color = colorPicker.activeColor
     colorPicker.colorChanged.connect { color in
       self.color = color
@@ -44,7 +44,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     }
   }
 
-  func updateNodesColor() {
+  private func updateNodesColor() {
     if let mesh = rayLine?.mesh as? CylinderMesh,
       let material = mesh.material as? StandardMaterial3D
     {
@@ -61,7 +61,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     }
   }
 
-  func setupButtons() {
+  private func setupButtons() {
     controller.buttonPressed.connect { button in
       if button == "trigger_click" {
         self.activateRay()
@@ -74,14 +74,14 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     }
   }
 
-  func activateRay() {
+  private func activateRay() {
     active = true
     let node = PickupRayLine.create(name: "Line", color: color, width: width)
     addChild(node: node)
     animateExpansion()
   }
 
-  func deactivateRay() {
+  private func deactivateRay() {
     active = false
 
     rayLine?.queueFree()
@@ -93,7 +93,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     lastExpandedLength = 0
   }
 
-  func resolveRayData() -> PickupRayData {
+  private func resolveRayData() -> PickupRayData {
     let origin = Vector3.zero
     let maxTarget = Vector3(z: -Float(maxLength))
     let hitTarget = detectCollision(
@@ -111,7 +111,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     )
   }
 
-  func detectCollision(origin: Vector3, target: Vector3) -> Vector3? {
+  private func detectCollision(origin: Vector3, target: Vector3) -> Vector3? {
     guard let space = getWorld3d()?.directSpaceState,
       let query = PhysicsRayQueryParameters3D.create(from: origin, to: target)
     else { return nil }
@@ -123,7 +123,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     return hit?.position
   }
 
-  func updateExpansion(_ data: PickupRayData) {
+  private func updateExpansion(_ data: PickupRayData) {
     let expandedLength = data.expandedLength
     let lengthDelta = expandedLength - (lastExpandedLength ?? 0)
     let animating = expansionTween?.isRunning() ?? false
@@ -155,7 +155,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     }
   }
 
-  func updateLineNode(_ data: PickupRayData) {
+  private func updateLineNode(_ data: PickupRayData) {
     guard let rayLine, let lineMesh = rayLine.mesh as? CylinderMesh else { return }
 
     let length = data.expandedLength * expansion
@@ -164,7 +164,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     rayLine.rotation = Vector3(x: .pi / 2)
   }
 
-  func updateTipNode(_ data: PickupRayData) {
+  private func updateTipNode(_ data: PickupRayData) {
     let collides = data.collides
 
     if collides, rayTip == nil {
@@ -180,7 +180,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     }
   }
 
-  func animateExpansion() {
+  private func animateExpansion() {
     expansionTween?.kill()
     expansionTween = createTween()
     expansionTween?
@@ -190,7 +190,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   }
 }
 
-struct PickupRayData {
+private struct PickupRayData {
   let origin: Vector3
   let target: Vector3
   let expandedLength: Double

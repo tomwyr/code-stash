@@ -10,9 +10,9 @@ class SwiftColorPicker: Node3D, @unchecked Sendable {
   @Signal var colorChanged: SignalWithArguments<Color>
   var activeColor: Color { picker.activeColor }
 
-  var open = false
-  var picker = ColorPicker()
-  var activeGesture: StickGesture?
+  private var open = false
+  private var picker = ColorPicker()
+  private var activeGesture: StickGesture?
 
   override func _ready() {
     picker.onChanged = { color in
@@ -25,14 +25,14 @@ class SwiftColorPicker: Node3D, @unchecked Sendable {
     }
   }
 
-  func setupSignals() {
+  private func setupSignals() {
     controller.inputVector2Changed.connect { name, input in
       guard name == "primary" else { return }
       self.processStickInput(input)
     }
   }
 
-  func processStickInput(_ input: Vector2) {
+  private func processStickInput(_ input: Vector2) {
     // Keep gesture active above threshold to avoid changing the color repeatedly.
     if activeGesture != nil && input.length() < 0.5 {
       activeGesture = nil
@@ -46,7 +46,7 @@ class SwiftColorPicker: Node3D, @unchecked Sendable {
     activeGesture = gesture
   }
 
-  func processStickGesture(_ gesture: StickGesture) {
+  private func processStickGesture(_ gesture: StickGesture) {
     switch gesture {
     case .up:
       if !open {
@@ -67,25 +67,25 @@ class SwiftColorPicker: Node3D, @unchecked Sendable {
     }
   }
 
-  func openPanel() {
+  private func openPanel() {
     open = true
     let node = ColorPickerPanel.create(name: "Panel")
     addChild(node: node)
     updatePanel()
   }
 
-  func closePanel() {
+  private func closePanel() {
     open = false
     getNode("Panel").queueFree()
   }
 
-  func updatePanel() {
+  private func updatePanel() {
     setPanelColor(of: currentColor, to: picker.activeColor)
     setPanelColor(of: previousColor, to: picker.previousColor)
     setPanelColor(of: nextColor, to: picker.nextColor)
   }
 
-  func setPanelColor(of node: MeshInstance3D?, to color: Color) {
+  private func setPanelColor(of node: MeshInstance3D?, to color: Color) {
     if let mesh = node?.mesh as? PlaneMesh,
       let material = mesh.material as? StandardMaterial3D
     {
@@ -108,9 +108,9 @@ struct ColorPickerPanel {
 class ColorPicker {
   let colors = [Color](arrayLiteral: .red, .green, .blue, .yellow, .purple)
 
-  private(set) var activeIndex = 0
-  var previousIndex: Int { activeIndex > 0 ? activeIndex - 1 : colors.count - 1 }
-  var nextIndex: Int { activeIndex < colors.count - 1 ? activeIndex + 1 : 0 }
+  private var activeIndex = 0
+  private var previousIndex: Int { activeIndex > 0 ? activeIndex - 1 : colors.count - 1 }
+  private var nextIndex: Int { activeIndex < colors.count - 1 ? activeIndex + 1 : 0 }
 
   var activeColor: Color { colors[activeIndex] }
   var previousColor: Color { colors[previousIndex] }
