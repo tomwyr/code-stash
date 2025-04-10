@@ -1,14 +1,17 @@
 import SwiftGodot
 
-@Godot(.tool)
+@Godot
 class SwiftPickupRay: Node3D, @unchecked Sendable {
-  var controller: XRController3D? { getParent() }
+  var controller: XRController3D { getParent() }
   var rayLine: MeshInstance3D? { getNodeOrNull("Line") }
-  var rayTip: Node3D? { getNodeOrNull("Tip") }
+  var rayTip: MeshInstance3D? { getNodeOrNull("Tip") }
+  var colorPicker: SwiftColorPicker { getNode("../ColorPicker") }
 
   let maxLength = 5.0
   let width = 0.005
-  let color = Color.tomato
+
+  @Export
+  var color: Color = Color.transparent
 
   @Export
   var expansion: Double = 0.0
@@ -18,7 +21,8 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   var lastExpandedLength = 0.0
 
   override func _ready() {
-    setupSignals()
+    setupColor()
+    setupButtons()
   }
 
   override func _process(delta: Double) {
@@ -32,8 +36,32 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     lastExpandedLength = data.expandedLength
   }
 
-  func setupSignals() {
-    guard let controller = controller else { return }
+  func setupColor() {
+    color = colorPicker.activeColor
+    colorPicker.colorChanged.connect { color in
+      self.color = color
+      self.updateNodesColor()
+    }
+  }
+
+  func updateNodesColor() {
+    if let mesh = rayLine?.mesh as? CylinderMesh,
+      let material = mesh.material as? StandardMaterial3D
+    {
+      material.albedoColor = color
+    }
+    if let mesh = rayTip?.mesh as? SphereMesh,
+      let material = mesh.material as? StandardMaterial3D
+    {
+      material.albedoColor = color
+      material.emission = color
+    }
+    if let light = rayTip?.getChild(idx: 0) as? OmniLight3D {
+      light.lightColor = color
+    }
+  }
+
+  func setupButtons() {
     controller.buttonPressed.connect { button in
       if button == "trigger_click" {
         self.activateRay()

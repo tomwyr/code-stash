@@ -1,0 +1,52 @@
+[gd_scene load_steps=9 format=3 uid="uid://c67e5tf5c1lxm"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jscy8"]
+transparency = 1
+albedo_color = Color(0, 0, 0, 0.941176)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_pm3ni"]
+material = SubResource("StandardMaterial3D_jscy8")
+size = Vector2(0.15, 0.15)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pm3ni"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jscy8"]
+material = SubResource("StandardMaterial3D_pm3ni")
+size = Vector2(0.05, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y6deb"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_y6deb"]
+material = SubResource("StandardMaterial3D_y6deb")
+size = Vector2(0.03, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_og1vs"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_og1vs"]
+material = SubResource("StandardMaterial3D_og1vs")
+size = Vector2(0.03, 0.03)
+
+[node name="ColorPanel" type="MeshInstance3D"]
+transform = Transform3D(0.642788, -0.719846, -0.262003, 0, 0.34202, -0.939693, 0.766044, 0.604023, 0.219846, 0, 0, 0)
+mesh = SubResource("PlaneMesh_pm3ni")
+
+[node name="Title" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 2.98023e-08, 0, -2.98023e-08, 1, 0, -1, -2.98023e-08, 0, 0.001, -0.04)
+pixel_size = 0.001
+text = "Color"
+font_size = 28
+outline_size = 4
+
+[node name="CurrentColor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 2.98023e-08, -1.49012e-08, 0, 1, -2.98023e-08, 0, 0, 1, 0, 0.001, 0.015)
+mesh = SubResource("PlaneMesh_jscy8")
+skeleton = NodePath("../PreviousColor")
+
+[node name="PreviousColor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 2.98023e-08, 0, 0, 1, -1.49012e-08, 0, 0, 1, -0.05, 0.001, 0.015)
+mesh = SubResource("PlaneMesh_y6deb")
+skeleton = NodePath("../NextColor")
+
+[node name="NextColor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.001, 0.015)
+mesh = SubResource("PlaneMesh_og1vs")

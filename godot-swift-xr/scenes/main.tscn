@@ -272,7 +272,9 @@ tracker = &"right_hand"
 
 [node name="FunctionPickup" parent="fXROrigin3D/RightHandController" instance=ExtResource("6_vxglm")]
 
-[node name="SwiftPickupRay" type="SwiftPickupRay" parent="fXROrigin3D/RightHandController"]
+[node name="PickupRay" type="SwiftPickupRay" parent="fXROrigin3D/RightHandController"]
+
+[node name="ColorPicker" type="SwiftColorPicker" parent="fXROrigin3D/RightHandController"]
 
 [node name="PlayerBody" parent="fXROrigin3D" instance=ExtResource("10_tel4y")]
 collision_layer = 524289

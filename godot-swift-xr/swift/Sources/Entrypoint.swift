@@ -6,5 +6,6 @@ import SwiftGodot
     SwiftLabel3D.self,
     SwiftCubeColor.self,
     SwiftPickupRay.self,
+    SwiftColorPicker.self,
   ]
 )
