@@ -19,7 +19,7 @@ class SwiftColorPicker: Node3D, @unchecked Sendable {
 
   override func _ready() {
     picker.onChanged = { color in
-      self.updatePanel()
+      self.updatePanelColors()
       self.colorChanged.emit(color)
     }
     setupSignals()
@@ -77,24 +77,25 @@ class SwiftColorPicker: Node3D, @unchecked Sendable {
     open = true
     let node = ColorPickerPanel.create(name: "Panel")
     addChild(node: node)
-    updatePanel()
+    updatePanelColors()
     animatePanel(to: .open)
   }
 
   private func closePanel() {
     open = false
-    animatePanel(to: .close) {
-      self.getNode("Panel").queueFree()
-    }
+    animatePanel(
+      to: .close,
+      onDone: { self.getNode("Panel").queueFree() }
+    )
   }
 
-  private func updatePanel() {
+  private func updatePanelColors() {
     modifyPlaneMesh(currentColor, color: picker.activeColor)
     modifyPlaneMesh(previousColor, color: picker.previousColor)
     modifyPlaneMesh(nextColor, color: picker.nextColor)
   }
 
-  private func animatePanel(to direction: PanelDirection, _ onDone: (() -> Void)? = nil) {
+  private func animatePanel(to direction: PanelDirection, onDone: (() -> Void)? = nil) {
     let (start, end) =
       switch direction {
       case .open: (0.0, 1.0)
@@ -102,7 +103,7 @@ class SwiftColorPicker: Node3D, @unchecked Sendable {
       }
 
     let tween = createTween()?.tweenMethod(
-      Callable(updateOpacity),
+      Callable(updateExpansion),
       from: Variant(start),
       to: Variant(end),
       duration: 0.3
@@ -115,7 +116,7 @@ class SwiftColorPicker: Node3D, @unchecked Sendable {
     }
   }
 
-  private func updateOpacity(value: Float) {
+  private func updateExpansion(value: Float) {
     panel.position = getPanelPosition(expansion: value)
     modifyPlaneMesh(panel, alpha: value)
     modifyLabel(title, alpha: value)
