@@ -260,6 +260,8 @@ tracker = &"left_hand"
 
 [node name="FunctionPickup" parent="fXROrigin3D/LeftHandController" instance=ExtResource("6_vxglm")]
 
+[node name="SwiftNodePainter" type="SwiftNodePainter" parent="fXROrigin3D/LeftHandController"]
+
 [node name="RightHandController" type="XRController3D" parent="fXROrigin3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0, 0)
 tracker = &"right_hand"

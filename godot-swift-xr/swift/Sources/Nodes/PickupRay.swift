@@ -13,6 +13,8 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   @Export
   var color: Color = Color.transparent
 
+  var currentCollision: Object?
+
   @Export
   var expansion: Double = 0.0
   private var expansionTween: Tween?
@@ -33,6 +35,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     updateTipNode(data)
     updateLineNode(data)
 
+    currentCollision = data.collider
     lastExpandedLength = data.expandedLength
   }
 
@@ -96,10 +99,11 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   private func resolveRayData() -> PickupRayData {
     let origin = Vector3.zero
     let maxTarget = Vector3(z: -Float(maxLength))
-    let hitTarget = detectCollision(
+    let hitResult = detectCollision(
       origin: toGlobal(localPoint: origin),
       target: toGlobal(localPoint: maxTarget)
-    ).flatMap(toLocal)
+    )
+    let hitTarget = (hitResult?.target).flatMap(toLocal)
     let target = hitTarget ?? maxTarget
     let expandedLength = (target - origin).length()
 
@@ -107,11 +111,11 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
       origin: origin,
       target: target,
       expandedLength: expandedLength,
-      collides: hitTarget != nil
+      collider: hitResult?.collider
     )
   }
 
-  private func detectCollision(origin: Vector3, target: Vector3) -> Vector3? {
+  private func detectCollision(origin: Vector3, target: Vector3) -> RayCollisionResult? {
     guard let space = getWorld3d()?.directSpaceState,
       let query = PhysicsRayQueryParameters3D.create(from: origin, to: target)
     else { return nil }
@@ -119,8 +123,10 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
     query.collideWithAreas = true
     query.collideWithBodies = true
 
-    let hit = space.intersectRay(parameters: query)
-    return hit?.position
+    guard let hit = space.intersectRay(parameters: query) else {
+      return nil
+    }
+    return (hit.collider, hit.position)
   }
 
   private func updateExpansion(_ data: PickupRayData) {
@@ -165,7 +171,7 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   }
 
   private func updateTipNode(_ data: PickupRayData) {
-    let collides = data.collides
+    let collides = data.collider != nil
 
     if collides, rayTip == nil {
       let node = PickupRayTip.create(name: "Tip", color: color)
@@ -190,11 +196,13 @@ class SwiftPickupRay: Node3D, @unchecked Sendable {
   }
 }
 
+private typealias RayCollisionResult = (collider: Object, target: Vector3)
+
 private struct PickupRayData {
   let origin: Vector3
   let target: Vector3
   let expandedLength: Double
-  let collides: Bool
+  let collider: Object?
 }
 
 struct PickupRayLine {

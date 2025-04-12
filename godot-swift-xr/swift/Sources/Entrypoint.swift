@@ -7,5 +7,6 @@ import SwiftGodot
     SwiftCubeColor.self,
     SwiftPickupRay.self,
     SwiftColorPicker.self,
+    SwiftNodePainter.self,
   ]
 )
