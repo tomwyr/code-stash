@@ -242,43 +242,43 @@ script = ExtResource("1_jscy8")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_gs1fl")
 
-[node name="fXROrigin3D" type="XROrigin3D" parent="."]
+[node name="XROrigin" type="XROrigin3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 script = ExtResource("2_pm3ni")
 
-[node name="XRCamera3D" type="XRCamera3D" parent="fXROrigin3D"]
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin"]
 
-[node name="VRCommonShaderCache" parent="fXROrigin3D/XRCamera3D" instance=ExtResource("3_y6deb")]
+[node name="VRCommonShaderCache" parent="XROrigin/XRCamera3D" instance=ExtResource("3_y6deb")]
 
-[node name="LeftHandController" type="XRController3D" parent="fXROrigin3D"]
+[node name="LeftHandController" type="XRController3D" parent="XROrigin"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0, 0)
 tracker = &"left_hand"
 
-[node name="LeftHand" parent="fXROrigin3D/LeftHandController" instance=ExtResource("4_og1vs")]
+[node name="LeftHand" parent="XROrigin/LeftHandController" instance=ExtResource("4_og1vs")]
 
-[node name="FunctionTeleport" parent="fXROrigin3D/LeftHandController" instance=ExtResource("5_2wyq8")]
+[node name="FunctionTeleport" parent="XROrigin/LeftHandController" instance=ExtResource("5_2wyq8")]
 
-[node name="FunctionPickup" parent="fXROrigin3D/LeftHandController" instance=ExtResource("6_vxglm")]
+[node name="FunctionPickup" parent="XROrigin/LeftHandController" instance=ExtResource("6_vxglm")]
 
-[node name="SwiftNodePainter" type="SwiftNodePainter" parent="fXROrigin3D/LeftHandController"]
+[node name="RayPainter" type="SwiftRayPainter" parent="XROrigin/LeftHandController"]
 
-[node name="RightHandController" type="XRController3D" parent="fXROrigin3D"]
+[node name="RightHandController" type="XRController3D" parent="XROrigin"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0, 0)
 tracker = &"right_hand"
 
-[node name="RightHand" parent="fXROrigin3D/RightHandController" instance=ExtResource("7_2f3dj")]
+[node name="RightHand" parent="XROrigin/RightHandController" instance=ExtResource("7_2f3dj")]
 
-[node name="MovementDirect" parent="fXROrigin3D/RightHandController" instance=ExtResource("8_yq6so")]
+[node name="MovementDirect" parent="XROrigin/RightHandController" instance=ExtResource("8_yq6so")]
 
-[node name="MovementTurn" parent="fXROrigin3D/RightHandController" instance=ExtResource("9_fv21b")]
+[node name="MovementTurn" parent="XROrigin/RightHandController" instance=ExtResource("9_fv21b")]
 
-[node name="FunctionPickup" parent="fXROrigin3D/RightHandController" instance=ExtResource("6_vxglm")]
+[node name="FunctionPickup" parent="XROrigin/RightHandController" instance=ExtResource("6_vxglm")]
 
-[node name="PickupRay" type="SwiftPickupRay" parent="fXROrigin3D/RightHandController"]
+[node name="PickupRay" type="SwiftPickupRay" parent="XROrigin/RightHandController"]
 
-[node name="ColorPicker" type="SwiftColorPicker" parent="fXROrigin3D/RightHandController"]
+[node name="ColorPicker" type="SwiftColorPicker" parent="XROrigin/RightHandController"]
 
-[node name="PlayerBody" parent="fXROrigin3D" instance=ExtResource("10_tel4y")]
+[node name="PlayerBody" parent="XROrigin" instance=ExtResource("10_tel4y")]
 collision_layer = 524289
 enabled = false
 player_height_max = 1.0

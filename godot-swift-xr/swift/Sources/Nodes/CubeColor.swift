@@ -1,11 +1,17 @@
 import SwiftGodot
 
 @Godot
-class SwiftCubeColor: Node3D, @unchecked Sendable, NodePaintable {
+class SwiftCubeColor: Node3D, @unchecked Sendable, RayPainterDelegate {
+  private var pickableCube: RigidBody3D { getNode("../..") }
+  private var nodePainter: SwiftRayPainter {
+    getNode("/root/Main/XROrigin/LeftHandController/RayPainter")
+  }
+
   @Export
   var cubeColor: Color?
 
   override func _ready() {
+    nodePainter.register(delegate: self)
     guard let color = cubeColor else {
       GD.print("SwiftCubeColor not set")
       return
@@ -13,9 +19,13 @@ class SwiftCubeColor: Node3D, @unchecked Sendable, NodePaintable {
     changeCubeColor(color)
   }
 
-  func paint(to color: Color) {
+  func paint(_ target: Object, to color: Color) -> Bool {
+    guard target == pickableCube else {
+      return false
+    }
     cubeColor = color
     changeCubeColor(color)
+    return true
   }
 
   private func changeCubeColor(_ color: Color) {
