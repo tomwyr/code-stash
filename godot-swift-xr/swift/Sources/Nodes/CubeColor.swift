@@ -16,7 +16,7 @@ class SwiftCubeColor: Node3D, @unchecked Sendable, RayPainterDelegate {
       GD.print("SwiftCubeColor not set")
       return
     }
-    changeCubeColor(color)
+    initColor(color)
   }
 
   func paint(_ target: Object, to color: Color) -> Bool {
@@ -24,11 +24,11 @@ class SwiftCubeColor: Node3D, @unchecked Sendable, RayPainterDelegate {
       return false
     }
     cubeColor = color
-    changeCubeColor(color)
+    animateColor(color)
     return true
   }
 
-  private func changeCubeColor(_ color: Color) {
+  private func initColor(_ color: Color) {
     guard let parent = getParent() as? MeshInstance3D,
       let mesh = parent.mesh as? BoxMesh
     else {
@@ -39,5 +39,19 @@ class SwiftCubeColor: Node3D, @unchecked Sendable, RayPainterDelegate {
     var material = StandardMaterial3D()
     material.albedoColor = color
     mesh.material = material
+  }
+
+  private func animateColor(_ color: Color) {
+    guard let parent = getParent() as? MeshInstance3D,
+      let mesh = parent.mesh as? BoxMesh,
+      let material = mesh.material as? StandardMaterial3D
+    else { return }
+
+    createTween()?.tweenProperty(
+      object: material,
+      property: "albedo_color",
+      finalVal: Variant(color),
+      duration: 0.3
+    )?.setEase(.in)?.setTrans(.circ)
   }
 }
