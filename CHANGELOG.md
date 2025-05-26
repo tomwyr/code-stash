@@ -1,3 +1,7 @@
+## [0.1.3]
+
+- Add demo recording to readme and clarify commands usage
+
 ## [0.1.2]
 
 - Fix branch picker not displayed after scanning
