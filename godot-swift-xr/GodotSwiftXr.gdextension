@@ -1,0 +1,52 @@
+[configuration]
+entry_symbol = "swift_entry_point"
+compatibility_minimum = 4.3
+
+[libraries]
+macos.debug = "res://swift/bin/libGodotSwiftXr.dylib"
+android.debug.arm64 = "res://swift/bin/libGodotSwiftXr.so"
+
+[dependencies]
+macos.debug = {"res://swift/bin/libSwiftGodot.dylib" : ""}
+android.debug.arm64 = {
+  "res://swift/bin/libGodotSwiftXr.so": "",
+  "res://swift/bin/libSwiftGodot.so" : "",
+  "res://swift/bin/libswiftAndroid.so" : "",
+  "res://swift/bin/libBlocksRuntime.so": "",
+  "res://swift/bin/libFoundation.so": "",
+  "res://swift/bin/libFoundationEssentials.so": "",
+  "res://swift/bin/libFoundationInternationalization.so": "",
+  "res://swift/bin/libFoundationNetworking.so": "",
+  "res://swift/bin/libFoundationXML.so": "",
+  "res://swift/bin/libSwiftGodot.so": "",
+  "res://swift/bin/libXCTest.so": "",
+  "res://swift/bin/lib_FoundationICU.so": "",
+  "res://swift/bin/libandroid-spawn.so": "",
+  "res://swift/bin/libc++_shared.so": "",
+  "res://swift/bin/libcharset.so": "",
+  "res://swift/bin/libcrypto.so": "",
+  "res://swift/bin/libcurl.so": "",
+  "res://swift/bin/libdispatch.so": "",
+  "res://swift/bin/libiconv.so": "",
+  "res://swift/bin/liblzma.so": "",
+  "res://swift/bin/libnghttp2.so": "",
+  "res://swift/bin/libnghttp3.so": "",
+  "res://swift/bin/libssh2.so": "",
+  "res://swift/bin/libssl.so": "",
+  "res://swift/bin/libswiftAndroid.so": "",
+  "res://swift/bin/libswiftCore.so": "",
+  "res://swift/bin/libswiftDispatch.so": "",
+  "res://swift/bin/libswiftDistributed.so": "",
+  "res://swift/bin/libswiftObservation.so": "",
+  "res://swift/bin/libswiftRegexBuilder.so": "",
+  "res://swift/bin/libswiftSwiftOnoneSupport.so": "",
+  "res://swift/bin/libswiftSynchronization.so": "",
+  "res://swift/bin/libswift_Builtin_float.so": "",
+  "res://swift/bin/libswift_Concurrency.so": "",
+  "res://swift/bin/libswift_Differentiation.so": "",
+  "res://swift/bin/libswift_RegexParser.so": "",
+  "res://swift/bin/libswift_StringProcessing.so": "",
+  "res://swift/bin/libswift_math.so": "",
+  "res://swift/bin/libxml2.so": "",
+  "res://swift/bin/libz.so": ""
+}
