@@ -1,0 +1,43 @@
+"Person participating in the olympics"
+type Athlete {
+  id: String!
+  name: String!
+  gender: Gender!
+  birthdate: String!
+  country: Country!
+}
+
+"Reward given to an athlete in a specific competition during olympics"
+type Medal {
+  id: String!
+  date: String!
+  event: String!
+  type: MedalType!
+  athlete: Athlete!
+  discipline: Discipline!
+}
+
+"Olympics event type in which athletes participate"
+type Discipline {
+  id: String!
+  name: String!
+  code: String!
+}
+
+"Nationality of an athlete"
+type Country {
+  id: String!
+  name: String!
+  code: String!
+}
+
+enum MedalType {
+  Gold
+  Silver
+  Bronze
+}
+
+enum Gender {
+  Male
+  Female
+}

@@ -1,0 +1,4 @@
+type Mutation {
+    registerAthlete(input: AthleteInput!): Athlete!
+    awardMedal(input: MedalInput!): Medal!
+}

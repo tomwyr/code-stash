@@ -1,0 +1,3 @@
+- randomUUID -> unique()
+- resolvers objects -> types
+- use resolvers from parent

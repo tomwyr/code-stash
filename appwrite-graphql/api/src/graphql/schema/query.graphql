@@ -1,0 +1,6 @@
+type Query {
+    athletes: [Athlete!]!
+    medals: [Medal!]!
+    countries: [Country!]!
+    disciplines: [Discipline!]!
+}
