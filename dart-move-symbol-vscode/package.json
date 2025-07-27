@@ -1,0 +1,68 @@
+{
+  "name": "dart-move-symbol",
+  "displayName": "Dart Move Symbol",
+  "description": "Provides commands and keybindings for moving Dart symbols in text editor.",
+  "version": "1.0.5",
+  "publisher": "tomwyr",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomwyr/dart-move-symbol-vscode"
+  },
+  "engines": {
+    "vscode": "^1.56.0"
+  },
+  "categories": [
+    "Keymaps",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "dart",
+    "flutter"
+  ],
+  "activationEvents": [
+    "onLanguage:dart"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "dart-move-symbol.up",
+        "title": "Move Symbol Up"
+      },
+      {
+        "command": "dart-move-symbol.down",
+        "title": "Move Symbol Down"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "dart-move-symbol.up",
+        "key": "ctrl+alt+up",
+        "when": "editorLangId == dart"
+      },
+      {
+        "command": "dart-move-symbol.down",
+        "key": "ctrl+alt+down",
+        "when": "editorLangId == dart"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.8",
+    "@types/vscode": "^1.56.0",
+    "ts-loader": "^6.2.1",
+    "tslint": "^5.12.1",
+    "typescript": "^3.5.1",
+    "webpack": "^5.19.0",
+    "webpack-cli": "^4.8.0"
+  }
+}
