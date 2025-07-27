@@ -1,0 +1,11 @@
+.*/
+build/
+out/
+/refresh.sh
+*.imp
+*.ipr
+*.iws
+*.idea
+
+logs
+db.json
