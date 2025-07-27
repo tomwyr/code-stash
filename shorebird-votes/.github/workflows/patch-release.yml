@@ -1,0 +1,58 @@
+name: patch-release
+
+on:
+  push:
+    tags: 
+      - 'patch#*'
+
+env:
+  # Appwrite
+  APPWRITE_PROJECT_ID: ${{ vars.APPWRITE_PROJECT_ID }}
+  APPWRITE_DATABASE_ID: ${{ vars.APPWRITE_DATABASE_ID }}
+  APPWRITE_ISSUES_ID: ${{ vars.APPWRITE_ISSUES_ID }}
+  APPWRITE_APP_INFO_ID: ${{ vars.APPWRITE_APP_INFO_ID }}
+  APPWRITE_NOTIFY_UPDATE_AVAILABLE_ID: ${{ vars.APPWRITE_NOTIFY_UPDATE_AVAILABLE_ID }}
+  APPWRITE_NOTIFY_UPDATE_AVAILABLE_KEY: ${{ secrets.APPWRITE_NOTIFY_UPDATE_AVAILABLE_KEY }}
+  # Shorebird
+  SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+  # Android
+  ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+  ANDROID_STORE_FILE: ${{ secrets.ANDROID_STORE_FILE }}
+  ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+  ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+  ANDROID_ENCODED_KEYSTORE: ${{ secrets.ANDROID_ENCODED_KEYSTORE }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: microsoft
+          java-version: 11
+
+      - name: Setup env file
+        run: sh .github/scripts/setup-env-file.sh
+
+      - name: Setup keystore
+        run: sh .github/scripts/setup-keystore.sh
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+
+      - name: Generate sources
+        run: flutter pub get && flutter pub run build_runner build
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v0
+
+      - name: Release patch
+        run: shorebird patch android
+
+      - name: Notify update available
+        run: sh .github/scripts/notify-update-available.sh
