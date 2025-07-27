@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "name": "Frontend Debug",
+      "type": "dart",
+      "request": "launch",
+      "program": "frontend/lib/main.dart"
+    },
+    {
+      "name": "Backend Debug",
+      "type": "dart",
+      "request": "launch",
+      "program": "backend/lib/main.dart"
+    },
+  ]
+}
